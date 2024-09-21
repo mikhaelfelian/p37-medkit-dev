@@ -1755,7 +1755,7 @@ class medcheck extends CI_Controller {
         
         $id = $this->input->get('id');
         
-        $dt['cUser'] = $this->session->userdata('username');
+//        $dt['cUser'] = $this->ion_auth->user()->row()->username;
         $dt['dLastUpdate'] = date('Y-m-d H:i:s');
         
         $this->db->where('id', $id)->update("tr_queue", $dt);

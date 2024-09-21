@@ -65,8 +65,6 @@
     <!-- /.content -->
 </div>
 <!-- /.content-wrapper -->
-<!-- /.content-wrapper -->
-<!-- /.content-wrapper -->
 <script src="<?php echo base_url('assets/theme/admin-lte-2/plugins/JAutoNumber/autonumeric.js') ?>"></script>
 <script src="<?php echo base_url('assets/theme/admin-lte-3/plugins/jquery-ui/jquery-ui.js') ?>"></script>
 <link href="<?php echo base_url('assets/theme/admin-lte-3/plugins/jquery-ui/jquery-ui.min.css') ?>" rel="stylesheet">
@@ -74,22 +72,21 @@
 <!-- Page script -->
 <script type="text/javascript">
     $(function () {
-    $("#tgl").datepicker({
-    format: 'dd/mm/yyyy',
-            //defaultDate: "+1w",
-//            SetDate: new Date(),
+        $("#tgl").datepicker({
+            format: 'dd/mm/yyyy',
             changeMonth: true,
 //            minDate: dateToday,
             autoclose: true
-    });
-            function call_data(){
+        });
+        function call_data() {
             $.ajax({
-            type	: 'POST',
-                    url		: "<?php echo site_url(); ?>tr_custsrv/call_data<?php echo (!empty($_GET['id']) ? '?id=' . $_GET['id'] . '&antrian=' . $_GET['antrian'] : '') ?>",
-                                        cache	: false,
-                                        success	: function(data){
-                                        $("#Num_Queue").html(data);
-                                        }
-                                });
-                                });
+                type: 'POST',
+                url: "<?php echo base_url('tr_custsrv/call_data') . (!empty($_GET['id']) ? '?id=' . $_GET['id'] . '&antrian=' . $_GET['antrian'] : '') ?>",
+                cache: false,
+                success: function (data) {
+                    $("#Num_Queue").html(data);
+                }
+            });
+        }
+    });
 </script>
