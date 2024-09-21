@@ -38,7 +38,6 @@
                                     <h2 class="headline text-danger" style="font-size: 7rem;">
                                         <?php echo $this->input->get('antrian') ?>
                                     </h2>
-
                                     <?php if ($sql_antrian->status_pgl == '1') { ?>
                                         <a href="<?php echo base_url('medcheck/set_data_antrian.php?id=' . $this->input->get('id') . '&antrian=' . $this->input->get('antrian') . '&type=' . $this->input->get('type') . '&status=' . $this->input->get('status') . '&status_pgl=' . $sql_antrian->status_pgl . '&poli=' . $this->input->get('poli') . '&id_view=' . $this->input->get('id_view')) ?>">
                                             <button type="button" class="btn btn-danger">STOP</button>
@@ -48,7 +47,7 @@
                                             <button type="button" class="btn btn-primary">PANGGIL</button>
                                         </a>
                                     <?php } ?>
-                                    
+
                                     <a href="<?php echo base_url('medcheck/daftar.php?id=' . $this->input->get('id') . '&antrian=' . $this->input->get('antrian') . '&type=' . $this->input->get('type') . '&status=' . $this->input->get('status') . '&status_pgl=' . $this->input->get('status_pgl') . '&poli=' . $this->input->get('poli') . '&id_view=' . $this->input->get('id_view')) ?>">
                                         <button type="button" class="btn btn-primary">SET Pendaftaran</button>
                                     </a>
