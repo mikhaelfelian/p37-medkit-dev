@@ -90,7 +90,7 @@
                                                     <i><label class="badge badge-primary"><?php echo $cuti->tipe ?></label></i>
                                                 </td>
                                                 <td class="text-center" style="width: 100px;"><?php echo $this->tanggalan->tgl_indo2($cuti->tgl_masuk) ?></td>
-                                                <td class="text-center" style="width: 100px;"><?php echo $this->tanggalan->tgl_indo2(date('Y-m-d', strtotime("+1 day", strtotime($sql_kary->tgl_keluar)))) ?></td>
+                                                <td class="text-center" style="width: 100px;"><?php echo $this->tanggalan->tgl_indo2(date('Y-m-d', strtotime("+1 day", strtotime($cuti->tgl_keluar)))) ?></td>
                                                 <td class="text-left" style="width: 250px;"><?php echo $cuti->keterangan ?></td>
                                                 <td class="text-left" style="width: 150px;">
                                                     <?php if (akses::hakSA() == TRUE || akses::hakOwner() == TRUE || akses::hakAdminM() == TRUE || akses::hakAdmin() == TRUE) { ?>
