@@ -39,7 +39,7 @@
                                         <th>Tanggal</th>
                                         <th>Nama</th>
                                         <th class="text-center">Tgl Cuti</th>
-                                        <th class="text-center">Tgl Masuk</th>
+                                        <th class="text-center">s/d Tgl</th>
                                         <th class="text-left">Keterangan</th>
                                         <th>#</th>
                                     </tr>
