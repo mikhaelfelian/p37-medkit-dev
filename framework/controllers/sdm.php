@@ -19,7 +19,6 @@ class sdm extends CI_Controller {
             $id_user     = $this->ion_auth->user()->row()->id;
             $id_grup     = $this->ion_auth->get_users_groups()->row();
             $pengaturan  = $this->db->get('tbl_pengaturan')->row();
-
             
             /* Sidebar Menu */
             $data['sidebar']    = 'admin-lte-3/includes/sdm/sidebar_sdm';
