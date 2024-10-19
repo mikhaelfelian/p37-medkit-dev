@@ -35,6 +35,8 @@ class login extends CI_Controller {
         $pass   = $this->input->post('pass');
         $inga   = $this->input->post('ingat');
 
+//        $this->form_validation->set_error_delimiters('<div class="alert alert-danger">', '</div>');
+
         $this->form_validation->set_rules('user', 'Username', 'required');
         $this->form_validation->set_rules('pass', 'Password', 'required');
 
@@ -47,7 +49,14 @@ class login extends CI_Controller {
             $this->session->set_flashdata('form_error', $msg_error);
             redirect('page=login');
         } else {            
-            if($this->input->post('login') === 'login_aksi'){                
+            if($this->input->post('login') === 'login_aksi'){
+                /*
+                  Check if the reCAPTCHA was solved
+                  You can pass arguments to the `is_valid` method,
+                  but it should work fine without any.
+                  Check the "Validating the reCAPTCHA" section for more details
+                 */
+                
                 $is_valid = $this->recaptcha->is_valid();
                 
                 if($is_valid['success']){
@@ -74,6 +83,13 @@ class login extends CI_Controller {
                     redirect();
                 }
             }
+
+//            if($login == FALSE){
+//                $this->session->set_flashdata('login', '<p class="login-box-msg text-bold text-danger">Username atau Kata sandi salah !!</p>');
+//                redirect();                
+//            }else{
+//                redirect(base_url('dashboard2.php'));
+//            }
         }
     }
 

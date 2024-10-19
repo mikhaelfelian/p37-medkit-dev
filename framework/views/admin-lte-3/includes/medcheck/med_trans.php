@@ -166,6 +166,12 @@
                         </select>
                     </div>
                 </div>
+                <div class="form-group row">
+                    <label for="inputEmail3" class="col-sm-3 col-form-label">Upload Foto</label>
+                    <div class="col-sm-3">
+                        <input type="file" name="fupload">
+                    </div>
+                </div>
                                 </div>
                             </div>
                         </div>

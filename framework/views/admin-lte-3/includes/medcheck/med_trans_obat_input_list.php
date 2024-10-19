@@ -39,8 +39,6 @@
                                     <?php // } ?>
                                 <?php } ?>
                             <?php } ?>
-                            <?php echo br() ?>
-                            <?php echo general::status_resep_item($cart->status_resep) ?>
                         </th>
                         <td class="text-center"><?php echo $no . '.'; ?></td>
                         <td class="text-left">

@@ -113,7 +113,7 @@
                             <th class="text-left">Tgl Pengajuan</th>
                             <th class="text-left">Alasan Cuti</th>
                             <th class="text-center">Mulai Cuti</th>
-                            <th class="text-center">Masuk Kerja</th>
+                            <th class="text-center">Selesai Cuti</th>
                             <th class="text-center">#</th>
                         </tr>                                    
                     </thead>

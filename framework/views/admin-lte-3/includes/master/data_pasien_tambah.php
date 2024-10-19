@@ -24,7 +24,6 @@
     <div class="content">
         <div class="container-fluid">
             <div class="row">
-
                 <div class="col-md-3">
                     <div class="card card-default">
                         <div class="card-header">
@@ -59,7 +58,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="col-md-9">
                     <?php echo form_open(base_url('master/data_pasien_' . (isset($_GET['id']) ? 'update' : 'simpan') . '.php'), 'autocomplete="off"') ?>
                     <div class="card card-default">

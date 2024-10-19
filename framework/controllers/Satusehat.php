@@ -402,7 +402,7 @@ class Satusehat extends CI_Controller {
                         $data_log = array(
                             'id_medcheck' => $row->id,
                             'no_register' => $row->no_register,
-                            'status'        => 'ERROR-' . $resArr->resourceType,
+                            'status' => 'ERROR-' . $resArr->resourceType,
                             'response_status' => $serialized_data,
                         );
                         
@@ -418,7 +418,7 @@ class Satusehat extends CI_Controller {
                             'id_condition' => $resArr->entry[1]->response->resourceID,
                         );
 
-                        // echo "<pre>"; print_r($resArr->entry[0]->response->resourceID); echo "</pre>";
+                        //echo "<pre>"; print_r($resArr->entry[0]->response->resourceID); echo "</pre>";
 
 //                        $this->Satusehat_model->update_id($row->id, $data);
                         $this->db->where('id', $row->id)->update('tbl_trans_medcheck', $data);

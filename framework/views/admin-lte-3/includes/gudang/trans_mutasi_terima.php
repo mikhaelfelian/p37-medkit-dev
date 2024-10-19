@@ -95,7 +95,10 @@
                                     <?php $jml_item_krg = $jml_item_krg + $jml_kurang; ?>
                                     <tr>
                                         <td class="text-center" style="width: 25px;"><?php echo $no++ ?></td>
-                                        <td class="text-left" style="width: 70px;"><?php echo anchor(base_url('gudang/data_stok_tambah.php?id=' . general::enkrip($produk->id)), $items->kode, 'target="_blank"') ?></td>
+                                        <td class="text-left" style="width: 70px;">
+                                            <?php echo anchor(base_url('gudang/data_stok_tambah.php?id=' . general::enkrip($produk->id)), $items->kode, 'target="_blank"') ?><br/>
+                                            <small><b>ID:</b><?php echo $items->id; ?></small>
+                                        </td>
                                         <td class="text-left" style="width: 250px;">                                            
                                             <?php echo ucwords($items->produk); ?>
                                             <br/>

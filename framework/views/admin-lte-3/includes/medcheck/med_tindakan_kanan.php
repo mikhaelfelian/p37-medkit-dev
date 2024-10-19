@@ -204,6 +204,7 @@
                             <?php echo form_hidden('id', general::enkrip($sql_medc->id)) ?>
                             <b>Penjamin</b><br/>
                             <span class="float-left text-danger">
+
                                 <select id="platform" name="platform" class="form-control rounded-0<?php echo (!empty($hasError['platform']) ? ' is-invalid' : '') ?>">
                                     <option value="">- PENJAMIN -</option>
                                     <?php foreach ($sql_penjamin2 as $penj) { ?>

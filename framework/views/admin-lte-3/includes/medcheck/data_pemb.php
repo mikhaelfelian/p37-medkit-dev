@@ -70,7 +70,10 @@
                                             ?>
                                             <tr>
                                                 <td class="text-center"><?php echo $no++ ?>.</td>
-                                                <td style="width: 150px;"><?php echo $this->tanggalan->tgl_indo($penj->tgl_masuk) ?></td>
+                                                <td style="width: 150px;">
+                                                    <?php echo $this->tanggalan->tgl_indo($penj->tgl_masuk) ?><br/>
+                                                    <small><b>ID : </b><?php echo $penj->id ?></small>
+                                                </td>
                                                 <td style="width: 600px;"><?php echo $pasien->nama_pgl ?></td>
                                                 <td style="width: 150px;"><?php echo anchor(base_url('medcheck/tindakan.php?id=' . general::enkrip($penj->id)), $penj->no_nota, 'class="text-default"') ?></td>
                                                 <td class="text-right" style="width: 150px;"><?php echo general::format_angka($penj->jml_gtotal) ?></td>

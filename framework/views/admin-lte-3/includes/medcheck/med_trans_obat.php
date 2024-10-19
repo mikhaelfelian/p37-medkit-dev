@@ -25,8 +25,8 @@
             <div class="row">
                 <div class="col-lg-8">
                     <?php
-                    $hasError = $this->session->flashdata('form_error');
-
+                    $hasError   = $this->session->flashdata('form_error');
+                    
                     switch ($_GET['act']) {
                         default:
                             $this->load->view('admin-lte-3/includes/medcheck/med_trans_obat_index', $data);
@@ -40,11 +40,6 @@
                         # Form Input Resep
                         case 'res_input':
                             $this->load->view('admin-lte-3/includes/medcheck/med_trans_obat_input', $data);
-                            break;
-
-                        # Form Input Copy Resep
-                        case 'res_input_copy':
-                            $this->load->view('admin-lte-3/includes/medcheck/med_trans_obat_input_copy', $data);
                             break;
 
                         # Form Input Racikan
@@ -137,7 +132,7 @@
                 method: "POST",
                 success: function () {
                     toastr.success("Resep sudah dikonfirmasi dan ditanda tangani");
-                    window.location.href = '<?php echo base_url('medcheck/tambah.php?id=' . $this->input->get('id') . '&status=' . $this->input->get('status')) ?>';
+                    window.location.href='<?php echo base_url('medcheck/tambah.php?id='.$this->input->get('id').'&status='.$this->input->get('status')) ?>';
                 }
             });
         });
@@ -146,55 +141,53 @@
     $(function () {
         $("#1").hide().find('input').prop('disabled', true);
         $("#2").hide().find('input').prop('disabled', true);
-
-        $('#status_etiket').on('change', function () {
+        
+        $('#status_etiket').on('change', function(){         
             var status_etiket = $(this).val();
-
+        
             $("div.divEtiket").hide();
-            $("#" + status_etiket).show().find('input').prop('disabled', false);
+            $("#"+status_etiket).show().find('input').prop('disabled', false);
         });
-
+        
         $('#kode').focus();
         $("input[id=harga]").autoNumeric({aSep: '.', aDec: ',', aPad: false});
 
-<?php echo $this->session->flashdata('medcheck_toast'); ?>
+        <?php echo $this->session->flashdata('medcheck_toast'); ?>
 
-<?php if ($_GET['act'] == 'res_input' OR $_GET['act'] == 'res_input_rc') { ?>
-            // Data Item Cart
-            $('#kode').autocomplete({
-                source: function (request, response) {
-                    $.ajax({
-                        url: "<?php echo base_url('medcheck/json_item.php?page=obat&status=4') ?>",
-                        dataType: "json",
-                        data: {
-                            term: request.term
-                        },
-                        success: function (data) {
-                            response(data);
-                        }
-                    });
-                },
-                minLength: 4,
-                select: function (event, ui) {
-                    var $itemrow = $(this).closest('tr');
-                    //Populate the input fields from the returned values
-                    $itemrow.find('#id_item').val(ui.item.id);
-                    $('#id_item').val(ui.item.id);
-                    $('#kode').val(ui.item.kode);
-                    window.location.href = "<?php echo base_url('medcheck/tambah.php?act=' . $this->input->get('act') . '&id=' . $this->input->get('id') . (isset($_GET['id_resep']) ? '&id_resep=' . $this->input->get('id_resep') : '') . '&status=' . $this->input->get('status') . (isset($_GET['item_id']) ? '&item_id=' . $this->input->get('item_id') : '') . (isset($_GET['id_item_resep']) ? '&id_item_resep=' . $this->input->get('id_item_resep') : '')) ?>&id_produk=" + ui.item.id + "&harga=" + ui.item.harga + "&satuan=" + ui.item.satuan;
+        // Data Item Cart
+        $('#kode').autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: "<?php echo base_url('medcheck/json_item.php?page=obat&status=4') ?>",
+                    dataType: "json",
+                    data: {
+                        term: request.term
+                    },
+                    success: function (data) {
+                        response(data);
+                    }
+                });
+            },
+            minLength: 4,
+            select: function (event, ui) {
+                var $itemrow = $(this).closest('tr');
+                //Populate the input fields from the returned values
+                $itemrow.find('#id_item').val(ui.item.id);
+                $('#id_item').val(ui.item.id);
+                $('#kode').val(ui.item.kode);
+                window.location.href = "<?php echo base_url('medcheck/tambah.php?act=' . $this->input->get('act') . '&id=' . $this->input->get('id') . (isset($_GET['id_resep']) ? '&id_resep=' . $this->input->get('id_resep') : '') . '&status=' . $this->input->get('status') . (isset($_GET['item_id']) ? '&item_id=' . $this->input->get('item_id') : '') . (isset($_GET['id_item_resep']) ? '&id_item_resep=' . $this->input->get('id_item_resep') : '')) ?>&id_produk=" + ui.item.id + "&harga=" + ui.item.harga + "&satuan=" + ui.item.satuan;
 
-                    // Give focus to the next input field to recieve input from user
-                    $('#jml').focus();
-                    return false;
-                }
+                // Give focus to the next input field to recieve input from user
+                $('#jml').focus();
+                return false;
+            }
 
-                // Format the list menu output of the autocomplete
-            }).data("ui-autocomplete")._renderItem = function (ul, item) {
-                return $("<li></li>")
-                        .data("item.autocomplete", item)
-                        .append("<a>" + item.name + "</a><br/><a><i><small>" + item.alias + "</small></i></a><a><i><small> " + item.kandungan + "</small></i></a>")
-                        .appendTo(ul);
-            };
-<?php } ?>
+            // Format the list menu output of the autocomplete
+        }).data("ui-autocomplete")._renderItem = function (ul, item) {
+            return $("<li></li>")
+                    .data("item.autocomplete", item)
+                    .append("<a>" + item.name + "</a><br/><a><i><small>" + item.alias + "</small></i></a><a><i><small> " + item.kandungan + "</small></i></a>")
+                    .appendTo(ul);
+        };
     });
 </script>

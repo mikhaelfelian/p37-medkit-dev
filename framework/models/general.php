@@ -373,35 +373,6 @@ class general extends CI_Model {
         return $status;
     }
 
-    function status_resep_item($status) {
-        switch ($status) {
-            case '0':
-                $status = '<label class="badge badge-warning"><i class="far fa-solid fa-clock-rotate-left"></i> Pending</label>';
-                break;
-            
-            case '1':
-                $status = '<label class="badge badge-info"><i class="far fa-light fa-check-circle"></i> Tersedia</label>';
-                break;
-
-            case '2':
-                $status = '<label class="badge badge-primary"><i class="far fa-solid fa-clock-rotate-left"></i> Diganti</label>';
-                break;
-
-            case '3':
-                $status = '<label class="badge badge-warning"><i class="far fa-solid fa-xmark"></i> Tidak Tersedia</label>';
-                break;
-
-            case '4':
-                $status = '<label class="badge badge-success"><i class="far fa-check-circle"></i> Selesai</label>';
-                break;
-
-            default:
-                $status = '';
-                break;
-        }
-        return $status;
-    }
-
     function status_periksa($status) {
         switch ($status) {
             case '0':

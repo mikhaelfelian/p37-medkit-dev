@@ -47,14 +47,29 @@
                             <?php if (akses::hakSA() == TRUE OR akses::hakOwner() == TRUE OR akses::hakOwner2() == TRUE OR akses::hakFarmasi() == TRUE OR akses::hakDokter() == TRUE OR akses::hakPerawat() == TRUE) { ?>
                                 <?php echo anchor(base_url('medcheck/tambah.php?act=res_input&id=' . general::enkrip($sql_medc->id) . '&id_resep=' . general::enkrip($resep->id) . '&status=' . $this->input->get('status')), 'Input &raquo;', 'class="btn btn-success btn-flat btn-xs text-bold" style="width: 70px;"') ?>
                                 <?php echo br() ?>
-                                <?php echo anchor(base_url('medcheck/tambah.php?act=res_input_copy&id=' . general::enkrip($sql_medc->id) . '&id_resep=' . general::enkrip($resep->id) . '&status=' . $this->input->get('status')), 'Copy &raquo;', 'class="btn btn-success btn-flat btn-xs text-bold" style="width: 70px;"') ?>
-                                <?php echo br() ?>
                                 <?php echo anchor(base_url('medcheck/resep/cetak_label_json.php?id=' . general::enkrip($sql_medc->id) . '&id_resep=' . general::enkrip($resep->id) . '&status=' . $this->input->get('status')), 'Label JS &raquo;', 'class="btn btn-primary btn-flat btn-xs text-bold" style="width: 70px;" target="_blank"') ?>
                                 <?php echo br() ?>
                                 <?php echo anchor(base_url('medcheck/resep/cetak_pdf.php?id=' . general::enkrip($sql_medc->id) . '&id_resep=' . general::enkrip($resep->id) . '&status=' . $this->input->get('status')), 'Resep &raquo;', 'class="btn btn-primary btn-flat btn-xs text-bold" style="width: 70px;" target="_blank"') ?>
                             <?php } ?>
 
-                            <?php echo nbs(2) . general::status_resep($resep->status) ?>                            
+                            <?php echo nbs(2) . general::status_resep($resep->status) ?>
+                            
+                            <!--
+                            <?php if (akses::hakSA() == TRUE OR akses::hakOwner() == TRUE OR akses::hakOwner() == TRUE) { ?>
+                                <?php if ($resep->status == '0') { ?>
+                                    <?php echo anchor(base_url('medcheck/tambah.php?id=' . general::enkrip($sql_medc->id) . '&id_resep=' . general::enkrip($resep->id) . '&status=' . $this->input->get('status')), '<i class="fas fa-eye"></i>', 'class="btn btn-primary btn-flat btn-xs"'); ?>
+                                <?php } ?>
+                            <?php } elseif (akses::hakDokter() == TRUE) { ?>
+                                <?php echo anchor(base_url('medcheck/tambah.php?id=' . general::enkrip($sql_medc->id) . '&id_resep=' . general::enkrip($resep->id) . '&status=' . $this->input->get('status')), '<i class="fas fa-plus"></i> Input', 'class="btn btn-primary btn-flat btn-xs"'); ?>
+                            <?php } elseif (akses::hakFarmasi() == TRUE) { ?>
+                                <?php if ($resep->status == '1') { ?>
+                                    <?php echo anchor(base_url('medcheck/set_medcheck_resep_stat.php?id=' . general::enkrip($sql_medc->id) . '&id_resep=' . general::enkrip($resep->id) . '&status=' . $this->input->get('status') . '&status_res=2'), '<i class="fas fa-solid fa-check"></i>', 'class="btn btn-success btn-flat btn-xs text-bold" style="width: 20px;"') ?>
+                                    <?php echo anchor(base_url('medcheck/set_medcheck_resep_stat.php?id=' . general::enkrip($sql_medc->id) . '&id_resep=' . general::enkrip($resep->id) . '&status=' . $this->input->get('status') . '&status_res=4'), '<i class="fas fa-solid fa-xmark"></i>', 'class="btn btn-danger btn-flat btn-xs text-bold" style="width: 20px;"') ?>
+                                <?php } elseif ($resep->status == '2') { ?>
+                                    <?php echo anchor(base_url('medcheck/tambah.php?id=' . general::enkrip($sql_medc->id) . '&id_resep=' . general::enkrip($resep->id) . '&status=' . $this->input->get('status')), 'Input &raquo;', 'class="btn btn-success btn-flat btn-xs text-bold" style="width: 70px;"') ?>
+                                <?php } ?>
+                            <?php } ?>
+                            -->
                             <?php // echo anchor(base_url('medcheck/tambah.php?id=' . general::enkrip($sql_medc->id) . '&id_resep=' . general::enkrip($resep->id) . '&status=' . $this->input->get('status')), '<i class="fas fa-eye"></i> Detail', 'class="btn btn-primary btn-flat btn-xs"'); ?>
                         </td>
                     </tr>

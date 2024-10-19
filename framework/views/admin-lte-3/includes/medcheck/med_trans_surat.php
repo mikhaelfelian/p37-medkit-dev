@@ -63,7 +63,6 @@
                                                 <!--<option value="12">Surat Ket. Pengawasan Obat</option>-->
                                                 <option value="13">Surat Ket. Bebas Narkoba</option>
                                                 <option value="15">Surat Ket. THT</option>
-                                                <option value="16">Surat Screening</option>
                                             </select>
                                         </div>
                                     </div>
@@ -627,75 +626,6 @@
                                             </div>
                                         </div>                                   
                                     </div>
-                                    <div id="16" class="divSurat">
-                                        <!--SURAT KET THT-->
-                                        <div id="tht" class="form-group row">
-                                            <label for="inputTglSuratSehat" class="col-sm-3 col-form-label">Apakah anda sedang sakit ?</label>
-                                            <div class="col-sm-3">
-                                                <?php echo form_input(array('id' => 'tht_lt_kiri', 'name' => 'tht_lt_kiri', 'class' => 'form-control text-middle rounded-0' . (!empty($hasError['tht_lt_kiri']) ? ' is-invalid' : ''), 'style' => 'vertical-align: middle;', 'placeholder' => 'Isikan jawaban anda ...')) ?>
-                                            </div>
-                                            <label for="inputTglSuratSehat" class="col-sm-3 col-form-label">Apakah Anda sedang alergi terhadap obat-obatan ?</label>
-                                            <div class="col-sm-3">
-                                                <?php echo form_input(array('id' => 'tht_lt_kanan', 'name' => 'tht_lt_kanan', 'class' => 'form-control text-middle rounded-0' . (!empty($hasError['tht_lt_kanan']) ? ' is-invalid' : ''), 'style' => 'vertical-align: middle;', 'placeholder' => 'Isikan jawaban anda ...')) ?>
-                                            </div>
-                                        </div>
-                                        <div id="tht" class="form-group row">
-                                            <label for="tht" class="col-sm-3 col-form-label">Apakah anda memiliki penyakit kronis</label>
-                                            <div class="col-sm-3">
-                                                <?php echo form_input(array('id' => 'tht_membran_kiri', 'name' => 'tht_membran_kiri', 'class' => 'form-control text-middle rounded-0' . (!empty($hasError['tht_membran_kiri']) ? ' is-invalid' : ''), 'style' => 'vertical-align: middle;', 'placeholder' => 'Isikan jawaban anda ...')) ?>
-                                            </div>
-                                            <label for="tht" class="col-sm-3 col-form-label">Apakah Anda menderita kanker,HIV, Leukemia ?</label>
-                                            <div class="col-sm-3">
-                                                <?php echo form_input(array('id' => 'tht_membran_kanan', 'name' => 'tht_membran_kanan', 'class' => 'form-control text-middle rounded-0' . (!empty($hasError['tht_membran_kanan']) ? ' is-invalid' : ''), 'style' => 'vertical-align: middle;', 'placeholder' => 'Isikan jawaban anda ...')) ?>
-                                            </div>
-                                        </div>
-                                        <div id="tht" class="form-group row">
-                                            <label for="tht" class="col-sm-3 col-form-label">Apakah anda pernah mengalami kejang</label>
-                                            <div class="col-sm-3">
-                                                <?php echo form_input(array('id' => 'tht_mukosa_kiri', 'name' => 'tht_mukosa_kiri', 'class' => 'form-control text-middle rounded-0' . (!empty($hasError['tht_mukosa_kiri']) ? ' is-invalid' : ''), 'style' => 'vertical-align: middle;', 'placeholder' => 'Isikan jawaban anda ...')) ?>
-                                            </div>
-                                            <label for="tht" class="col-sm-3 col-form-label">Apakah anda sedang atau berencana hamil ?</label>
-                                            <div class="col-sm-3">
-                                                <?php echo form_input(array('id' => 'tht_mukosa_kanan', 'name' => 'tht_mukosa_kanan', 'class' => 'form-control text-middle rounded-0' . (!empty($hasError['tht_mukosa_kanan']) ? ' is-invalid' : ''), 'style' => 'vertical-align: middle;', 'placeholder' => 'Isikan jawaban anda ...')) ?>
-                                            </div>
-                                        </div>
-                                        <div id="tht" class="form-group row">
-                                            <label for="tht" class="col-sm-3 col-form-label">Apakah anda mendapatkan vaksinasi dalam 4 minggu ?</label>
-                                            <div class="col-sm-3">
-                                                <?php echo form_input(array('id' => 'tht_konka_kiri', 'name' => 'tht_konka_kiri', 'class' => 'form-control text-middle rounded-0' . (!empty($hasError['tht_konka_kiri']) ? ' is-invalid' : ''), 'style' => 'vertical-align: middle;', 'placeholder' => 'Isikan jawaban anda ...')) ?>
-                                            </div>
-                                            <label for="tht" class="col-sm-3 col-form-label">Apakah anda membawa kartu vaksin ?</label>
-                                            <div class="col-sm-3">
-                                                <?php echo form_input(array('id' => 'tht_konka_kanan', 'name' => 'tht_konka_kanan', 'class' => 'form-control text-middle rounded-0' . (!empty($hasError['tht_konka_kanan']) ? ' is-invalid' : ''), 'style' => 'vertical-align: middle;', 'placeholder' => 'Isikan jawaban anda ...')) ?>
-                                            </div>
-                                        </div>
-                                        <div id="tht" class="form-group row">
-                                            <label for="tht" class="col-sm-3 col-form-label">Timpanometri</label>
-                                            <div class="col-sm-3">
-                                                <?php echo form_input(array('id' => 'tht_timpa_kiri', 'name' => 'tht_timpa_kiri', 'class' => 'form-control text-middle rounded-0' . (!empty($hasError['tht_timpa_kiri']) ? ' is-invalid' : ''), 'style' => 'vertical-align: middle;', 'placeholder' => 'Isikan jawaban anda ...')) ?>
-                                            </div>
-                                            <label for="tht" class="col-sm-3 col-form-label">Timpanometri</label>
-                                            <div class="col-sm-3">
-                                                <?php echo form_input(array('id' => 'tht_timpa_kanan', 'name' => 'tht_timpa_kanan', 'class' => 'form-control text-middle rounded-0' . (!empty($hasError['tht_timpa_kanan']) ? ' is-invalid' : ''), 'style' => 'vertical-align: middle;', 'placeholder' => 'Isikan jawaban anda ...')) ?>
-                                            </div>
-                                        </div>
-                                        <div id="tht" class="form-group row">
-                                            <label for="tht" class="col-sm-3 col-form-label">Tonsil Tenggorokan</label>
-                                            <div class="col-sm-3">
-                                                <?php echo form_input(array('id' => 'tht_tonsil_tg', 'name' => 'tht_tonsil_tg', 'class' => 'form-control text-middle rounded-0' . (!empty($hasError['tht_tonsil_tg_kiri']) ? ' is-invalid' : ''), 'style' => 'vertical-align: middle;', 'placeholder' => 'Tonsil ...')) ?>
-                                            </div>
-                                            <label for="tht" class="col-sm-3 col-form-label">Mukosa Tenggorokan</label>
-                                            <div class="col-sm-3">
-                                                <?php echo form_input(array('id' => 'tht_mukosa_tg', 'name' => 'tht_mukosa_tg', 'class' => 'form-control text-middle rounded-0' . (!empty($hasError['tht_tonsil_tg_kanan']) ? ' is-invalid' : ''), 'style' => 'vertical-align: middle;', 'placeholder' => 'Mukosa ...')) ?>
-                                            </div>
-                                        </div>
-                                        <div id="tht" class="form-group row">
-                                            <label for="tht" class="col-sm-3 col-form-label">Dinding Faring</label>
-                                            <div class="col-sm-3">
-                                                <?php echo form_input(array('id' => 'tht_faring_tg', 'name' => 'tht_faring_tg', 'class' => 'form-control text-middle rounded-0' . (!empty($hasError['tht_tonsil_tg_kiri']) ? ' is-invalid' : ''), 'style' => 'vertical-align: middle;', 'placeholder' => 'Faring ...')) ?>
-                                            </div>
-                                        </div>                                  
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -816,7 +746,6 @@
         $("#13").hide().find('input').prop('disabled', true);
         $("#14").hide().find('input').prop('disabled', true);
         $("#15").hide().find('input').prop('disabled', true);
-        $("#16").hide().find('input').prop('disabled', true);
 
         $('#tgl_masuk_sht').datepicker({
             dateFormat: 'dd-mm-yy',

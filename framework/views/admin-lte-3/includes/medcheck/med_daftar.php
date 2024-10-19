@@ -38,8 +38,11 @@
                         </div>
                         <div class="card-footer p-0">
                             <?php if (isset($_GET['tipe_pas'])) { ?>
-                                <button type="button" onclick="takeSnapshot()" class="btn btn-primary btn-flat btn-block"><i class="fa fa-camera"></i> Ambil Gambar</button>
-                                <button id="flip-btn" type="button" class="btn btn-primary btn-flat btn-block"><i class="fa fa-camera-rotate"></i> Pindah Kamera</button>
+                                <?php if (isset($_GET['id_pasien']) OR $_GET['tipe_pas'] == '2') { ?>
+                                    <button type="button" onclick="takeSnapshot()" class="btn btn-primary btn-flat btn-block"><i class="fa fa-camera"></i> Ambil Gambar</button>                                
+                                    <!--<button type="button" onclick="" class="btn btn-primary btn-flat btn-block"><i class="fa fa-camera"></i> Download</button>-->
+                                    <button id="flip-btn" type="button" class="btn btn-primary btn-flat btn-block"><i class="fa fa-camera-rotate"></i> Pindah Kamera</button>
+                                <?php } ?>
                             <?php } ?>
                         </div>
                     </div>
@@ -57,8 +60,10 @@
                         </div>
                         <div class="card-footer p-0">
                             <?php if (isset($_GET['tipe_pas'])) { ?>
-                                <button type="button" onclick="takeSnapshot_id()" class="btn btn-primary btn-flat btn-block"><i class="fa fa-camera"></i> Ambil Gambar</button>
-                                <button id="flip-btn2" type="button" class="btn btn-primary btn-flat btn-block"><i class="fa fa-camera-rotate"></i> Pindah Kamera</button>
+                                <?php if (isset($_GET['id_pasien']) OR $_GET['tipe_pas'] == '2') { ?>
+                                    <button type="button" onclick="takeSnapshot_id()" class="btn btn-primary btn-flat btn-block"><i class="fa fa-camera"></i> Ambil Gambar</button>
+                                    <button id="flip-btn2" type="button" class="btn btn-primary btn-flat btn-block"><i class="fa fa-camera-rotate"></i> Pindah Kamera</button>
+                                <?php } ?>
                             <?php } ?>
                         </div>
                     </div>
@@ -254,141 +259,150 @@
 <!-- Page script -->
 <script type="text/javascript">
 <?php if (isset($_GET['tipe_pas'])) { ?>
-    /* Ambil gambar dari webcam */
-    // minta izin user
-    navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia || navigator.oGetUserMedia;
+    <?php if (isset($_GET['id_pasien']) OR $_GET['tipe_pas'] == '2') { ?>
+        /* Ambil gambar dari webcam */
+        // minta izin user
+        navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia || navigator.oGetUserMedia;
 
-    var video               = document.querySelector("#kamera");
-    var video2              = document.querySelector("#kamera_id");
-    var gambar              = document.querySelector("#gambar");
-    var gambar2             = document.querySelector("#gambar_id");
-    gambar.style.display    = 'none';
-    gambar2.style.display   = 'none';
-    
-    
-    let on_stream_video     = document.querySelector('#kamera');
-    let on_stream_video2    = document.querySelector('#kamera_id');
-    // default user media options
-    let constraints         = { audio: false, video: true }
-    let shouldFaceUser      = true;
-    let flipBtn             = document.querySelector('#flip-btn');
-    let flipBtn2            = document.querySelector('#flip-btn2');
-    
-    // check whether we can use facingMode
-    let supports = navigator.mediaDevices.getSupportedConstraints();
-    if( supports['facingMode'] === true ) {
-        flipBtn.disabled = false;
-    }
-    
-    let stream  = null;
-    let stream2 = null;
-    
-    function capture() {
-        constraints.video = {
-          facingMode: shouldFaceUser ? 'user' : 'environment'
+        var video               = document.querySelector("#kamera");
+        var video2              = document.querySelector("#kamera_id");
+        var gambar              = document.querySelector("#gambar");
+        var gambar2             = document.querySelector("#gambar_id");
+        gambar.style.display    = 'none';
+        gambar2.style.display   = 'none';
+
+
+        let on_stream_video     = document.querySelector('#kamera');
+        let on_stream_video2    = document.querySelector('#kamera_id');
+        // default user media options
+        let constraints         = { audio: false, video: true }
+        let shouldFaceUser      = true;
+        let flipBtn             = document.querySelector('#flip-btn');
+        let flipBtn2            = document.querySelector('#flip-btn2');
+
+        // check whether we can use facingMode
+        let supports = navigator.mediaDevices.getSupportedConstraints();
+        if( supports['facingMode'] === true ) {
+            flipBtn.disabled = false;
         }
-        navigator.mediaDevices.getUserMedia(constraints)
-          .then(function(mediaStream) {
-            stream  = mediaStream;
-            on_stream_video.srcObject = stream;
-            on_stream_video.play();
-          })
-          .catch(function(err) {
-            console.log(err)
-          });
-    }
-    
-    function capture_id() {
-        constraints.video = {
-          facingMode: shouldFaceUser ? 'user' : 'environment'
+
+        let stream  = null;
+        let stream2 = null;
+
+        function capture() {
+            constraints.video = {
+              facingMode: shouldFaceUser ? 'user' : 'environment'
+            }
+            navigator.mediaDevices.getUserMedia(constraints)
+              .then(function(mediaStream) {
+                stream  = mediaStream;
+                on_stream_video.srcObject = stream;
+                on_stream_video.play();
+              })
+              .catch(function(err) {
+                console.log(err)
+              });
         }
-        navigator.mediaDevices.getUserMedia(constraints)
-          .then(function(mediaStream) {
-            stream2  = mediaStream;
-            on_stream_video2.srcObject = stream2;
-            on_stream_video2.play();
-          })
-          .catch(function(err) {
-            console.log(err)
+
+        function capture_id() {
+            constraints.video = {
+              facingMode: shouldFaceUser ? 'user' : 'environment'
+            }
+            navigator.mediaDevices.getUserMedia(constraints)
+              .then(function(mediaStream) {
+                stream2  = mediaStream;
+                on_stream_video2.srcObject = stream2;
+                on_stream_video2.play();
+              })
+              .catch(function(err) {
+                console.log(err)
+              });
+        }
+
+        flipBtn.addEventListener('click', function(){
+          if( stream == null ) return
+            // we need to flip, stop everything
+            stream.getTracks().forEach(t => {
+            t.stop();
           });
-    }
-    
-    flipBtn.addEventListener('click', function(){
-      if( stream == null ) return
-        // we need to flip, stop everything
-        stream.getTracks().forEach(t => {
-        t.stop();
-      });
-        // toggle / flip
-        shouldFaceUser = !shouldFaceUser;
+            // toggle / flip
+            shouldFaceUser = !shouldFaceUser;
+            capture();
+        });
+
+        flipBtn2.addEventListener('click', function(){
+          if( stream2 == null ) return
+            // we need to flip, stop everything
+            stream2.getTracks().forEach(t => {
+            t.stop();
+          });
+            // toggle / flip
+            shouldFaceUser = !shouldFaceUser;
+            capture_id();
+        });
+
         capture();
-    });
-    
-    flipBtn2.addEventListener('click', function(){
-      if( stream2 == null ) return
-        // we need to flip, stop everything
-        stream2.getTracks().forEach(t => {
-        t.stop();
-      });
-        // toggle / flip
-        shouldFaceUser = !shouldFaceUser;
         capture_id();
-    });
-    
-    capture();
-    capture_id();
 
-    function takeSnapshot() {
-        var img     = document.getElementById('gambar');
-        var nama    = document.getElementById('file');
-        var context;
+        function takeSnapshot() {
+            var img     = document.getElementById('gambar');
+            var nama    = document.getElementById('file');
+            var context;
 
-        // video
-        var width = video.offsetWidth, height = video.offsetHeight;
+            // video
+            var width = video.offsetWidth, height = video.offsetHeight;
 
-        // buat elemen canvas
-        canvas = document.createElement('canvas');
-        canvas.width = width;
-        canvas.height = height;
+            // buat elemen canvas
+            canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
 
-        // ambil gambar dari video dan masukan 
-        // ke dalam canvas
-        context = canvas.getContext('2d');
-        context.drawImage(video, 0, 0, width, height);
+            // ambil gambar dari video dan masukan 
+            // ke dalam canvas
+            context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, width, height);
 
-        // render hasil dari canvas ke elemen img
-        img.src = canvas.toDataURL('image/png');
+            // render hasil dari canvas ke elemen img
+            img.src = canvas.toDataURL('image/png');
 
-        video.style.display = 'none';
-        gambar.style.display = 'block'
-        nama.value = canvas.toDataURL('image/png');
-    }
+            video.style.display = 'none';
+            gambar.style.display = 'block'
+            nama.value = canvas.toDataURL('image/png');
 
-    function takeSnapshot_id() {
-        var img2 = document.getElementById('gambar_id');
-        var nama2 = document.getElementById('file_id');
-        var context;
+            const link = document.createElement('a');
+            canvas.toBlob(function(blob) {
+                link.href = URL.createObjectURL(blob);
+                link.download = 'pasien_<?php echo date('YmdHi').rand(32,256) ?>.png'; // naming the downloaded file with email
+                link.click();
+            }, 'image/png');
+        }
 
-        // video
-        var width = video2.offsetWidth, height = video2.offsetHeight;
+        function takeSnapshot_id() {
+            var img2 = document.getElementById('gambar_id');
+            var nama2 = document.getElementById('file_id');
+            var context;
 
-        // buat elemen canvas
-        canvas2 = document.createElement('canvas');
-        canvas2.width = width;
-        canvas2.height = height;
+            // video
+            var width = video2.offsetWidth, height = video2.offsetHeight;
 
-        // ambil gambar dari video dan masukan 
-        // ke dalam canvas
-        context = canvas2.getContext('2d');
-        context.drawImage(video2, 0, 0, width, height);
+            // buat elemen canvas
+            canvas2 = document.createElement('canvas');
+            canvas2.width = width;
+            canvas2.height = height;
 
-        // render hasil dari canvas ke elemen img
-        img2.src = canvas2.toDataURL('image/png');
+            // ambil gambar dari video dan masukan 
+            // ke dalam canvas
+            context = canvas2.getContext('2d');
+            context.drawImage(video2, 0, 0, width, height);
 
-        video2.style.display = 'none';
-        gambar2.style.display = 'block'
-        nama2.value = canvas2.toDataURL('image/png');
-    }
+            // render hasil dari canvas ke elemen img
+            img2.src = canvas2.toDataURL('image/png');
+
+            video2.style.display = 'none';
+            gambar2.style.display = 'block'
+            nama2.value = canvas2.toDataURL('image/png');
+        }
+    <?php } ?>
 <?php } ?>
 
     $(function () {        

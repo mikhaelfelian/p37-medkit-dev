@@ -308,6 +308,6 @@ $jml_hari = $this->tanggalan->jml_hari($t_awl, $t_akh);
         </a>                       
     <?php } ?>
 <?php } ?>
-<a class="btn btn-app bg-warning" href="<?php echo $pengaturan->url_antrian.'/tr_queue?id_medcheck='.general::enkrip($sql_medc->id) ?>" target="_blank">
+<a class="btn btn-app bg-warning" href="<?php echo $pengaturan->url_antrian.'/tr_queue?id_medcheck='.($sql_medc->id) ?>" target="_blank">
     <i class="fas fa-hand-paper"></i> Antrian
 </a>

@@ -4062,6 +4062,38 @@ class medcheck extends CI_Controller {
                 # Update ke tabel pendaftaran
                 $this->db->where('id', $dft_id)->update('tbl_pendaftaran', array('status_akt' => '2', 'file_base64'=>''));
 
+                # Upload file foto
+                $kode   = sprintf('%05d', $sql_pas->kode);
+                $no_rm  = strtolower($pengaturan->kode_pasien).$kode;
+                $path   = 'file/pasien/'.$no_rm.'/';
+                $folder = realpath('./'.$path);
+
+                if (!empty($_FILES['fupload']['name'])) {
+                    $config['upload_path']      = $folder;
+                    $config['allowed_types']    = 'jpg|png|pdf|jpeg|jfif';
+                    $config['remove_spaces']    = TRUE;
+                    $config['overwrite']        = TRUE;
+                    $config['file_name']        = 'profile_'.$no_rm; // general::dekrip($id).sprintf('%05d', rand(1,256));
+                    $this->load->library('upload', $config);
+
+                    if (!$this->upload->do_upload('fupload')) {
+                        $this->session->set_flashdata('medcheck', '<div class="alert alert-danger">Error : <b>' . $this->upload->display_errors() . '</b></div>');
+//                        redirect(base_url('medcheck/tambah.php'.(!empty($dft_id) ? '?dft_pas='.general::enkrip($pasien).'&dft_id='.general::enkrip($dft_id) : '').'&err='.$this->upload->display_errors()));
+                    } else {
+                        $f      = $this->upload->data();
+                        
+                        # Data File
+                        $data_file = array(
+                            'file_name'     => $path.$f['orig_name'],
+                            'file_type'     => $f['file_type'],
+                            'file_ext'      => $f['file_ext'],
+                        );
+
+                        # Simpan File Gambar ke tabel
+                        $this->db->where('id', $sql_pas->id)->update('tbl_m_pasien', $data_file);
+                    }
+                }
+                
                 # Cek status transact MySQL
                 if ($this->db->trans_status() === FALSE) {
                     # Rollback jika gagal
@@ -7021,7 +7053,7 @@ class medcheck extends CI_Controller {
             $status = $this->input->get('status');
             
             if(!empty($id)){
-                $sql_doc_rad= $this->db->where('id', '54')->get('v_master_dokter')->row(); 
+                $sql_doc_rad= $this->db->where('id', '271')->get('v_master_dokter')->row(); 
                 $sql_medc   = $this->db->where('id', general::dekrip($id))->get('tbl_trans_medcheck'); 
                 $pengaturan = $this->db->get('tbl_pengaturan')->row();
                    
@@ -9467,7 +9499,7 @@ class medcheck extends CI_Controller {
             $status_fl  = $this->input->post('status_file');
             $foto       = $this->input->post('file_foto');
             $rute       = $this->input->post('route');
-            
+
             $this->form_validation->set_error_delimiters('<div class="alert alert-danger">', '</div>');
 
             $this->form_validation->set_rules('id', 'ID', 'required');
@@ -9532,7 +9564,7 @@ class medcheck extends CI_Controller {
                         
                         redirect(base_url((!empty($rute) ? $rute.'?id='.$id : 'medcheck/tambah.php?id='.$id.'&status=8')));
                     }
-                }else{                    
+                }else{
                     $filename   = 'medc_'.$sql_medc->no_rm.'_upl'.sprintf('%05d', rand(1,256)).'_cam.png';
                     $path       = $folder.'/'.$filename;
                     

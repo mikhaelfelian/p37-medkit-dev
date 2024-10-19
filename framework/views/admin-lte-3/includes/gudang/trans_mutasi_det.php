@@ -84,9 +84,13 @@
                                     <tr>
                                         <td class="text-right" style="width: 25px;"><?php // echo ($items->id_kategori2 == 0 && $sql_penj->status_bayar == 0 ? anchor(base_url('cart/cart_hapus_brg.php?id=' . general::enkrip($items->id) . '&no_nota=' . general::enkrip($items->no_nota)), '<i class="fa fa-remove"></i>', 'onclick="return confirm(\'Hapus ?\')" class="text-danger"') : '<i class="fa fa-remove"></i>')    ?></td>
                                         <td class="text-right" style="width: 50px;"><?php echo $no++ ?></td>
-                                        <td class="text-left" style="width: 250px;"><?php echo anchor(base_url('gudang/data_stok_tambah.php?id='.general::enkrip($produk->id)), $items->kode, 'target="_blank"') ?></td>
+                                        <td class="text-left" style="width: 250px;">
+                                            <?php echo anchor(base_url('gudang/data_stok_tambah.php?id='.general::enkrip($produk->id)), $items->kode, 'target="_blank"').br() ?>
+                                            <small><b>ID:</b><?php echo $items->id; ?></small>
+                                        </td>
                                         <td class="text-left" style="width: 550px;">                                            
-                                            <?php echo ucwords($items->produk); ?>
+                                            <?php echo ucwords($items->produk); ?><br/>
+                                            <small><?php echo $items->kode_batch.(!empty($items->tgl_ed) ? ' / '.$items->tgl_ed : ''); ?></small><br/>
                                         </td>
                                         <td class="text-right" style="width: 150px;"><?php echo (!empty($items->keterangan) ? $items->jml : $items->jml) . ' ' . $items->satuan . (!empty($items->keterangan) ? $items->keterangan : ''); ?></td>
                                     </tr>

@@ -70,12 +70,6 @@
                                     </div>
                                 </div>
                             <?php } ?>
-                            <?php echo br() ?>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <?php echo anchor(base_url('master/data_pasien_pdf.php?id='.general::enkrip($pasien->id)), '<i class="fa fa-print"></i> Member &raquo;', 'class="btn btn-info btn-flat btn-sm" style="width: 107.14px;" target="_blank"'); ?>
-                                </div>
-                            </div>
                         </div>
                     </div>
                     <div class="card card-primary card-outline">

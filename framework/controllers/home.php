@@ -1854,42 +1854,6 @@ FROM tbl_trans_medcheck_det WHERE item IS NULL ORDER BY id DESC;");
         echo '</body>';
         echo '</html>';
     }
-    
-    # BOT ID item
-    public function tes52() {
-        echo '<html>';
-        echo '<head>';
-        echo '<meta http-equiv="refresh" content="5">';
-        echo '<title>KUNTUL</title>';
-        echo '</head>';
-        echo '<body>';
-        
-
-        $sql = $this->db
-                        ->where('sp', '0')
-                        ->order_by('id', 'asc')
-                        ->limit(1000)
-                        ->get('tbl_m_pasien')->result();
-
-        foreach($sql as $pas){
-            $kode   = sprintf('%05d', $pas->kode);
-            $no_rm  = strtolower($pas->kode_dpn).$kode;
-            $path   = FCPATH.'file/pasien/'.$no_rm;
-                        
-            # Buat Folder Untuk Foto Pasien
-            if (!is_dir($path)) {
-                mkdir($path, 0777, true);
-                
-                echo $path;
-                echo br();                
-                crud::update('tbl_m_pasien', 'id', $pas->id, array('sp'=>'1'));
-            }
-        }    
-
-
-        echo '</body>';
-        echo '</html>';
-    }
 
     public function bot_stok_op() {
         $sql = $this->db

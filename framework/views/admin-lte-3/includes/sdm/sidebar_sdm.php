@@ -45,7 +45,6 @@
             </p>
         </a>
     </li>
-    -->
     <li class="nav-item">
         <a href="<?php echo base_url('sdm/data_absen.php') ?>" class="nav-link">
             <i class="nav-icon fas fa-fingerprint"></i>
@@ -54,4 +53,5 @@
             </p>
         </a>
     </li>
+    -->
 <?php } ?>

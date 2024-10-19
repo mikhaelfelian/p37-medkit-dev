@@ -126,7 +126,7 @@
                                                 <td>
                                                     <?php if (akses::hakSA() == TRUE || akses::hakOwner() == TRUE || akses::hakAdminM() == TRUE || akses::hakAdmin() == TRUE || akses::hakFarmasi() == TRUE) { ?>
                                                         <?php echo anchor(site_url('page=master&act=cek_satuan&id=' . general::enkrip($barang->id)), '<i class="fas fa-edit"></i> Ubah', 'class="btn btn-info btn-flat btn-xs" style="width: 55px;"') ?>
-                                                        <?php if (akses::hakSA() == TRUE || akses::hakOwner() == TRUE || akses::hakAdminM() == TRUE) { ?>
+                                                        <?php if (akses::hakSA() == TRUE || akses::hakOwner() == TRUE || akses::hakAdminM() == TRUE || akses::hakAdmin() == TRUE) { ?>
                                                             <?php echo br() ?>
                                                             <?php echo anchor(base_url('master/data_barang_hapus_ars.php?id=' . general::enkrip($barang->id)), '<i class="fas fa-trash"></i> Arsip', 'onclick="return confirm(\'Arsipkan [' . $barang->produk . '] ? \')" class="btn btn-secondary btn-flat btn-xs" style="width: 55px;"') ?>
                                                         <?php } ?>

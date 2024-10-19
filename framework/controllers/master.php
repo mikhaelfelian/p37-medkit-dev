@@ -3606,14 +3606,15 @@ class master extends CI_Controller {
        
     public function data_barang_hapus_arsip() {
         if (akses::aksesLogin() == TRUE) {
-            $id = $this->input->get('id');
-            $rs = $this->input->get('restore');
+            $id         = $this->input->get('id');
+            $rs         = $this->input->get('restore');
+            $id_user    = $this->ion_auth->user()->row()->id;
             
             if(!empty($id)){
                if($rs == '1'){
                    $this->db->where('id', general::dekrip($id))->update('tbl_m_produk', array('status_hps'=>'0'));
                }else{
-                   $this->db->where('id', general::dekrip($id))->update('tbl_m_produk', array('status_hps'=>'1'));
+                   $this->db->where('id', general::dekrip($id))->update('tbl_m_produk', array('tgl_simpan_arsip'=>date('Y-m-d H:i:s'),'id_user_arsip'=>$id_user,'status_hps'=>'1'));
                }
             }
             
