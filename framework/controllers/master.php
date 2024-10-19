@@ -3608,7 +3608,7 @@ class master extends CI_Controller {
         if (akses::aksesLogin() == TRUE) {
             $id         = $this->input->get('id');
             $rs         = $this->input->get('restore');
-            $id_user    = $this->ion_auth->user()->row()->id;
+            $id_user    = $this->ion_auth->user()->row()->id; 
             
             if(!empty($id)){
                if($rs == '1'){
