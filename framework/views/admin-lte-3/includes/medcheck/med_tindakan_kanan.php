@@ -176,7 +176,7 @@
 
         <ul class="list-group list-group-unbordered mb-3">
                 <li class="list-group-item">
-                    <b>TRX ID</b><br/> 
+                    <b>TRX ID</b><br/>
                     <span class="float-left"><small><?php echo strtoupper($sql_medc->id) ?></small></span>
                 </li>
             <?php if (!empty($sql_medc->no_rm)) { ?>
