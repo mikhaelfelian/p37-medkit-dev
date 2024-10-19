@@ -175,6 +175,10 @@
         <p class="text-muted text-center"><?php echo anchor(base_url('master/data_pasien_pdf.php?id=' . general::enkrip($sql_medc->id_pasien) . '&route=medcheck/tindakan.php?id=' . general::enkrip($sql_medc->id)), '<i class="fa fa-file-pdf"></i> Kartu Pasien', 'class="btn btn-success btn-flat btn-sm" style="width: 107.14px;" target="_blank"'); ?></p>
 
         <ul class="list-group list-group-unbordered mb-3">
+                <li class="list-group-item">
+                    <b>TRX ID</b><br/>
+                    <span class="float-left"><small><?php echo strtoupper($sql_medc->id) ?></small></span>
+                </li>
             <?php if (!empty($sql_medc->no_rm)) { ?>
                 <li class="list-group-item">
                     <b>No. Register / Kunjungan</b><br/>
