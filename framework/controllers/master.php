@@ -3612,7 +3612,7 @@ class master extends CI_Controller {
             
             if(!empty($id)){
                if($rs == '1'){
-                   $this->db->where('id', general::dekrip($id))->update('tbl_m_produk', array('status_hps'=>'0'));
+                   $this->db->where('id', general::dekrip($id))->update('tbl_m_produk', array('tgl_simpan_arsip'=>'0000-00-00 00:00:00','id_user_arsip'=>0,'status_hps'=>'0'));
                }else{
                    $this->db->where('id', general::dekrip($id))->update('tbl_m_produk', array('tgl_simpan_arsip'=>date('Y-m-d H:i:s'),'id_user_arsip'=>$id_user,'status_hps'=>'1'));
                }
