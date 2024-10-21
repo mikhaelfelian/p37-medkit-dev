@@ -272,7 +272,7 @@
                                 <div class="card-body">                            
                                     <?php echo form_hidden('id', general::enkrip($sql_medc->id)); ?>
                                     <?php echo form_hidden('item_id', general::enkrip($sql_produk->id)); ?>
-        <?php echo form_hidden('item_id_det', general::enkrip($sql_medc_det2->id)); ?>
+                                    <?php echo form_hidden('item_id_det', general::enkrip($sql_medc_det2->id)); ?>
 
                                     <div class="form-group">
                                         <label for="inputEmail3">METODE PEMBAYARAN</label>
