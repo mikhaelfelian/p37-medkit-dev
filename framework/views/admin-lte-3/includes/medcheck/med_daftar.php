@@ -372,7 +372,7 @@
             const link = document.createElement('a');
             canvas.toBlob(function(blob) {
                 link.href = URL.createObjectURL(blob);
-                link.download = 'pasien_<?php echo date('YmdHi').rand(32,256) ?>.png'; // naming the downloaded file with email
+                link.download = 'pasien_<?php echo date('YmdHi').rand(32,256) ?>.jpg'; // naming the downloaded file with email
                 link.click();
             }, 'image/png');
         }
