@@ -15848,19 +15848,26 @@ class medcheck extends CI_Controller {
                                 }
                                 
                                 $pdf->Cell(7, .5, ' - '.html_entity_decode($lab2->item_name), '', 0, 'L', $fill);
-                                $pdf->Cell(4.5, .5, html_entity_decode($lab2->item_hasil, ENT_NOQUOTES, 'utf-8'). ($lab2->status_hsl_lab == '1' ? '*' : ''), '', 0, 'L', $fill);
-
+                                
                                 $x = $pdf->GetX();
-                                $y = $pdf->GetY();  
+                                $y = $pdf->GetY();
+                                $pdf->MultiCell(4.5, .5, html_entity_decode($lab2->item_hasil, ENT_NOQUOTES, 'utf-8').($lab2->status_hsl_lab == '1' ? '*' : ''), '', 'L');
+                                $pdf->SetXY($x + 4.5, $y);
+//                                
+                                $x = $pdf->GetX();
+                                $y = $pdf->GetY();
                                 $pdf->MultiCell(5.5, .5, html_entity_decode($lab2->item_value, ENT_NOQUOTES, 'utf-8'), '', 'L');                            
-                                $pdf->SetXY($x + 5.5, $y);                            
+                                $pdf->SetXY($x + 9.5, $y);
+                                
+                                $x = $pdf->GetX();
+                                $y = $pdf->GetY();
                                 $pdf->Cell(2, .5, html_entity_decode($lab2->item_satuan, ENT_NOQUOTES, 'utf-8'), '', 0, 'L', $fill);
-//                                $pdf->Cell(5.5, .5, html_entity_decode($lab2->item_value, ENT_NOQUOTES, 'utf-8'), '', 0, 'L', $fill);
-//                                $pdf->Cell(2, .5, html_entity_decode($lab2->item_satuan, ENT_NOQUOTES, 'utf-8'), '', 0, 'L', $fill);
-//                                $pdf->Ln(1.5);
+                                $pdf->SetXY($x + 11.5, $y);
+                                $pdf->Ln(1.5);
                                 
                                 $len = strlen($lab2->item_value);
-                                if($len > 36){
+                                $len2 = strlen($lab2->item_hasil);
+                                if($len > 36 OR $len2 > 36){
                                     $pdf->Ln(1.5);
                                 }else{
                                     $pdf->Ln();
