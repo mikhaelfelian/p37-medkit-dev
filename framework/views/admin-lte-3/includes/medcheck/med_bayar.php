@@ -202,59 +202,6 @@
                                         <?php echo form_input(array('id' => 'potongan', 'name' => 'potongan', 'class' => 'form-control pull-right' . (!empty($hasError['kode']) ? ' is-invalid' : ''), 'placeholder' => 'Isikan Potongan ...', 'value' => (!empty($sql_medc_det2->potongan) ? $sql_medc_det2->potongan : '0'))) ?>
                                     </div>
                                 </div>
-                                <!--
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label for="inputEmail3">TOTAL POIN</label>
-                                            <div class="input-group mb-3">                                                
-                                                <?php echo form_input(array('id' => 'total_poin', 'name' => '', 'class' => 'form-control pull-right rounded-0', 'placeholder' => 'Poin ...', 'value' => (float) $sql_poin->jml_poin, 'readonly' => 'TRUE')) ?>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-8">
-                                        <div class="form-group">
-                                            <label for="inputEmail3"><?php echo nbs(2) ?></label>
-                                            <div class="input-group mb-3">
-                                                <div class="input-group-append">
-                                                    <span class="input-group-text">Rp. </span>
-                                                </div>
-                                                <?php echo form_input(array('id' => 'total_poin', 'name' => '', 'class' => 'form-control pull-right rounded-0', 'placeholder' => 'Poin anda ...', 'value' => (float) $sql_poin->jml_poin_nom, 'readonly' => 'TRUE')) ?>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <?php if($sql_medc->tipe_bayar == '1'){ ?>
-                                    <div class="form-group">
-                                        <label for="inputEmail3">PAKAI POIN</label>
-                                        <div class="input-group mb-3">
-                                            <div class="input-group-append">
-                                                <span class="input-group-text">Rp. </span>
-                                            </div>
-                                            <?php echo form_input(array('id' => 'potongan_poin', 'name' => 'potongan_poin', 'class' => 'form-control pull-right' . (!empty($hasError['jml_potongan_poin']) ? ' is-invalid' : ''), 'placeholder' => 'Isikan Potongan Poin ...', 'value' => (!empty($sql_medc_det2->potongan_poin) ? (float) $sql_medc_det2->potongan_poin : '0'))) ?>
-                                        </div>
-                                    </div>
-                                <?php }else{ ?>
-                                    <div class="form-group">
-                                        <label for="inputEmail3" class="text-danger"><i>*Tidak bisa menukar poin karena asuransi</i></label>
-                                    </div>
-                                <?php } ?>
-                                -->
-                                <!--
-                                <div class="form-group">
-                                    <label for="inputEmail3">Ongkir</label>
-                                    <div class="input-group mb-3">
-                                        <div class="input-group-append">
-                                            <span class="input-group-text">Rp. </span>
-                                        </div>
-                                        <?php echo form_input(array('id' => 'ongkir', 'name' => 'jml_ongkir', 'class' => 'form-control pull-right' . (!empty($hasError['ongkir']) ? ' is-invalid' : ''), 'placeholder' => 'Isikan Ongkir ...', 'value' => (!empty($sql_medc_det2->jml_ongkir) ? $sql_medc_det2->jml_ongkir : '0'))) ?>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="inputEmail3">Dokter</label>
-    <?php // echo form_input(array('id' => 'dokter', 'name' => 'dokter', 'class' => 'form-control pull-right rounded-0' . (!empty($hasError['produk']) ? ' is-invalid' : ''), 'placeholder' => 'Isikan Dokter ...', 'value' => $sql_dokter->nama))  ?>
-                                </div>
-                                -->
                             </div>
     <?php if (!empty($sql_produk)) { ?>
                                 <div class="card-footer">
@@ -279,15 +226,13 @@
                                         <select name="metode_bayar" class="form-control select2bs4  <?php echo (!empty($hasError['metode']) ? 'is-invalid' : '') ?>">
                                             <option value="">- Pilih -</option>
                                                 <?php foreach ($sql_platform as $platform) { ?>
-                                                <option value="<?php echo $platform->id ?>">
-                                                <?php echo (!empty($platform->kode) ? '[' . $platform->kode . '] ' : '') . $platform->platform ?>
-                                                </option>
-        <?php } ?>
+                                                    <option value="<?php echo $platform->id ?>">
+                                                    <?php echo (!empty($platform->kode) ? '[' . $platform->kode . '] ' : '') . $platform->platform ?>
+                                                    </option>
+                                                <?php } ?>
                                         </select>
                                     </div>
-                                    <?php
-                                    $jml_gtotal_dp = (!empty($sql_medc->jml_gtotal) ? $sql_medc->jml_gtotal : $gtotal) - $jml_total_dp;
-                                    ?>
+                                    <?php $jml_gtotal_dp = (!empty($sql_medc->jml_gtotal) ? $sql_medc->jml_gtotal : $gtotal) - $jml_total_dp; ?>
                                     <div class="form-group">
                                         <label for="inputEmail3">SUBTOTAL</label>
                                         <div class="input-group mb-3">
@@ -297,34 +242,6 @@
         <?php echo form_input(array('id' => 'jml_total', 'name' => 'jml_total', 'class' => 'form-control pull-right rounded-0', 'placeholder' => 'Harga ...', 'value' => (float) $gtotal, 'readonly' => 'TRUE')) ?>
                                         </div>
                                     </div>
-                                    <!--
-                                    <div class="form-group">
-                                        <div class="row">
-                                            <div class="col-md-4">
-                                                <label for="inputEmail3">DISKON (%)</label>
-        <?php echo form_input(array('id' => 'diskon', 'name' => 'diskon', 'class' => 'form-control text-center rounded-0', 'placeholder' => 'DISKON ...', 'value' => 0)) ?>
-                                            </div>
-                                            <div class="col-md-8">
-                                                <label for="inputEmail3">NOMINAL</label>
-                                                <div class="input-group mb-3">
-                                                    <div class="input-group-append">
-                                                        <span class="input-group-text">Rp. </span>
-                                                    </div>
-        <?php echo form_input(array('id' => 'jml_diskon', 'name' => 'jml_diskon', 'class' => 'form-control pull-right rounded-0', 'placeholder' => 'NOMINAL DISKON ...', 'value' => 0)) ?>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="inputEmail3">ONGKIR</label>
-                                        <div class="input-group mb-3">
-                                            <div class="input-group-append">
-                                                <span class="input-group-text">Rp. </span>
-                                            </div>
-        <?php echo form_input(array('id' => 'ongkir', 'name' => 'jml_ongkir', 'class' => 'form-control pull-right' . (!empty($hasError['ongkir']) ? ' is-invalid' : ''), 'placeholder' => 'Isikan Ongkir ...', 'value' => (!empty($sql_medc_det2->jml_ongkir) ? $sql_medc_det2->jml_ongkir : '0'))) ?>
-                                        </div>
-                                    </div>
-                                    -->
                                     <div class="row">
                                         <div class="col-md-4">
                                             <div class="form-group">
