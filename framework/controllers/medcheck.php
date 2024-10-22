@@ -15837,6 +15837,9 @@ class medcheck extends CI_Controller {
                         }
 
                         foreach ($sql_lab2->result() as $lab2) {
+                                $x = $pdf->GetX();
+                                $y = $pdf->GetY();
+                                
 //                            if ($sess_print[$i]['value'] == '1' AND $sess_print[$i]['id_lab_hsl'] == $lab->id) {
                                 if(strtoupper($sql_lab2->row()->item_name) != strtoupper($medc2->item)){
                                     $pdf->Cell(.25, .5, '', '', 0, 'L', $fill);
@@ -15847,30 +15850,32 @@ class medcheck extends CI_Controller {
                                     $pdf->SetTextColor(249,11,11);
                                 }
                                 
-                                $pdf->Cell(7, .5, ' - '.html_entity_decode($lab2->item_name), '', 0, 'L', $fill);
-                                
-                                $x = $pdf->GetX();
-                                $y = $pdf->GetY();
-                                $pdf->MultiCell(4.5, .5, html_entity_decode($lab2->item_hasil, ENT_NOQUOTES, 'utf-8').($lab2->status_hsl_lab == '1' ? '*' : ''), '', 'L');
-                                $pdf->SetXY($x + 4.5, $y);
+                                $pdf->Cell(7, .5, ' - '.$pdf->getY().html_entity_decode($lab2->item_name), '', 0, 'L', $fill);
+                                 
+//                                $pdf->Cell(4.5, .5, $pdf->GetX().html_entity_decode($lab2->item_hasil, ENT_NOQUOTES, 'utf-8'). ($lab2->status_hsl_lab == '1' ? '*' : ''), '', 0, 'L', $fill);
+                                $pdf->SetXY($x + 7, $y);
+                                $pdf->MultiCell(4.5, .5, html_entity_decode($lab2->item_hasil, ENT_NOQUOTES, 'utf-8'), '', 'J');
+
+//                                $pdf->SetXY($x + 11.5, $y);
+//                                $pdf->Cell(5.5, 2, html_entity_decode($lab2->item_satuan, ENT_NOQUOTES, 'utf-8'), '', 0, 'L', $fill);
+//                                $pdf->MultiCell(5.5, .5, html_entity_decode($lab2->item_satuan, ENT_NOQUOTES, 'utf-8'), '', 'L'); 
+//
+//                                $pdf->SetXY($x + 4.5, $y);
 //                                
-                                $x = $pdf->GetX();
-                                $y = $pdf->GetY();
-                                $pdf->MultiCell(5.5, .5, html_entity_decode($lab2->item_value, ENT_NOQUOTES, 'utf-8'), '', 'L');                            
-                                $pdf->SetXY($x + 9.5, $y);
+//                                $pdf->Cell(5.5, .5, html_entity_decode($lab2->item_satuan, ENT_NOQUOTES, 'utf-8'), '', 0, 'L', $fill);
+//                                $pdf->MultiCell(5.5, .5, html_entity_decode($lab2->item_value, ENT_NOQUOTES, 'utf-8'), '', 'L');                            
+//                                $pdf->SetXY($x + 17, $y);                            
+//                                $pdf->Cell(2, .5, html_entity_decode($lab2->item_satuan, ENT_NOQUOTES, 'utf-8'), '', 0, 'L', $fill);
+//                                $pdf->Cell(5.5, .5, html_entity_decode($lab2->item_value, ENT_NOQUOTES, 'utf-8'), '', 0, 'L', $fill);
+//                                $pdf->Cell(2, .5, html_entity_decode($lab2->item_satuan, ENT_NOQUOTES, 'utf-8'), '', 0, 'L', $fill);
+                                $pdf->Ln();
+//                                $pdf->SetXY($x, $y);
                                 
-                                $x = $pdf->GetX();
-                                $y = $pdf->GetY();
-                                $pdf->Cell(2, .5, html_entity_decode($lab2->item_satuan, ENT_NOQUOTES, 'utf-8'), '', 0, 'L', $fill);
-                                $pdf->SetXY($x + 11.5, $y);
-                                $pdf->Ln(1.5);
-                                
-                                $len = strlen($lab2->item_value);
-                                $len2 = strlen($lab2->item_hasil);
-                                if($len > 36 OR $len2 > 36){
-                                    $pdf->Ln(1.5);
+                                $len = strlen($lab2->item_hasil);
+                                if($len > 36){
+//                                    $pdf->Ln();
                                 }else{
-                                    $pdf->Ln();
+                                    $pdf->Ln(0);
                                 }
                                 
                                 # Jika warna hasil di tandai merah
