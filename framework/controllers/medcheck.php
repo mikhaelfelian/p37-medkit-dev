@@ -15850,7 +15850,7 @@ class medcheck extends CI_Controller {
                                     $pdf->SetTextColor(249,11,11);
                                 }
                                 
-                                $itm_tg     = 0.5;
+                                $itm_tg     = 0.5; # tinggi cell
                                 $itm_lbr    = 4.5;
                                 $itm_txt    = ceil($pdf->GetStringWidth($lab2->item_hasil));
                                 $itm_hsl    = (ceil(($itm_txt / $itm_lbr)) * $itm_tg) + 0.25;
