@@ -33,7 +33,7 @@
                     </div>
                     <div class="form-group row <?php echo (!empty($hasError['kode']) ? 'text-danger' : '') ?>">
                         <label for="inputEmail3" class="col-sm-4 col-form-label">Dokter</label>
-                        <div class="col-sm-6">
+                        <div class="col-sm-6"> 
                             <select id="dokter" name="dokter" class="form-control rounded-0 select2bs4 <?php echo (!empty($hasError['dokter']) ? ' is-invalid' : '') ?>">
                                 <option value="0">- Dokter -</option>
                                 <?php foreach ($sql_doc as $doctor) { ?>
