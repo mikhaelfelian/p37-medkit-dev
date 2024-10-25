@@ -15695,7 +15695,7 @@ class medcheck extends CI_Controller {
             $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
             $pdf->Cell(8, .5, $sql_pasien->kode_dpn.$sql_pasien->kode, '0', 0, 'L', $fill);
             $pdf->Ln();
-            $pdf->Cell(3, .5, 'No. Sampel', '0', 0, 'L', $fill);
+            $pdf->Cell(3, .5, 'No. Sampel', '0', 0, 'L', $fill); 
             $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
             $pdf->Cell(4.5, .5, $sql_medc_lab->no_sample, '0', 0, 'L', $fill);
             $pdf->Cell(2.5, .5, 'Nama Name', '0', 0, 'L', $fill);
