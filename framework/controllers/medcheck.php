@@ -15861,39 +15861,8 @@ class medcheck extends CI_Controller {
                                 $pdf->MultiCell(5.5, $itm_hsl, html_entity_decode($lab2->item_value, ENT_NOQUOTES, 'utf-8'), '', 'L'); 
                                 $pdf->SetXY($x + 17, $y);
                                 $pdf->MultiCell(2, $itm_hsl, html_entity_decode($lab2->item_satuan, ENT_NOQUOTES, 'utf-8'), '', 'L'); 
-                                
-//                                $pdf->MultiCell(4.5, .5, html_entity_decode($lab2->item_hasil, ENT_NOQUOTES, 'utf-8'), '', 'J');
-                                
-//                                $h = $pdf->GetMultiCellHeight(4.5, .5, $lab2->item_hasil);
-                                
-//                                $pdf->Cell(7, .5, ' - '.html_entity_decode($lab2->item_name), '', 0, 'L', $fill);
-//                                $pdf->Cell(4.5, .5, html_entity_decode($lab2->item_hasil), '', 0, 'L', $fill);
-//                                $pdf->Cell(5.5, .5, html_entity_decode($lab2->item_value), '', 0, 'L', $fill);
-//                                $pdf->Cell(2, .5, html_entity_decode($lab2->item_satuan), '', 0, 'L', $fill);
                                 $pdf->Ln(0);
-                                 
-                                
-                                
-                                
-//                                $pdf->Cell(4.5, .5, $pdf->GetX().html_entity_decode($lab2->item_hasil, ENT_NOQUOTES, 'utf-8'). ($lab2->status_hsl_lab == '1' ? '*' : ''), '', 0, 'L', $fill);
-//                                $pdf->SetXY($x + 7, $y);
-//                                $pdf->MultiCell(4.5, $h, html_entity_decode($lab2->item_hasil, ENT_NOQUOTES, 'utf-8'), '', 'J');
-//                                
-//                                $pdf->SetXY($x + 11.5, $y);
-//                                $pdf->Cell(5.5, 2, html_entity_decode($lab2->item_satuan, ENT_NOQUOTES, 'utf-8'), '', 0, 'L', $fill);
-//                                $pdf->MultiCell(5.5, .5, html_entity_decode($lab2->item_satuan, ENT_NOQUOTES, 'utf-8'), '', 'L'); 
-//
-//                                $pdf->SetXY($x + 4.5, $y);
-//                                
-//                                $pdf->Cell(5.5, .5, html_entity_decode($lab2->item_satuan, ENT_NOQUOTES, 'utf-8'), '', 0, 'L', $fill);
-//                                $pdf->MultiCell(5.5, .5, html_entity_decode($lab2->item_value, ENT_NOQUOTES, 'utf-8'), '', 'L');                            
-//                                $pdf->SetXY($x + 17, $y);                            
-//                                $pdf->Cell(2, .5, html_entity_decode($lab2->item_satuan, ENT_NOQUOTES, 'utf-8'), '', 0, 'L', $fill);
-//                                $pdf->Cell(5.5, .5, html_entity_decode($lab2->item_value, ENT_NOQUOTES, 'utf-8'), '', 0, 'L', $fill);
-//                                $pdf->Cell(2, .5, html_entity_decode($lab2->item_satuan, ENT_NOQUOTES, 'utf-8'), '', 0, 'L', $fill);
-//                                
-//                                $pdf->SetXY($x, $y);
-//                                
+
 //                                $len = strlen($lab2->item_hasil);
 //                                $len = $itm_txt;
 //                                if($len > 36){
