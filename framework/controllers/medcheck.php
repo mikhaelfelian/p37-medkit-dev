@@ -15853,7 +15853,9 @@ class medcheck extends CI_Controller {
                                 $itm_tg     = 0.5; # tinggi cell
                                 $itm_lbr    = 4.5;
                                 $itm_txt    = ceil($pdf->GetStringWidth($lab2->item_hasil));
-                                $itm_hsl    = (ceil(($itm_txt / $itm_lbr)) * $itm_tg) + 0.25;
+                                $len        = strlen($lab2->item_hasil);
+                                $itm_spasi  = ($len > 36 ? 0.25 : 0);
+                                $itm_hsl    = (ceil(($itm_txt / $itm_lbr)) * $itm_tg) + $itm_spasi;
                                 
                                 $pdf->Cell(6.75, .5, ' - '.html_entity_decode($lab2->item_name), '', 0, 'L', $fill);
                                 $pdf->MultiCell(4.5, .5, html_entity_decode($lab2->item_hasil, ENT_NOQUOTES, 'utf-8'), '', 'J');
@@ -15864,9 +15866,9 @@ class medcheck extends CI_Controller {
                                 $pdf->Ln(0);
 
 //                                $len = strlen($lab2->item_hasil);
-//                                $len = $itm_txt;
+////                                $len = $itm_txt;
 //                                if($len > 36){
-//                                    $pdf->Ln($itm_hsl);
+//                                    $pdf->Ln(0);
 //                                }else{
 //                                    $pdf->Ln(0);
 //                                }
