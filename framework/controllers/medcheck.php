@@ -15701,7 +15701,7 @@ class medcheck extends CI_Controller {
             $pdf->Cell(2.5, .5, 'Nama Name', '0', 0, 'L', $fill);
             $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
             $pdf->Cell(8, .5, general::bersih($sql_pasien->nama_pgl).' ('.$sql_pasien->jns_klm.')', '0', 0, 'L', $fill);
-            $pdf->Ln(); 
+            $pdf->Ln();
             $pdf->Cell(3, .5, 'Tgl Periksa', '0', 0, 'L', $fill);
             $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
             $pdf->Cell(4.5, .5, $this->tanggalan->tgl_indo5($sql_medc_lab->tgl_masuk), '0', 0, 'L', $fill);
