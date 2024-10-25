@@ -6025,7 +6025,7 @@ class master extends CI_Controller {
 //                    $this->session->set_flashdata('member', '<div class="alert alert-danger">Username sudah ada</div>');
 //                    redirect(base_url('master/data_karyawan_tambah.php'));
 //                }else{               
-                    if(!empty($user) AND !empty($pass2)) {
+//                    if(!empty($user) AND !empty($pass2)) {
                         $data_user = array(
                             'id_app'        => $pengaturan->id_app,
                             'first_name'    => $nama,
@@ -6038,7 +6038,7 @@ class master extends CI_Controller {
                         
                         $this->ion_auth->register($user, $pass2, $email, $data_user, array($grup));
                         $last_id_user = $this->db->where('username', $user)->get('tbl_ion_users')->row()->id;
-                    }
+//                    }
 //                }
 
                 $data_kary = array(
