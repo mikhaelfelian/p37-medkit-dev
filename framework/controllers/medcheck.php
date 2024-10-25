@@ -15656,7 +15656,7 @@ class medcheck extends CI_Controller {
 
             $this->load->library('MedLabPDF');
             $pdf = new MedLabPDF('P', 'cm', array(21.5,33));
-            $pdf->SetAutoPageBreak('auto', 7);
+            $pdf->SetAutoPageBreak('auto', 6.5);
             $pdf->SetMargins(1,0.35,1);
             $pdf->header = 0;
             $pdf->addPage('','',false);
@@ -15850,12 +15850,35 @@ class medcheck extends CI_Controller {
                                     $pdf->SetTextColor(249,11,11);
                                 }
                                 
-                                $pdf->Cell(7, .5, ' - '.$pdf->getY().html_entity_decode($lab2->item_name), '', 0, 'L', $fill);
-                                 
-//                                $pdf->Cell(4.5, .5, $pdf->GetX().html_entity_decode($lab2->item_hasil, ENT_NOQUOTES, 'utf-8'). ($lab2->status_hsl_lab == '1' ? '*' : ''), '', 0, 'L', $fill);
-                                $pdf->SetXY($x + 7, $y);
+                                $itm_tg     = 0.5;
+                                $itm_lbr    = 4.5;
+                                $itm_txt    = ceil($pdf->GetStringWidth($lab2->item_hasil));
+                                $itm_hsl    = (ceil(($itm_txt / $itm_lbr)) * $itm_tg) + 0.25;
+                                
+                                $pdf->Cell(6.75, .5, ' - '.html_entity_decode($lab2->item_name), '', 0, 'L', $fill);
                                 $pdf->MultiCell(4.5, .5, html_entity_decode($lab2->item_hasil, ENT_NOQUOTES, 'utf-8'), '', 'J');
-
+                                $pdf->SetXY($x + 11.5, $y);
+                                $pdf->MultiCell(5.5, $itm_hsl, html_entity_decode($lab2->item_value, ENT_NOQUOTES, 'utf-8'), '', 'L'); 
+                                $pdf->SetXY($x + 17, $y);
+                                $pdf->MultiCell(2, $itm_hsl, html_entity_decode($lab2->item_satuan, ENT_NOQUOTES, 'utf-8'), '', 'L'); 
+                                
+//                                $pdf->MultiCell(4.5, .5, html_entity_decode($lab2->item_hasil, ENT_NOQUOTES, 'utf-8'), '', 'J');
+                                
+//                                $h = $pdf->GetMultiCellHeight(4.5, .5, $lab2->item_hasil);
+                                
+//                                $pdf->Cell(7, .5, ' - '.html_entity_decode($lab2->item_name), '', 0, 'L', $fill);
+//                                $pdf->Cell(4.5, .5, html_entity_decode($lab2->item_hasil), '', 0, 'L', $fill);
+//                                $pdf->Cell(5.5, .5, html_entity_decode($lab2->item_value), '', 0, 'L', $fill);
+//                                $pdf->Cell(2, .5, html_entity_decode($lab2->item_satuan), '', 0, 'L', $fill);
+                                $pdf->Ln(0);
+                                 
+                                
+                                
+                                
+//                                $pdf->Cell(4.5, .5, $pdf->GetX().html_entity_decode($lab2->item_hasil, ENT_NOQUOTES, 'utf-8'). ($lab2->status_hsl_lab == '1' ? '*' : ''), '', 0, 'L', $fill);
+//                                $pdf->SetXY($x + 7, $y);
+//                                $pdf->MultiCell(4.5, $h, html_entity_decode($lab2->item_hasil, ENT_NOQUOTES, 'utf-8'), '', 'J');
+//                                
 //                                $pdf->SetXY($x + 11.5, $y);
 //                                $pdf->Cell(5.5, 2, html_entity_decode($lab2->item_satuan, ENT_NOQUOTES, 'utf-8'), '', 0, 'L', $fill);
 //                                $pdf->MultiCell(5.5, .5, html_entity_decode($lab2->item_satuan, ENT_NOQUOTES, 'utf-8'), '', 'L'); 
@@ -15868,15 +15891,16 @@ class medcheck extends CI_Controller {
 //                                $pdf->Cell(2, .5, html_entity_decode($lab2->item_satuan, ENT_NOQUOTES, 'utf-8'), '', 0, 'L', $fill);
 //                                $pdf->Cell(5.5, .5, html_entity_decode($lab2->item_value, ENT_NOQUOTES, 'utf-8'), '', 0, 'L', $fill);
 //                                $pdf->Cell(2, .5, html_entity_decode($lab2->item_satuan, ENT_NOQUOTES, 'utf-8'), '', 0, 'L', $fill);
-                                $pdf->Ln();
+//                                
 //                                $pdf->SetXY($x, $y);
-                                
-                                $len = strlen($lab2->item_hasil);
-                                if($len > 36){
-//                                    $pdf->Ln();
-                                }else{
-                                    $pdf->Ln(0);
-                                }
+//                                
+//                                $len = strlen($lab2->item_hasil);
+//                                $len = $itm_txt;
+//                                if($len > 36){
+//                                    $pdf->Ln($itm_hsl);
+//                                }else{
+//                                    $pdf->Ln(0);
+//                                }
                                 
                                 # Jika warna hasil di tandai merah
                                 if($lab2->status_hsl_wrn == 1){

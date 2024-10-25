@@ -5,6 +5,7 @@
         <group>
             <file>file:/D:/xampp/htdocs/p37-medkit-dev/framework/controllers/medcheck.php</file>
             <file>file:/D:/xampp/htdocs/p37-medkit-dev/framework/controllers/master.php</file>
+            <file>file:/D:/xampp/htdocs/p37-medkit-dev/framework/views/admin-lte-3/includes/medcheck/med_trans_lab_surat.php</file>
             <file>file:/D:/xampp/htdocs/p37-medkit-dev/framework/views/admin-lte-3/includes/medcheck/med_daftar.php</file>
         </group>
     </open-files>
