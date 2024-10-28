@@ -37,7 +37,15 @@
                                 <thead>
                                     <?php echo form_open_multipart(base_url('medcheck/set_cari_medcheck.php'), 'autocomplete="off"') ?> 
                                     <tr>
-                                        <td colspan="2"></td>
+                                        <!--<td colspan="1"></td>-->
+                                        <td colspan="2">
+                                            <select name="poli" class="form-control">
+                                                <option value="">[Poli]</option>
+                                                <?php foreach($sql_poli as $poli){ ?>
+                                                    <option value="<?php echo $poli->id ?>"><?php echo $poli->lokasi ?></option>
+                                                <?php } ?>
+                                            </select>                                            
+                                        </td>
                                         <td>
                                             <?php echo form_input(array('id' => 'tgl', 'name' => 'tgl', 'class' => 'form-control', 'placeholder' => 'Isikan Tgl ...', 'value' => (!empty($_GET['filter_nama']) ? $_GET['filter_tgl'] : ''))) ?>
                                         </td>
@@ -60,9 +68,9 @@
                                         <td>
                                             <select name="status_bayar" class="form-control">
                                                 <option value="">[Status Bayar]</option>
-                                                <option value="0" <?php // echo ($_GET['filter_bayar'] == '0' ? 'selected' : '')   ?>>Belum</option>
-                                                <option value="1" <?php // echo ($_GET['filter_bayar'] == '1' ? 'selected' : '')   ?>>Lunas</option>
-                                                <option value="2" <?php // echo ($_GET['filter_bayar'] == '2' ? 'selected' : '')   ?>>Kurang</option>
+                                                <option value="0">Belum</option>
+                                                <option value="1">Lunas</option>
+                                                <option value="2">Kurang</option>
                                             </select>
                                         </td>
                                         <td class="text-right">

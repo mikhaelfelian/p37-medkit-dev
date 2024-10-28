@@ -34,6 +34,7 @@ class medcheck extends CI_Controller {
                 $tp      = $this->input->get('filter_tipe');
                 $tg      = $this->input->get('filter_tgl');
                 $sp      = $this->input->get('filter_periksa');
+                $pl      = $this->input->get('filter_poli');
                 $jml     = $this->input->get('jml');
 
                 # Jika User dokter, maka pilih rajal dan ranap
@@ -53,6 +54,7 @@ class medcheck extends CI_Controller {
                                         ->like('tipe', $tp)
                                         ->like('id_dokter', ($id_grup->name == 'dokter' ? $id_user : ''), ($id_grup->name == 'dokter' ? 'none' : ''))
                                         ->like('id', general::dekrip($id))
+                                        ->like('id_poli', $poli)
                                         ->like('pasien', $cs)
                                         ->like('tipe', $tp)
                                         ->like('status_bayar', $by)
@@ -168,6 +170,7 @@ class medcheck extends CI_Controller {
                                         AND pasien LIKE '%". $cs."%'
                                         AND tipe LIKE '%". $tp."%'
                                         AND status_bayar LIKE '%". $by."%'
+                                        AND id_poli LIKE '%". $pl."%'
                                         GROUP BY DATE_FORMAT(tbl_trans_medcheck.tgl_simpan, '%Y-%m-%d %H'), DATE_FORMAT(tbl_trans_medcheck.tgl_masuk, '%Y-%m-%d %H'), tbl_trans_medcheck.keluhan, tbl_trans_medcheck.tipe, tbl_trans_medcheck.id_pasien
                                         ORDER BY tbl_trans_medcheck.id DESC LIMIT ".$config['per_page'].", ".$hal;
 
@@ -207,6 +210,7 @@ class medcheck extends CI_Controller {
                                         AND pasien LIKE '%". $cs."%'
                                         AND tipe LIKE '%". $tp."%'
                                         AND status_bayar LIKE '%". $by."%'
+                                        AND id_poli LIKE '%". $pl."%'
                                         GROUP BY DATE_FORMAT(tbl_trans_medcheck.tgl_simpan, '%Y-%m-%d %H'), DATE_FORMAT(tbl_trans_medcheck.tgl_masuk, '%Y-%m-%d %H'), tbl_trans_medcheck.keluhan, tbl_trans_medcheck.tipe, tbl_trans_medcheck.id_pasien
                                         ORDER BY tbl_trans_medcheck.id DESC LIMIT ".$config['per_page'];
                                 
@@ -230,7 +234,8 @@ class medcheck extends CI_Controller {
                                                    ->join('tbl_m_karyawan', 'tbl_m_karyawan.id=tbl_m_karyawan_jadwal.id_karyawan')
                                                    ->join('tbl_m_poli', 'tbl_m_poli.id=tbl_m_karyawan_jadwal.id_poli')
                                                    ->get('tbl_m_karyawan_jadwal')->result();
-                $data['pengaturan']     = $pengaturan;             
+                $data['sql_poli']       = $this->db->get('tbl_m_poli')->result();
+                $data['pengaturan']     = $pengaturan;
             }
 
             /* Sidebar Menu */
@@ -20338,6 +20343,7 @@ class medcheck extends CI_Controller {
         if (akses::aksesLogin() == TRUE) {
             $id         = $this->input->post('id_medcheck');
             $nama       = $this->input->post('pasien');
+            $poli       = $this->input->post('poli');
             $tipe       = $this->input->post('tipe');
             $tgl        = $this->input->post('tgl');
             $status_byr = $this->input->post('status_bayar');
@@ -20347,6 +20353,7 @@ class medcheck extends CI_Controller {
                                     ->where('status_pos', '0')
                                     ->like('DATE(tgl_masuk)', $this->tanggalan->tgl_indo_sys($tgl))
                                     ->like('id', $id)
+                                    ->like('id_poli', $poli)
                                     ->like('pasien', $nama)
                                     ->like('tipe', $tipe)
                                     ->like('status_bayar', $status_byr)
@@ -20355,7 +20362,7 @@ class medcheck extends CI_Controller {
             $sql_row    = $sql->row();
             $sql_jml    = $sql->num_rows();
             
-            redirect(base_url('medcheck/index.php?tipe=1'.(!empty($nama) ? '&filter_nama='.$nama : '').(!empty($id) ? '&id='.general::enkrip($id) : '').(!empty($tgl) ? '&filter_tgl='.$this->tanggalan->tgl_indo_sys($tgl) : '').(!empty($tipe) ? '&filter_tipe='.$tipe : '').(isset($status_byr) ? '&filter_bayar='.$status_byr : '')));
+            redirect(base_url('medcheck/index.php?tipe=1'.(!empty($nama) ? '&filter_nama='.$nama : '').(!empty($poli) ? '&filter_poli='.$poli : '').(!empty($id) ? '&id='.general::enkrip($id) : '').(!empty($tgl) ? '&filter_tgl='.$this->tanggalan->tgl_indo_sys($tgl) : '').(!empty($tipe) ? '&filter_tipe='.$tipe : '').(isset($status_byr) ? '&filter_bayar='.$status_byr : '')));
         } else {
             $errors = $this->ion_auth->messages();
             $this->session->set_flashdata('login', '<div class="alert alert-danger">Authentifikasi gagal, silahkan login ulang!!</div>');
