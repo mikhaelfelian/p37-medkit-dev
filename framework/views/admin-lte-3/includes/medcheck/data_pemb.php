@@ -67,6 +67,8 @@
                                             $pasien = $this->db->where('id', $penj->id_pasien)->get('tbl_m_pasien')->row();
                                             $poli = $this->db->where('id', $penj->id_poli)->get('tbl_m_poli')->row();
                                             $app = $this->db->where('id', $penj->id_app)->get('tbl_pengaturan_cabang')->row();
+                                            
+                                            $jml_kurang = $penj->jml_gtotal - $penj->jml_bayar;
                                             ?>
                                             <tr>
                                                 <td class="text-center"><?php echo $no++ ?>.</td>
@@ -76,7 +78,7 @@
                                                 </td>
                                                 <td style="width: 600px;"><?php echo $pasien->nama_pgl ?></td>
                                                 <td style="width: 150px;"><?php echo anchor(base_url('medcheck/tindakan.php?id=' . general::enkrip($penj->id)), $penj->no_nota, 'class="text-default"') ?></td>
-                                                <td class="text-right" style="width: 150px;"><?php echo general::format_angka($penj->jml_gtotal) ?></td>
+                                                <td class="text-right" style="width: 150px;"><?php echo general::format_angka($penj->jml_gtotal).(!empty($penj->jml_kurang) ? br().'('.general::format_angka($jml_kurang).')' : '') ?></td>
                                                 <td style="width: 250px;">
                                                     <?php echo anchor(base_url('medcheck/invoice/bayar.php?id=' . general::enkrip($penj->id) . '#jml_bayar'), '<i class="fa fa-shopping-cart"></i> Bayar &raquo;', 'class="btn btn-warning btn-flat btn-xs"') . nbs() ?>
                                                     <?php echo br(); ?>

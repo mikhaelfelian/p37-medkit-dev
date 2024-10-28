@@ -1,3 +1,7 @@
+<?php 
+$txt_pasien = explode(' ', $pasien->nama);
+$nm_file    = strtolower($txt_pasien[0]);
+?>
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
@@ -372,7 +376,7 @@
             const link = document.createElement('a');
             canvas.toBlob(function(blob) {
                 link.href = URL.createObjectURL(blob);
-                link.download = 'pasien_<?php echo date('YmdHi').rand(32,256) ?>.jpg'; // naming the downloaded file with email
+                link.download = 'pasien_<?php echo date('Ymd').'_'.$nm_file ?>.jpg'; // naming the downloaded file with email
                 link.click();
             }, 'image/png');
         }

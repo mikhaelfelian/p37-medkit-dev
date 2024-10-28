@@ -15877,7 +15877,6 @@ class medcheck extends CI_Controller {
                                 if($lab2->status_hsl_wrn == 1){
                                     $pdf->SetTextColor(0,0,0);
                                 }
-//                            }
                         }
                     }
                     
