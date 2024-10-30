@@ -364,6 +364,7 @@ $route['surat/print_pdf_gc.php']                        = "medcheck/pdf_gc";
 $route['medcheck/set_gc_simpan.php']                    = "medcheck/set_gc_simpan";
 $route['medcheck/set_gc_update.php']                    = "medcheck/set_gc_update";
 $route['medcheck/set_cari_daftar.php']                  = "medcheck/set_cari_daftar";
+$route['medcheck/set_cari_antrian.php']                  = "medcheck/set_cari_antrian";
 $route['medcheck/data_dokter.php']                      = "medcheck/data_dokter";
 
 $route['medcheck/data_antrian.php']                     = "medcheck/trans_medcheck_ant";

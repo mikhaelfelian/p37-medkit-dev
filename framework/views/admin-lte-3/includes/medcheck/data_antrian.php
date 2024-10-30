@@ -35,17 +35,20 @@
                             <?php echo $this->session->flashdata('medcheck'); ?>
                             <table class="table table-striped project">
                                 <thead>
-                                    <?php echo form_open_multipart(base_url('medcheck/set_cari_daftar.php'), 'autocomplete="off"') ?> 
+                                    <?php echo form_open_multipart(base_url('medcheck/set_cari_antrian.php'), 'autocomplete="off"') ?>
                                     <tr>
                                         <td colspan="2">
                                             <?php echo form_input(array('id' => 'tgl', 'name' => 'tgl_daftar', 'class' => 'form-control rounded-0', 'placeholder' => 'Tgl Pendaftaran ...', 'value' => (!empty($_GET['filter_tgl']) ? $this->tanggalan->tgl_indo2($this->input->get('filter_tgl')) : ''))) ?>
                                         </td>
                                         <td colspan="3">
-                                            <?php echo form_input(array('id' => '', 'name' => 'pasien', 'class' => 'form-control rounded-0', 'placeholder' => 'Pasien ...', 'value' => (!empty($_GET['filter_nama']) ? $_GET['filter_nama'] : ''))) ?>
-                                            <input type="hidden" id="id_daftar" name="id_daftar" value="<?php echo (!empty($_GET['id']) ? $_GET['id'] : '') ?>">
+                                            <select name="poli" class="form-control rounded-0">
+                                                <option value="">- Pilih -</option>
+                                                <?php foreach ($this->db->where('status', '1')->get('mpoli')->result() as $mpoli){ ?>
+                                                    <option value="<?php echo $mpoli->kode ?>"><?php echo $mpoli->poli; ?></option>
+                                                <?php } ?>
+                                            </select>
                                         </td>
                                         <td>
-
                                         </td>
                                         <td class="text-left">
                                             <button class="btn btn-primary btn-flat">

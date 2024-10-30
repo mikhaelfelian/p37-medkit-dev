@@ -1512,15 +1512,8 @@ class medcheck extends CI_Controller {
             /* -- Blok Filter -- */
             $query   = $this->input->get('q');
             $hal     = $this->input->get('halaman');
-            $nt      = $this->input->get('filter_nota');
-            $fn      = explode('/', $nt);
             $tg      = $this->input->get('filter_tgl');
-            $tb      = $this->input->get('filter_tgl_bayar');
-            $tp      = $this->input->get('filter_tgl_tempo');
-            $lk      = $this->input->get('filter_lokasi');
-            $cs      = $this->input->get('filter_nama');
-            $sn      = $this->input->get('filter_status');
-            $sl      = $this->input->get('filter_sales');
+            $pl      = $this->input->get('filter_poli');
             $stts    = $this->input->get('status');
             $jml     = $this->input->get('jml');
 //            $jml_sql = ($id_grup->name == 'superadmin' || $id_grup->name == 'owner' || $id_grup->name == 'admin' ? $this->db->get('tbl_trans_jual')->num_rows() : $this->db->where('id_user', $id_user)->where('tgl_masuk', date('Y-m-d'))->get('tbl_trans_jual')->num_rows());
@@ -1583,7 +1576,9 @@ class medcheck extends CI_Controller {
 //                           ->get('tbl_pendaftaran')->result();
             }else{
                    $data['penj'] = $this->db->select('*')
-                                           ->where('ddate', date('Y-m-d'))->where('status !=', '2')->limit(100)
+                                           ->where('ddate', date('Y-m-d'))->where('status !=', '2')
+                                           ->like('ddate', $tg)
+                                           ->like('cnoro', $pl)->limit(100)
                                            ->get('tr_queue')->result();
             }
 
@@ -20330,6 +20325,25 @@ class medcheck extends CI_Controller {
             $sql_jml    = $sql->num_rows();
             
             redirect(base_url('medcheck/data_pendaftaran.php?'.(!empty($tgl) ? 'filter_tgl='.$this->tanggalan->tgl_indo_sys($tgl) : '').(!empty($nama) ? 'filter_nama='.$nama : '').(!empty($id) ? '&id='.general::enkrip($id) : '')));
+        } else {
+            $errors = $this->ion_auth->messages();
+            $this->session->set_flashdata('login', '<div class="alert alert-danger">Authentifikasi gagal, silahkan login ulang!!</div>');
+            redirect();
+        }
+    }
+
+    # Pencarian modul Antrian
+    public function set_cari_antrian() {
+        if (akses::aksesLogin() == TRUE) {
+            $poli       = $this->input->post('poli');
+            $tgl        = $this->input->post('tgl_daftar');
+
+            $sql        = $sql   = $this->db->like('cnoro',$poli)->like('ddate',$tgl)->get('tr_queue');
+            
+            $sql_row    = $sql->row();
+            $sql_jml    = $sql->num_rows();
+            
+            redirect(base_url('medcheck/data_antrian.php?'.(!empty($tgl) ? 'filter_tgl='.$this->tanggalan->tgl_indo_sys($tgl) : '').(!empty($poli) ? 'filter_poli='.$poli : '')));
         } else {
             $errors = $this->ion_auth->messages();
             $this->session->set_flashdata('login', '<div class="alert alert-danger">Authentifikasi gagal, silahkan login ulang!!</div>');
