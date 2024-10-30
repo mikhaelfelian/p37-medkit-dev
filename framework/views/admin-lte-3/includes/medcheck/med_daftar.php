@@ -44,7 +44,6 @@ $nm_file    = strtolower($txt_pasien[0]);
                             <?php if (isset($_GET['tipe_pas'])) { ?>
                                 <?php if (isset($_GET['id_pasien']) OR $_GET['tipe_pas'] == '2') { ?>
                                     <button type="button" onclick="takeSnapshot()" class="btn btn-primary btn-flat btn-block"><i class="fa fa-camera"></i> Ambil Gambar</button>                                
-                                    <!--<button type="button" onclick="" class="btn btn-primary btn-flat btn-block"><i class="fa fa-camera"></i> Download</button>-->
                                     <button id="flip-btn" type="button" class="btn btn-primary btn-flat btn-block"><i class="fa fa-camera-rotate"></i> Pindah Kamera</button>
                                 <?php } ?>
                             <?php } ?>
@@ -376,7 +375,7 @@ $nm_file    = strtolower($txt_pasien[0]);
             const link = document.createElement('a');
             canvas.toBlob(function(blob) {
                 link.href = URL.createObjectURL(blob);
-                link.download = 'pasien_<?php echo date('Ymd').(!empty($nm_file) ? '_'.$nm_file : date('Hi')) ?>.jpg'; // naming the downloaded file with email
+                link.download = 'pasien_<?php echo date('YmdHis').(!empty($nm_file) ? '_'.$nm_file : '') ?>.jpg'; // naming the downloaded file with email
                 link.click();
             }, 'image/png');
         }
