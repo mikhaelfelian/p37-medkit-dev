@@ -42,7 +42,7 @@ class medcheck extends CI_Controller {
                     $jml_sql = $this->db
                                     ->where('id_dokter', $id_user)
                                     ->like('tipe', $tp)
-                                    ->like('pasien', $cs)
+                                    ->like('pasien', str_replace("'", "''", $cs))
                                     ->like('id_poli', $pl)
                                     ->like('status_bayar', $by)
 //                                    ->group_by('tgl_simpan, pasien')
@@ -55,7 +55,7 @@ class medcheck extends CI_Controller {
                                         ->like('id_dokter', ($id_grup->name == 'dokter' ? $id_user : ''), ($id_grup->name == 'dokter' ? 'none' : ''))
                                         ->like('id', general::dekrip($id))
                                         ->like('id_poli', $poli)
-                                        ->like('pasien', $cs)
+                                        ->like('pasien', str_replace("'", "''", $cs))
                                         ->like('tipe', $tp)
                                         ->like('status_bayar', $by)
                                         ->like('status_periksa', $sp)
@@ -114,7 +114,7 @@ class medcheck extends CI_Controller {
                         $data['penj'] = $this->db
                                              ->where('id_dokter', $id_user)
                                              ->like('tipe', $tp)
-                                             ->like('pasien', $cs)
+                                             ->like('pasien', str_replace("'", "''", $cs))
                                              ->like('id_poli', $pl)
                                              ->like('status_bayar', $by)
                                              ->like('status_periksa', $sp)
@@ -125,7 +125,7 @@ class medcheck extends CI_Controller {
                         $data['penj'] = $this->db
                                              ->where('id_dokter', $id_user)
                                              ->like('tipe', $tp)
-                                             ->like('pasien', $cs)
+                                             ->like('pasien', str_replace("'", "''", $cs))
                                              ->like('id_poli', $pl)
                                              ->like('status_bayar', $by)
                                              ->like('status_periksa', $sp)
@@ -20368,7 +20368,7 @@ class medcheck extends CI_Controller {
                                     ->like('DATE(tgl_masuk)', $this->tanggalan->tgl_indo_sys($tgl))
                                     ->like('id', $id)
                                     ->like('id_poli', $poli)
-                                    ->like('pasien', $nama)
+                                    ->like('pasien', str_replace("'", "''", $nama))
                                     ->like('tipe', $tipe)
                                     ->like('status_bayar', $status_byr)
                                     ->get('v_medcheck');
