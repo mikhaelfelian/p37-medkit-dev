@@ -167,7 +167,7 @@ class medcheck extends CI_Controller {
                                         FROM tbl_trans_medcheck
                                         WHERE tbl_trans_medcheck.status_hps='0' AND tbl_trans_medcheck.status_pos='0' 
                                         AND DATE(tgl_simpan) LIKE '%". $this->tanggalan->tgl_indo_sys($tg)."%'
-                                        AND pasien LIKE '%". $cs."%'
+                                        AND pasien LIKE '%". str_replace("'", "''", $cs)."%'
                                         AND tipe LIKE '%". $tp."%'
                                         AND status_bayar LIKE '%". $by."%'
                                         AND id_poli LIKE '%". $pl."%'
@@ -207,7 +207,7 @@ class medcheck extends CI_Controller {
                                         FROM tbl_trans_medcheck
                                         WHERE tbl_trans_medcheck.status_hps='0' AND tbl_trans_medcheck.status_pos='0' 
                                         AND DATE(tgl_simpan) LIKE '%". $this->tanggalan->tgl_indo_sys($tg)."%'
-                                        AND pasien LIKE '%". $cs."%'
+                                        AND pasien LIKE '%". str_replace("'", "''", $cs)."%'
                                         AND tipe LIKE '%". $tp."%'
                                         AND status_bayar LIKE '%". $by."%'
                                         AND id_poli LIKE '%". $pl."%'
