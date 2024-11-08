@@ -1854,6 +1854,20 @@ FROM tbl_trans_medcheck_det WHERE item IS NULL ORDER BY id DESC;");
         echo '</body>';
         echo '</html>';
     }
+    
+    public function tes52(){
+        $sql = $this->db
+                    ->where('instansi', 'MCU PT. ERELA')
+                    ->order_by('id', 'desc')
+                    ->get('tbl_m_pasien')->result();
+        
+        foreach ($sql as $item){
+            crud::update('tbl_m_pasien', 'id', $item->id, array('tgl_modif'=>date('Y-m-d H:i:s'),'kode'=>$item->id));
+            
+            echo $item->kode_dpn.$item->id;
+            echo br();
+        }
+    }
 
     public function bot_stok_op() {
         $sql = $this->db
