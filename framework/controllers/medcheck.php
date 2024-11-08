@@ -17518,7 +17518,7 @@ class medcheck extends CI_Controller {
             $gambar2            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-bw-bg2-1440px.png';
             $gambar3            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-footer.png';
             $foto_file          = realpath($sql_pasien->file_name);
-            $ck_foto            = (!empty($sql_pasien->file_name) ? FCPATH.'/'.$sql_pasien->file_name : FCPATH.'/assets/theme/admin-lte-3/dist/img/'.($sql_pasien->jns_klm == 'L' ? 'avatar7-men' : 'avatar7-women').'.png');
+            $ck_foto            = (!empty($sql_pasien->file_name) ? base_url($sql_pasien->file_name) : FCPATH.'/assets/theme/admin-lte-3/dist/img/'.($sql_pasien->jns_klm == 'L' ? 'avatar7-men' : 'avatar7-women').'.png');
             $foto_pasien        = $ck_foto;
                     
             $judul  = "RESUME MEDICAL CHECKUP";

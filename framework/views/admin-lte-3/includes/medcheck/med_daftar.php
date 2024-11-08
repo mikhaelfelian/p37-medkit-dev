@@ -375,7 +375,7 @@ $nm_file    = strtolower($txt_pasien[0]);
             const link = document.createElement('a');
             canvas.toBlob(function(blob) {
                 link.href = URL.createObjectURL(blob);
-                link.download = 'pasien_<?php echo date('YmdHis').(!empty($nm_file) ? '_'.$nm_file : '') ?>.jpeg'; // naming the downloaded file with email
+                link.download = 'pasien_<?php echo date('YmdHis').(!empty($nm_file) ? '_'.$nm_file : '') ?>.png'; // naming the downloaded file with email
                 link.click();
             }, 'image/png');
         }

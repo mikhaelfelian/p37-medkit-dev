@@ -1858,13 +1858,16 @@ FROM tbl_trans_medcheck_det WHERE item IS NULL ORDER BY id DESC;");
     public function tes52(){
         $sql = $this->db
                     ->where('instansi', 'MCU PT. ERELA')
+                    ->where('file_ext', '.jpg')
+                    ->where('file_name !=', '')
                     ->order_by('id', 'desc')
                     ->get('tbl_m_pasien')->result();
         
         foreach ($sql as $item){
-            crud::update('tbl_m_pasien', 'id', $item->id, array('tgl_modif'=>date('Y-m-d H:i:s'),'kode'=>$item->id));
+            $file = 'file/pasien/pke'.$item->id.'/profile_'.$item->id.'.png';
+//            crud::update('tbl_m_pasien', 'id', $item->id, array('tgl_modif'=>date('Y-m-d H:i:s'),'file_name'=>$file,'file_type'=>'image/png'));
             
-            echo $item->kode_dpn.$item->id;
+            echo $item->file_name.' ==> '.$file;
             echo br();
         }
     }
