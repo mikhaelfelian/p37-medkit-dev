@@ -1857,7 +1857,7 @@ FROM tbl_trans_medcheck_det WHERE item IS NULL ORDER BY id DESC;");
     
     public function tes52(){
         $sql = $this->db
-                    ->where('instansi', 'MCU PT. ERELA')
+                    ->where('instansi', 'MCU PT. SAMWON')
                     ->where('file_ext', '.jpg')
                     ->where('file_name !=', '')
                     ->order_by('id', 'desc')
