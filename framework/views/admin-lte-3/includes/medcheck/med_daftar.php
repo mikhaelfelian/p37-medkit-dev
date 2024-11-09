@@ -1,6 +1,6 @@
 <?php 
 $txt_pasien = explode(' ', $pasien->nama);
-$nm_file    = strtolower($txt_pasien[0]);
+$nm_file    = strtolower($pasien->nik);
 ?>
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
