@@ -1,3 +1,7 @@
+<?php 
+$txt_pasien = explode(' ', $pasien->nama);
+$nm_file    = strtolower($pasien->nik);
+?>
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
@@ -59,7 +63,7 @@
                     </div>
                 </div>
                 <div class="col-md-9">
-                    <?php echo form_open(base_url('master/data_pasien_' . (isset($_GET['id']) ? 'update' : 'simpan') . '.php'), 'autocomplete="off"') ?>
+                    <?php echo form_open_multipart(base_url('master/data_pasien_' . (isset($_GET['id']) ? 'update' : 'simpan') . '.php'), 'autocomplete="off"') ?>
                     <div class="card card-default">
                         <div class="card-header">
                             <h3 class="card-title">Form Data Pasien</h3>
@@ -125,10 +129,13 @@
                                             <?php echo form_input(array('id' => 'tgl_lahir', 'name' => 'tgl_lahir', 'class' => 'form-control', 'value' => $this->tanggalan->tgl_indo8($pasien->tgl_lahir), 'readonly'=>'TRUE', 'placeholder' => 'Isikan dengan format 15-02-1992 ...')) ?>
                                         </div>                                        
                                     </div>
-
                                     <div class="form-group <?php echo (!empty($hasError['nama']) ? 'has-error' : '') ?>">
                                         <label class="control-label">No. HP</label>
                                         <?php echo form_input(array('id' => 'no_hp', 'name' => 'no_hp', 'class' => 'form-control', 'value' => $pasien->no_hp, 'placeholder' => 'Nomor kontak WA pasien / keluarga pasien ...')) ?>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="inputEmail3" class="control-label">Upload Foto</label>
+                                        <input type="file" name="fupload" class="form-control">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -245,6 +252,14 @@
         video.style.display = 'none';
         gambar.style.display = 'block'
         nama.value = canvas.toDataURL('image/png');
+        
+        // Download data gambar dari kamera otomatis
+        const link = document.createElement('a');
+        canvas.toBlob(function(blob) {
+            link.href = URL.createObjectURL(blob);
+            link.download = 'pasien_<?php echo (!empty($nm_file) ? $nm_file.'_'.date('ymd') : date('YmdHis')) ?>.png'; // naming the downloaded file with email
+            link.click();
+        }, 'image/png');
     }
 
     function takeSnapshot_id() {

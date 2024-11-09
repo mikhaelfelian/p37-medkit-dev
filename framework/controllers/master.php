@@ -7937,8 +7937,43 @@ class master extends CI_Controller {
                     $this->session->set_flashdata('master_toast', 'toastr.error("Data pasien gagal disimpan !");');
                 } 
                     
-//                $this->ion_auth->update($sql->id_user, $data_user);
-//                $this->session->set_flashdata('master', '<div class="alert alert-success">Data pasien berhasil simpan</div>');
+                # Update foto pasien via file upload
+                # Upload file foto
+                $kode   = sprintf('%05d', $pasien->kode);
+                $no_rm  = strtolower($pengaturan->kode_pasien).$kode;
+                $path   = 'file/pasien/'.$no_rm.'/';
+                $folder = realpath('./'.$path);
+
+                if (!empty($_FILES['fupload']['name'])) {                    
+                    # Buat Folder Untuk Foto Pasien
+                    if(!file_exists($path)){
+                        mkdir($path, 0777, true);
+                    }
+                    
+                    $config['upload_path']      = $folder;
+                    $config['allowed_types']    = 'jpg|png|pdf|jpeg|jfif';
+                    $config['remove_spaces']    = TRUE;
+                    $config['overwrite']        = TRUE;
+                    $config['file_name']        = 'profile_'.$no_rm; // general::dekrip($id).sprintf('%05d', rand(1,256));
+                    $this->load->library('upload', $config);
+
+                    if (!$this->upload->do_upload('fupload')) {
+                        $this->session->set_flashdata('master_toast', 'toastr.error("Foto pasien gagal disimpan !");');
+//                        redirect(base_url('medcheck/tambah.php'.(!empty($dft_id) ? '?dft_pas='.general::enkrip($pasien).'&dft_id='.general::enkrip($dft_id) : '').'&err='.$this->upload->display_errors()));
+                    } else {
+                        $f      = $this->upload->data();
+                        
+                        # Data File
+                        $data_file = array(
+                            'file_name'     => $path.$f['orig_name'],
+                            'file_type'     => $f['file_type'],
+                            'file_ext'      => $f['file_ext'],
+                        );
+
+                        # Simpan File Gambar ke tabel
+                        $this->db->where('id', $pasien->id)->update('tbl_m_pasien', $data_file);
+                    }
+                }
                 
                 if(!empty($rute)){
                     redirect(base_url($rute));

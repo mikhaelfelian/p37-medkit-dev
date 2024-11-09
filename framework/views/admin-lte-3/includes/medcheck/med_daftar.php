@@ -372,10 +372,11 @@ $nm_file    = strtolower($pasien->nik);
             gambar.style.display = 'block'
             nama.value = canvas.toDataURL('image/png');
 
+            // Download data gambar dari kamera otomatis
             const link = document.createElement('a');
             canvas.toBlob(function(blob) {
                 link.href = URL.createObjectURL(blob);
-                link.download = 'pasien_<?php echo date('YmdHis').(!empty($nm_file) ? '_'.$nm_file : '') ?>.png'; // naming the downloaded file with email
+                link.download = 'pasien_<?php echo (!empty($nm_file) ? $nm_file.'_'.date('ymd') : date('YmdHis')) ?>.png'; // naming the downloaded file with email
                 link.click();
             }, 'image/png');
         }
