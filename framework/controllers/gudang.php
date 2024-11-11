@@ -545,6 +545,7 @@ class gudang extends CI_Controller {
                     'id_pembelian_det'  => $sql_cek->id,
                     'id_supplier'       => $sql_bli->id_supplier,
                     'kode'              => $sql_cek_brg->kode,
+                    'kode_batch'        => $sql_cek->kode_batch,
                     'produk'            => $sql_cek_brg->produk,
                     'no_nota'           => $sql_cek->no_nota,
                     'jml'               => $jml_trm,
