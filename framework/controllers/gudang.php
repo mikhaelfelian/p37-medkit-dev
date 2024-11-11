@@ -545,6 +545,7 @@ class gudang extends CI_Controller {
                     'id_pembelian_det'  => $sql_cek->id,
                     'id_supplier'       => $sql_bli->id_supplier,
                     'kode'              => $sql_cek_brg->kode,
+                    'produk'            => $sql_cek_brg->produk,
                     'no_nota'           => $sql_cek->no_nota,
                     'jml'               => $jml_trm,
                     'jml_satuan'        => 1,
@@ -1175,7 +1176,7 @@ class gudang extends CI_Controller {
                                 'id_penjualan' => $sql_mut->id,
                                 'no_nota'      => $sql_mut->no_nota,
                                 'kode'         => $sql_mut_det->kode,
-                                'produk'       => $sql_mut_det->produk,
+                                'produk'       => $sql_cek_brg->produk,
                                 'keterangan'   => $ket,
                                 'jml'          => (int)$sql_mut_det->jml,
                                 'jml_satuan'   => (int)$sql_mut_det->jml_satuan,
@@ -1205,86 +1206,7 @@ class gudang extends CI_Controller {
                 }
                 
 //                $this->db->trans_complete();
-                
                 redirect(base_url('gudang/trans_mutasi_terima.php?id='.$nota));
-
-                
-//                $this->db->trans_complete();
-
-//                $this->session->set_flashdata('gudang_toast', 'toastr.success("Data mutasi berhasil di terima !")');
-                
-//                # Jika jumlah kurang > 0, maka update
-//                if($jml_kurang >= 0){
-//                    $sql_cek_stok = $this->db->where('id_produk', $sql_cek_brg->id)->where('id_gudang', $gudang)->get('tbl_m_produk_stok');
-//                    
-//                    if($sql_cek_stok->num_rows() > 0){
-//                        $stoknya    = $sql_cek_brg->jml;
-//                        $stoknya2   = $sql_cek_stok->row();
-//                        $stok       = $jml_trm + $stoknya;
-//                        $stok2      = $jml_trm + $stoknya2->jml;
-//                        
-//                       # Simpan stok ke tabel stok
-//                       $data_gudang_stok = array(
-//                           'tgl_modif' => date('Y-m-d H:i:s'),
-//                           'id_user'    => $this->ion_auth->user()->row()->id,
-//                           'id_gudang'  => $gudang,
-//                           'id_produk'  => $sql_cek_brg->id,
-//                           'jml'        => $stok2,
-//                           'jml_satuan' => 1,
-//                           'satuanKecil'=> (!empty($sql_cek_sat->satuanTerkecil) ? $sql_cek_sat->satuanTerkecil : 'PCS'),
-//                           'status'     => $sql_gdg->status
-//                       );
-//                       
-//                       $this->db->where('id', $stoknya2->id)->update('tbl_m_produk_stok', $data_gudang_stok);
-//                    } else {
-//                        $stoknya    = $sql_cek_stok->row();
-//                        $stok       = $jml_trm;
-//                       
-//                       // Simpan stok gudang
-//                       $data_gudang_stok = array(
-//                           'tgl_simpan' => date('Y-m-d H:i:s'),
-//                           'id_user'    => $this->ion_auth->user()->row()->id,
-//                           'id_gudang'  => $gudang,
-//                           'id_produk'  => $sql_cek_brg->id,
-//                           'jml'        => $stok,
-//                           'jml_satuan' => 1,
-//                           'satuanKecil'=> (!empty($sql_cek_sat->satuanTerkecil) ? $sql_cek_sat->satuanTerkecil : 'PCS'),
-//                           'status'     => $sql_gdg->status
-//                       );
-//                       
-//                       $this->db->insert('tbl_m_produk_stok', $data_gudang_stok);                        
-//                    }
-//                    
-//                    $this->session->set_flashdata('gudang_toast', 'toastr.success("Data mutasi berhasil di terima !")');
-//                } else {
-//                    $this->session->set_flashdata('gudang_toast', 'toastr.error("Data mutasi tidak sesuai")');
-//                }
-//                  
-//                # Simpan pemberiatuan bahwa barang sudah diterima
-//                $this->db->where('id', $sql_cek->id)->update('tbl_trans_mutasi_det', $data_pemb);
-//                
-//                $this->db->trans_complete();
-//                
-//                redirect(base_url('gudang/trans_mutasi_terima.php?id='.$nota));
-//                
-//                echo '<pre>';
-//                print_r($data_gudang_stok);
-//                echo '</pre>';                
-//                echo '<pre>';
-//                print_r($sql_gdg);
-//                echo '</pre>';
-//                echo '<pre>';
-//                print_r($data_brg);
-//                echo '</pre>';
-//                echo '<pre>';
-//                print_r($data_brg_hist);
-//                echo '</pre>';
-//                echo '<pre>';
-//                print_r($data_pemb);
-//                echo '</pre>';
-//                echo '<pre>';
-//                print_r($data_mut_hist);
-//                echo '</pre>';
             }
         } else {
             $errors = $this->ion_auth->messages();

@@ -119,7 +119,6 @@ $nm_file    = strtolower($pasien->nik);
                                         <label class="control-label">Tempat Lahir</label>
                                         <?php echo form_input(array('id' => 'tmp_lahir', 'name' => 'tmp_lahir', 'class' => 'form-control', 'value' => $pasien->tmp_lahir, 'placeholder' => 'Semarang ...')) ?>
                                     </div>
-
                                     <div class="form-group <?php echo (!empty($hasError['nama']) ? 'has-error' : '') ?>">
                                         <label class="control-label">Tgl Lahir</label>
                                         <div class="input-group mb-3">
