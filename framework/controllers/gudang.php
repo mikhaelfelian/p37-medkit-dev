@@ -538,6 +538,7 @@ class gudang extends CI_Controller {
                 $data_brg_hist = array(
                     'tgl_simpan'        => (!empty($tgl_trm) ? $this->tanggalan->tgl_indo_sys($tgl_trm) : date('Y-m-d')).' '.date('H:i:s'),
                     'tgl_masuk'         => (!empty($tgl_trm) ? $this->tanggalan->tgl_indo_sys($tgl_trm) : date('Y-m-d')),
+                    'tgl_ed'            => $sql_cek->tgl_ed,
                     'id_produk'         => $sql_cek_brg->id,
                     'id_user'           => $this->ion_auth->user()->row()->id,
                     'id_gudang'         => $gudang,

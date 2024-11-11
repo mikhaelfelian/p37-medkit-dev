@@ -1871,6 +1871,37 @@ FROM tbl_trans_medcheck_det WHERE item IS NULL ORDER BY id DESC;");
             echo br();
         }
     }
+    
+    public function tes53(){
+        $sql = $this->db
+                    ->where('status', '1')
+                    ->where('produk', '')
+                    ->order_by('id', 'desc')
+                    ->get('tbl_m_produk_hist')->result();
+        
+        foreach ($sql as $item){
+            $sql_det = $this->db
+                    ->where('id', $item->id_pembelian_det)
+                    ->get('tbl_trans_beli_det')->row();
+            
+            $data = array(
+                'tgl_modif'     => date('Y-m-d H:i:s'),
+                'tgl_ed'        => $sql_det->tgl_ed,
+                'kode_batch'    => $sql_det->kode_batch,
+                'produk'        => $sql_det->produk,
+                'no_nota'       => $sql_det->no_nota,
+                'tgl_masuk'     => '2024-09-30 00:00:00',
+            );
+            
+//            crud::update('tbl_m_produk_hist', 'id', $item->id, $data);
+            
+            echo $item->id.' ==> '.$item->id_produk.' ==> '.$sql_det->produk;
+            echo br();
+            
+            echo '<pre>';
+            print_r($data);
+        }
+    }
 
     public function bot_stok_op() {
         $sql = $this->db
