@@ -1,6 +1,7 @@
 <?php 
 $txt_pasien = explode(' ', $pasien->nama);
-$nm_file    = strtolower($pasien->nik);
+$nm         = strtolower(strreplace(array(' ','\''),'', $pasien->nama));
+$nm_file    = strtolower($pasien->nik).(!empty($pasien->nama) ? '_'.$nm : '');
 ?>
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">

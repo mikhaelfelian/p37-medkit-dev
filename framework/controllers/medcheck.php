@@ -59,7 +59,6 @@ class medcheck extends CI_Controller {
                                         ->like('tipe', $tp)
                                         ->like('status_bayar', $by)
                                         ->like('status_periksa', $sp)
-//                                        ->group_by('tgl_masuk, pasien')
                                         ->order_by('id','desc')
                                         ->get('v_medcheck')->num_rows();                
                 }
@@ -119,7 +118,6 @@ class medcheck extends CI_Controller {
                                              ->like('status_bayar', $by)
                                              ->like('status_periksa', $sp)
                                              ->limit($config['per_page'], $hal)
-//                                             ->group_by('tgl_simpan, pasien')
                                              ->get('v_medcheck_dokter')->result();
                     } else {
                         $data['penj'] = $this->db
@@ -135,22 +133,7 @@ class medcheck extends CI_Controller {
                     }         
                 }else{
                     // Bukan Dokter
-                    if (!empty($hal)) {
-//                        $data['penj'] = $this->db
-//                                             ->where('status_hps', '0')
-//                                             ->where('status_pos', '0')
-//                                             ->like('DATE(tgl_simpan)', $this->tanggalan->tgl_indo_sys($tg))
-//                                             ->like('tipe', $tp)
-//                                             ->like('id_dokter', ($id_grup->name == 'dokter' ? $id_user : ''), ($id_grup->name == 'dokter' ? 'none' : ''))
-//                                             ->like('id', general::dekrip($id))
-//                                             ->like('pasien', $cs)
-//                                             ->like('status_bayar', $by)
-//                                             ->like('status_periksa', $sp)
-//                                             ->limit($config['per_page'], $hal)
-////                                             ->group_by('tgl_masuk, pasien')
-//                                             ->order_by('tgl_simpan', 'desc')
-//                                             ->get('v_medcheck')->result();
-                        
+                    if (!empty($hal)) {                        
                                $kueri = "SELECT
                                             tbl_trans_medcheck.id, tbl_trans_medcheck.id_user, tbl_trans_medcheck.id_dokter, tbl_trans_medcheck.id_nurse, tbl_trans_medcheck.id_analis,
                                             tbl_trans_medcheck.id_pasien, tbl_trans_medcheck.id_poli, tbl_trans_medcheck.id_dft, tbl_trans_medcheck.id_ant, tbl_trans_medcheck.id_kasir, tbl_trans_medcheck.id_instansi, 
@@ -175,22 +158,7 @@ class medcheck extends CI_Controller {
                                         ORDER BY tbl_trans_medcheck.id DESC LIMIT ".$config['per_page'].", ".$hal;
 
                         $data['penj']   = $this->db->query($kueri)->result();
-                    } else {
-//                        $data['penj'] = $this->db
-//                                             ->where('status_hps', '0')
-//                                             ->where('status_pos', '0')
-//                                             ->like('DATE(tgl_simpan)', $this->tanggalan->tgl_indo_sys($tg))
-//                                             ->like('tipe', $tp)
-//                                             ->like('id_dokter', ($id_grup->name == 'dokter' ? $id_user : ''), ($id_grup->name == 'dokter' ? 'none' : ''))
-//                                             ->like('id', general::dekrip($id))
-//                                             ->like('pasien', $cs)
-//                                             ->like('status_bayar', $by)
-//                                             ->like('status_periksa', $sp)
-//                                             ->limit($config['per_page'])
-////                                             ->group_by('tgl_masuk, pasien')
-//                                             ->order_by('tgl_simpan', 'desc')
-//                                             ->get('v_medcheck')->result();
-                                             
+                    } else {                                             
                                $kueri = "SELECT
                                             tbl_trans_medcheck.id, tbl_trans_medcheck.id_user, tbl_trans_medcheck.id_dokter, tbl_trans_medcheck.id_nurse, tbl_trans_medcheck.id_analis,
                                             tbl_trans_medcheck.id_pasien, tbl_trans_medcheck.id_poli, tbl_trans_medcheck.id_dft, tbl_trans_medcheck.id_ant, tbl_trans_medcheck.id_kasir, tbl_trans_medcheck.id_instansi, 
@@ -215,7 +183,6 @@ class medcheck extends CI_Controller {
                                         ORDER BY tbl_trans_medcheck.id DESC LIMIT ".$config['per_page'];
                                 
                         $data['penj']   = $this->db->query($kueri)->result();
-                        // GROUP BY DATE_FORMAT(tbl_trans_medcheck.tgl_simpan, '%Y-%m-%d %H'), DATE_FORMAT(tbl_trans_medcheck.tgl_masuk, '%Y-%m-%d %H'), tbl_trans_medcheck.keluhan, tbl_trans_medcheck.tipe, tbl_trans_medcheck.id_pasien
                     }
                 }
 
