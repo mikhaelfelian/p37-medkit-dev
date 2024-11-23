@@ -168,7 +168,7 @@
             <?php echo (float)$sql_pasien_poin->jml_poin ?>
         </p>
 
-        <?php if (akses::hakSA() == TRUE OR akses::hakOwner() == TRUE OR akses::hakOwner2() == TRUE OR akses::hakPerawat() == TRUE) { ?>
+        <?php if (akses::hakSA() == TRUE OR akses::hakOwner() == TRUE OR akses::hakOwner2() == TRUE OR akses::hakPerawat() == TRUE OR akses::hakAnalis() == TRUE) { ?>
             <p class="text-muted text-center"><?php echo anchor(base_url('master/data_pasien_tambah.php?id=' . general::enkrip($sql_medc->id_pasien) . '&route=medcheck/tindakan.php?id=' . general::enkrip($sql_medc->id)), '<i class="fa fa-edit"></i> Ubah Pasien', 'class="btn btn-warning btn-flat btn-sm"'); ?></p>
         <?php } ?>
         <p class="text-muted text-center"><?php echo anchor(base_url('medcheck/cetak_label_json.php?id=' . general::enkrip($sql_medc->id) . '&route=medcheck/tindakan.php?id=' . general::enkrip($sql_medc->id)), '<i class="fa fa-print"></i> Cetak Label', 'class="btn btn-primary btn-flat btn-sm" style="width: 107.14px;" target="_blank"'); ?></p>

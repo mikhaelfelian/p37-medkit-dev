@@ -7766,7 +7766,7 @@ class master extends CI_Controller {
                 $sql_glr = $this->db->where('id', $gelar)->get('tbl_m_gelar')->row();
                 $kode    = sprintf('%05d', $sql_num);
                 $sql_kat = $this->db->get('tbl_m_kategori');
-                
+
                 $data_pas = array(
                     'tgl_simpan'   => date('Y-m-d H:i:s'),
                     'id_gelar'     => $gelar,
