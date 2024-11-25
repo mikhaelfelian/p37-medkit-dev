@@ -5686,8 +5686,6 @@ class medcheck extends CI_Controller {
             $jml_biaya      = str_replace('.', '', $this->input->post('jml_biaya'));
             $jml_dp         = str_replace('.', '', $this->input->post('jml_total_dp'));
             $jml_ongkir     = str_replace('.', '', $this->input->post('jml_ongkir'));
-            $jml_ongkir     = str_replace('.', '', $this->input->post('jml_ongkir'));
-//            $jml_tot_poin   = str_replace('.', '', $this->input->post('jml_total_poin'));
             $jml_pot_poin   = str_replace('.', '', $this->input->post('potongan_poin'));
 
             $pengaturan = $this->db->get('tbl_pengaturan')->row();
@@ -5871,17 +5869,16 @@ class medcheck extends CI_Controller {
                                 'id_kasir'          => $this->ion_auth->user()->row()->id,
                                 'tgl_bayar'         => $tgl_bayar.' '.date('H:i:s'),
                                 'tgl_keluar'        => date('Y-m-d H:i:s'),
-//                                'jml_ongkir'        => (float)$jml_ongkir,
                                 'jml_potongan_poin' => (float)$jml_pot_poin,
                                 'jml_subtotal'      => (float)$jml_gtotal,
                                 'jml_gtotal'        => (float)$gtotal,
                                 'jml_bayar'         => (float)$jml_bayar,
                                 'jml_kembali'       => (float)$jml_kembali,
-                                'jml_poin'          => floor($jml_poin),
-                                'jml_poin_nom'      => (float)$jml_poin_nom,
+                                'jml_poin'          => (!empty($jml_poin) ? floor($jml_poin) : 0),
+                                'jml_poin_nom'      => (!empty($jml_poin_nom) ? (float)$jml_poin_nom : 0),
                                 'status_bayar'      => '1',
                                 'status_nota'       => '3',
-                                'metode' 	   => $metode_byr,
+                                'metode' 	    => $metode_byr,
                              );
                             
                             # Update ketersediaan kamar jika rawat inap
