@@ -1,6 +1,15 @@
 <div class="row">
     <div class="col-md-12">
         <div class="form-group <?php echo (!empty($hasError['platform']) ? 'text-danger' : '') ?>">
+            <label class="control-label">Referensi</label>
+            <select id="referall" name="referall" class="form-control rounded-0 rounded-0<?php echo (!empty($hasError['platform']) ? ' is-invalid' : '') ?>">
+                <option value="">- REFERENSI -</option>
+                <?php foreach ($sql_kary as $karyawan){ ?>
+                    <option value="<?php echo $karyawan->id_user ?>" <?php // echo ($sql_dft_id->tipe_bayar == $penj->id ? 'selected' : '') ?>><?php echo $karyawan->nama ?></option>
+                <?php } ?>
+            </select>
+        </div>
+        <div class="form-group <?php echo (!empty($hasError['platform']) ? 'text-danger' : '') ?>">
             <label class="control-label">Penjamin</label>
             <select id="platform" name="platform" class="form-control rounded-0 rounded-0<?php echo (!empty($hasError['platform']) ? ' is-invalid' : '') ?>">
                 <option value="">- PENJAMIN -</option>

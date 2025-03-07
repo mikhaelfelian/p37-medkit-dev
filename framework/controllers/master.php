@@ -2939,6 +2939,7 @@ class master extends CI_Controller {
             $tipe_rc  = $this->input->post('tipe_racikan');
             $harga_bl = $this->input->post('harga_beli');
             $harga_jl = $this->input->post('harga_jual');
+            $harga_ht = $this->input->post('harga_jual_het');
             $harga_gr = $this->input->post('harga_grosir');
             $rem_tipe = $this->input->post('remun_tipe');
             $rem_perc = $this->input->post('remun_perc');
@@ -2985,6 +2986,7 @@ class master extends CI_Controller {
                         'jml'               => 0,                
                         'harga_beli'        => (!empty($harga_bl) ? general::format_angka_db($harga_bl) : 0),
                         'harga_jual'        => (!empty($harga_jl) ? general::format_angka_db($harga_jl) : 0),
+                        'harga_jual'        => (!empty($harga_ht) ? general::format_angka_db($harga_ht) : 0),
                         'harga_grosir'      => (!empty($harga_gr) ? general::format_angka_db($harga_gr) : 0),
                         'remun_tipe'        => (!empty($rem_tipe) ? $rem_tipe : '0'),
                         'remun_nom'         => (!empty($rem_nom) ? $rem_nom : '0'),
@@ -3466,6 +3468,7 @@ class master extends CI_Controller {
             $tipe_rc    = $this->input->post('tipe_racikan');
             $harga_bl   = $this->input->post('harga_beli');
             $harga_jl   = $this->input->post('harga_jual');
+            $harga_ht   = $this->input->post('harga_jual_het');
             $harga_gr   = $this->input->post('harga_grosir');
             $rem_tipe   = $this->input->post('remun_tipe');
             $rem_perc   = $this->input->post('remun_perc');
@@ -3517,6 +3520,7 @@ class master extends CI_Controller {
                     'apres_perc'        => (!empty($aps_perc) ? $aps_perc : '0'),
                     'harga_beli'        => (!empty($harga_bl) ? general::format_angka_db($harga_bl) : 0),
                     'harga_jual'        => (!empty($harga_jl) ? general::format_angka_db($harga_jl) : 0),
+                    'harga_jual_het'    => (!empty($harga_ht) ? general::format_angka_db($harga_ht) : 0),
                     'jml_limit'         => (!empty($jml_lmt) ? $jml_lmt : '0'),
                     'status_subt'       => (!empty($stat_subt) ? $stat_subt : '0'),
                     'status_racikan'    => (!empty($tipe_rc) ? $tipe_rc : '0'),

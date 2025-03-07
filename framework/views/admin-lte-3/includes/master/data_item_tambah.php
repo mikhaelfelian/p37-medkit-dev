@@ -122,6 +122,10 @@
                                     <label class="control-label">Harga Jual (Default)</label>
                                     <?php echo form_input(array('id' => 'harga', 'name' => 'harga_jual', 'class' => 'form-control', 'value' => $barang->harga_jual)) ?>
                                 </div>
+                                <div class="form-group <?php echo (!empty($hasError['harga_jual_het']) ? 'text-danger' : '') ?>">
+                                    <label class="control-label">Harga HET</label>
+                                    <?php echo form_input(array('id' => 'harga', 'name' => 'harga_jual_het', 'class' => 'form-control', 'value' => $barang->harga_jual_het)) ?>
+                                </div>
                             
                                 <div class="row">
                                     <div class="col-lg-4"><label class="control-label">Remunerasi</label></div>

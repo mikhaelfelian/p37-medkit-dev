@@ -364,7 +364,7 @@ $route['surat/print_pdf_gc.php']                        = "medcheck/pdf_gc";
 $route['medcheck/set_gc_simpan.php']                    = "medcheck/set_gc_simpan";
 $route['medcheck/set_gc_update.php']                    = "medcheck/set_gc_update";
 $route['medcheck/set_cari_daftar.php']                  = "medcheck/set_cari_daftar";
-$route['medcheck/set_cari_antrian.php']                  = "medcheck/set_cari_antrian";
+$route['medcheck/set_cari_antrian.php']                 = "medcheck/set_cari_antrian";
 $route['medcheck/data_dokter.php']                      = "medcheck/data_dokter";
 
 $route['medcheck/data_antrian.php']                     = "medcheck/trans_medcheck_ant";
@@ -394,14 +394,15 @@ $route['medcheck/restore.php']                 = "medcheck/trans_medcheck_restor
 $route['medcheck/invoice/detail.php']          = "medcheck/trans_medcheck_invoice";
 $route['medcheck/invoice/bayar.php']           = "medcheck/trans_medcheck_bayar";
 $route['medcheck/invoice/print_dm.php']        = "medcheck/trans_medcheck_print_dm";
+$route['medcheck/invoice/print_dm_pdf.php']        = "medcheck/pdf_medcheck_nota_dm";
 $route['medcheck/invoice/print_dm_ranap.php']  = "medcheck/trans_medcheck_print_dm_ranap";
 $route['medcheck/invoice/print_pdf.php']       = "medcheck/pdf_medcheck_nota_rajal";
-$route['medcheck/invoice/print_pdf_ranap.php'] = "medcheck/pdf_medcheck_nota_ranap";
-$route['medcheck/invoice/print_pdf_ranap2.php']= "medcheck/pdf_medcheck_nota_ranap2";
-$route['medcheck/invoice/print_pdf_ranap3.php']= "medcheck/pdf_medcheck_nota_ranap3";
-$route['medcheck/data_medcheck.php']           = "medcheck/medcheck_kasir_list";
-$route['medcheck/data_pemb.php']               = "medcheck/medcheck_pemb_list";
-$route['medcheck/data_hapus.php']              = "medcheck/medcheck_batal_list";
+$route['medcheck/invoice/print_pdf_ranap.php']          = "medcheck/pdf_medcheck_nota_ranap";
+$route['medcheck/invoice/print_pdf_ranap2.php']         = "medcheck/pdf_medcheck_nota_ranap2";
+$route['medcheck/invoice/print_pdf_ranap3.php']         = "medcheck/pdf_medcheck_nota_ranap3";
+$route['medcheck/data_medcheck.php']                    = "medcheck/medcheck_kasir_list";
+$route['medcheck/data_pemb.php']                        = "medcheck/medcheck_pemb_list";
+$route['medcheck/data_hapus.php']                       = "medcheck/medcheck_batal_list";
 
 $route['medcheck/set_medcheck.php']                     = "medcheck/set_medcheck";
 $route['medcheck/set_medcheck_transfer.php']            = "medcheck/set_medcheck_transfer";
@@ -444,12 +445,19 @@ $route['medcheck/set_medcheck_lab_spr_upd.php']         = "medcheck/set_medcheck
 $route['medcheck/set_medcheck_lab_spr_hsl.php']         = "medcheck/set_medcheck_lab_spiro_upd_hsl";
 $route['medcheck/set_medcheck_lab_spr_hps.php']         = "medcheck/set_medcheck_lab_spiro_hps";
 $route['medcheck/set_medcheck_lab_spr_hps_hsl.php']     = "medcheck/set_medcheck_lab_spiro_hps_hsl";
+$route['medcheck/set_medcheck_lab_adm_save.php']        = 'medcheck/set_medcheck_lab_adm_save';
+$route['medcheck/set_medcheck_lab_adm_delete.php']      = 'medcheck/set_medcheck_lab_adm_delete';
 $route['medcheck/set_medcheck_lab_ekg.php']             = "medcheck/set_medcheck_lab_ekg";
 $route['medcheck/set_medcheck_lab_ekg_upd.php']         = "medcheck/set_medcheck_lab_ekg_upd";
 $route['medcheck/set_medcheck_lab_ekg_upload.php']      = "medcheck/set_medcheck_lab_ekg_file";
 $route['medcheck/lab/hapus.php']                        = "medcheck/set_medcheck_lab_hapus";
 $route['medcheck/lab/hapus_spiro.php']                  = "medcheck/set_medcheck_lab_hapus_spiro";
 $route['medcheck/lab/hapus_ekg.php']                    = "medcheck/set_medcheck_lab_hapus_ekg";
+
+// Laporan routes
+$route['laporan/laporan_referal.php'] = 'laporan/laporan_referal';
+$route['laporan/set_cari_referal.php'] = 'laporan/set_cari_referal';
+$route['laporan/set_bayar_referal.php'] = 'laporan/set_bayar_referal'; 
 
 $route['medcheck/set_medcheck_rad.php']                 = "medcheck/set_medcheck_rad";
 $route['medcheck/set_medcheck_rad_upd.php']             = "medcheck/set_medcheck_rad_upd";
@@ -620,6 +628,7 @@ $route['medcheck/surat/cetak_pdf_inf.php']              = "medcheck/pdf_medcheck
 $route['medcheck/surat/cetak_pdf_lab.php']              = "medcheck/pdf_medcheck_lab";
 $route['medcheck/surat/cetak_pdf_lab_spiro.php']        = "medcheck/pdf_medcheck_lab_spiro";
 $route['medcheck/surat/cetak_pdf_lab_ekg.php']          = "medcheck/pdf_medcheck_lab_ekg";
+$route['medcheck/cetak_audiometri.php']                 = "medcheck/pdf_medcheck_lab_audio";
 $route['medcheck/surat/cetak_pdf_pen_hrv.php']          = "medcheck/pdf_medcheck_pen_hrv";
 $route['medcheck/surat/cetak_pdf_rad.php']              = "medcheck/pdf_medcheck_rad";
 $route['medcheck/surat/cetak_pdf_rsm.php']              = "medcheck/pdf_medcheck_resume";
@@ -628,10 +637,13 @@ $route['medcheck/surat/cetak_pdf_rsm_rnp.php']          = "medcheck/pdf_medcheck
 $route['medcheck/surat/cetak_pdf_ass_rnp.php']          = "medcheck/pdf_medcheck_ass_rnp";
 $route['medcheck/surat/cetak_pdf_ass_fisik.php']        = "medcheck/pdf_medcheck_ass_fisik";
 $route['medcheck/resep/cetak_pdf.php']                  = "medcheck/pdf_medcheck_resep";
+
+// route['medcheck/cetak_audiometri.php'] = 'medcheck/cetak_audiometri'; 
 /* --- Medcheck --- */
 
 /* Transaksi */ 
 // Pembelian
+$route['transaksi/beli']                                = "transaksi/trans_beli_list";
 $route['transaksi/beli/index.php']                      = "transaksi/trans_beli_list";
 $route['transaksi/beli/trans_beli.php']                 = "transaksi/trans_beli";
 $route['transaksi/beli/trans_beli_edit.php']            = "transaksi/trans_beli_edit";
@@ -916,6 +928,10 @@ $route['laporan/set_data_pasien.php']               = "laporan/set_data_pasien";
 $route['laporan/xls_data_pasien.php']               = "laporan/xls_data_pasien";
 $route['laporan/xls_data_pasien2.php']              = "laporan/xls_data_pasien2";
 
+$route['laporan/data_pasien_st.php']                = "laporan/data_pasien_st";
+$route['laporan/set_data_pasien_st.php']            = "laporan/set_data_pasien_st";
+$route['laporan/xls_data_pasien_st.php']            = "laporan/xls_data_pasien_st";
+
 // Laporan Kunjungan Pasien
 $route['laporan/data_visit_pasien.php']             = "laporan/data_pasien_kunj";
 $route['laporan/set_data_visit_pasien.php']         = "laporan/set_data_pasien_kunj";
@@ -1111,6 +1127,10 @@ $route['laporan/set_lap_ret_pembelian.php']         = "laporan/set_lap_ret_pembe
 $route['laporan/set_lap_pemasukan.php']             = "laporan/set_lap_pemasukan";
 $route['laporan/set_lap_pengeluaran.php']           = "laporan/set_lap_pengeluaran";
 $route['laporan/set_lap_mutasi.php']                = "laporan/set_lap_mutasi";
+
+// Laporan Referal Fee
+$route['laporan/data_referal_fee.php']              = "laporan/data_referal_fee";
+$route['laporan/set_data_referal_fee.php']          = "laporan/set_data_referal_fee";
 
 /* PAJAK */
 $route['pajak/input_retur_jual.php']                = "pajak/input_retur_jual";

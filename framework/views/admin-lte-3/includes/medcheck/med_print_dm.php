@@ -41,9 +41,23 @@ margin: 10;*/
     <body>
         <table border="0" style="width: 365px;" cellspacing="0">
             <tr>
-                <th style="width: 75px; text-align: left; font-size: 11px;" colspan="6">
-                    <img src="<?php echo base_url('/assets/theme/admin-lte-3/dist/img/kop.png') ?>" width="365px" height="82px">
+                <th rowspan="3" style="border-bottom: 1px solid #000;">
+                    <img src="<?php echo base_url('/assets/theme/admin-lte-3/dist/img/kop_es_bw_197x234.png') ?>" width="75px" height="82px">                   
                 </th>
+                <th style="width: 75px; text-align: center; font-size: 18px; color: #00A650;" colspan="5">
+                    <?php echo $setting->judul ?>
+                    <!--<img src="<?php echo base_url('/assets/theme/admin-lte-3/dist/img/kop.png') ?>" width="365px" height="82px">-->
+                </th>
+            </tr>
+            <tr>
+                <td style="width: 75px; text-align: center; font-size: 11px; color: #00A650;" colspan="5">
+                    <?php echo $setting->alamat ?>
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 75px; text-align: center; font-size: 11px; border-bottom: 1px solid #000; color: #00A650;" colspan="5">
+                    <?php echo $setting->tlp ?> / <?php echo $setting->email ?>
+                </td>
             </tr>
             <tr>
                 <th style="width: 65px; text-align: left; font-size: 11px;">No. Faktur</th>

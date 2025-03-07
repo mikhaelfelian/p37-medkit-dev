@@ -226,10 +226,6 @@
                                                     <th class="text-right" colspan="5">TOTAL OMSET</th>
                                                     <th class="text-right"><?php echo general::format_angka($total); ?></th>
                                                 </tr>
-                                                <tr>
-                                                    <th class="text-right" colspan="5">TOTAL KUNJUNGAN PASIEN</th>
-                                                    <th class="text-right"><?php echo general::format_angka($sql_omset_pas->num_rows()); ?></th>
-                                                </tr>
                                         <?php } ?>
                                     </tbody>
                                 </table>

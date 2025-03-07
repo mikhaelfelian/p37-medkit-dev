@@ -99,7 +99,6 @@
                                                                 <td class="text-right"><?php echo general::format_angka($medc->harga); ?></td>
                                                                 <td class="text-right"><?php echo general::format_angka($medc->subtotal); ?></td>
                                                             </tr>
-
                                                             <?php if ($sql_rf->num_rows() > 0) { ?>
                                                                 <?php foreach ($sql_rf->result() as $reff) { ?>
                                                                     <tr>

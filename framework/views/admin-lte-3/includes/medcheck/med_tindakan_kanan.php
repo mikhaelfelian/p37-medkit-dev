@@ -278,6 +278,9 @@
                     <span class="float-left"><small><?php echo anchor(base_url('surat/print_pdf_gc.php?dft=' . general::enkrip($sql_dft_gc->id) . '&route=medcheck/tindakan.php?id=' . general::enkrip($sql_medc->id)), '<i class="fa fa-signature"></i> Cetak', 'class="btn btn-primary btn-flat btn-sm" style="width: 107.14px;" target="_blank"'); ?></small></span>
                 </li>
             <?php } ?>
+                <li class="list-group-item">
+                    <a href="https://wa.me/<?php echo $sql_pasien->no_hp ?>" target="_blank" style="display: inline-block; padding: 10px 20px; background-color: #25D366; color: white; text-decoration: none; border-radius: 5px; font-size: 16px;">Chat via WhatsApp</a>
+                </li>
         </ul>
     </div>
 </div>

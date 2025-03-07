@@ -13,51 +13,107 @@
                 <div class="tab-content" id="vert-tabs-tabContent">
                     <div class="tab-pane text-left fade show active" id="tab-pemeriksaan" role="tabpanel" aria-labelledby="vert-tabs-home-tab">
                         <?php if (akses::hakSA() == TRUE OR akses::hakOwner() == TRUE OR akses::hakOwner2() == TRUE OR akses::hakDokter() == TRUE OR akses::hakPerawat() == TRUE OR akses::hakAnalis() == TRUE) { ?>
-                            <?php // if ($sql_medc->status < 5) { ?>
-                                <a href="<?php echo base_url('medcheck/set_medcheck_pen_hrv.php?id=' . general::enkrip($sql_medc->id) . '&status=' . $this->input->get('status')) ?>" class="btn btn-sm btn-primary"><i class="fas fa-plus"></i> Audiometri</a><?php echo br(2) ?>
-                            <?php // } ?>
+                            <!-- Add Audiometri Form -->
+                            <div class="card card-primary card-outline rounded-0">
+                                <div class="card-header">
+                                    <h3 class="card-title">Tambah Data Audiometri</h3>
+                                </div>
+                                <form action="<?php echo base_url('medcheck/set_medcheck_lab_adm_save.php') ?>" method="post" enctype="multipart/form-data">
+                                    <div class="card-body">
+                                        <input type="hidden" name="id_medcheck" value="<?php echo $this->input->get('id') ?>">
+                                        <input type="hidden" name="id_pasien" value="<?php echo general::enkrip($sql_pasien->id) ?>">
+                                        <input type="hidden" name="status" value="<?php echo $this->input->get('status') ?>">
+
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <div class="form-group">
+                                                    <label>Tanggal Pemeriksaan</label>
+                                                    <input type="text" class="form-control datepicker rounded-0" name="tgl_masuk" id="tgl_masuk" autocomplete="off" required>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6">
+                                                <div class="form-group">
+                                                    <label>File Hasil Audiometri</label>
+                                                    <div class="custom-file">
+                                                        <input type="file" class="custom-file-input rounded-0" id="file_audiometri" name="file_audiometri" required accept=".pdf,.jpg,.jpeg,.png">
+                                                        <label class="custom-file-label" for="file_audiometri">Pilih file...</label>
+                                                    </div>
+                                                    <small class="text-muted"><b class="text-danger">Format yang diizinkan:</b> JPG, JPEG, PNG, <br/>(Maks File : 2 MB)</small>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Hasil Pemeriksaan</label>
+                                            <textarea class="form-control rounded-0" name="hasil" rows="3" placeholder="Masukkan hasil pemeriksaan audiometri" autocomplete="off"></textarea>
+                                        </div>
+
+                                    </div>
+                                    <div class="card-footer">
+                                        <button type="submit" class="btn btn-primary btn-flat">Simpan</button>
+                                    </div>
+                                </form>
+                            </div>
+                            <?php echo br() ?>
                         <?php } ?>
 
+                        <!-- Display Records -->
                         <table class="table table-striped">
                             <thead>
                                 <tr>
                                     <th class="text-center">#</th>
-                                    <th class="text-center">No.</th>
-                                    <th class="text-left" colspan="2">Pemeriksaan</th>
+                                    <th class="text-center">Tanggal</th>
+                                    <th class="text-left">File</th>
+                                    <th class="text-left">Petugas</th>
                                     <th></th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php $grup = $this->ion_auth->get_users_groups()->row(); ?>
-                                <?php $no = 1; ?>
-                                <?php foreach ($sql_medc_hrv->result() as $hrv) { ?>
+                                <?php
+                                $no = 1;
+                                $audiometri_records = $this->db->where('id_medcheck', general::dekrip($this->input->get('id')))
+                                        ->order_by('tgl_simpan', 'DESC')
+                                        ->get('tbl_trans_medcheck_lab_audiometri')
+                                        ->result();
+                                foreach ($audiometri_records as $record) {
+                                    ?>
                                     <tr>
                                         <td class="text-center" style="width: 50px;">
-                                            <?php if (akses::hakSA() == TRUE OR akses::hakOwner() == TRUE OR akses::hakOwner2() == TRUE OR akses::hakAdminM() == TRUE OR akses::hakAdmin() == TRUE OR akses::hakAnalis() == TRUE OR akses::hakDokter() == TRUE) { ?>
-                                                <?php echo anchor(base_url('medcheck/hrv/hapus.php?id=' . $this->input->get('id') . '&act=' . $this->input->get('act') . '&item_id=' . general::enkrip($hrv->id) . '&status=' . $this->input->get('status')), '<i class="fas fa-trash"></i>', 'class="btn btn-danger btn-sm" onclick="return confirm(\'Hapus [' . $hrv->no_lab . '] ?\')"') ?>
-                                            <?php } elseif ($hrv->id_analis == $this->ion_auth->user()->row()->id) { ?>
-                                                <?php if ($sql_medc->status_bayar == '0') { ?>
-                                                    <?php echo anchor(base_url('medcheck/hrv/hapus.php?id=' . $this->input->get('id') . '&item_id=' . general::enkrip($hrv->id) . '&status=' . $this->input->get('status')), '<i class="fas fa-trash"></i>', 'class="btn btn-danger btn-sm" onclick="return confirm(\'Hapus [' . $hrv->no_lab . '] ?\')"') ?>
-                                                <?php } ?>
-                                            <?php } ?>
+                                            <?php if (akses::hakSA() == TRUE OR akses::hakOwner() == TRUE OR akses::hakOwner2() == TRUE OR $record->id_user == $this->ion_auth->user()->row()->id) { ?>
+                                                <?php
+                                                echo anchor(
+                                                        base_url('medcheck/set_medcheck_lab_adm_delete.php?id=' . $this->input->get('id') .
+                                                                '&item_id=' . general::enkrip($record->id) .
+                                                                '&status=' . $this->input->get('status')),
+                                                        '<i class="fas fa-trash"></i>',
+                                                        'class="btn btn-danger btn-sm" onclick="return confirm(\'Hapus data ini?\')"'
+                                                )
+                                                ?>
+    <?php } ?>
                                         </td>
-                                        <td class="text-center" style="width: 50px;"><?php echo $no; ?>.</td>
-                                        <td class="text-left" style="width: 50px;" colspan="2">
-                                            <?php echo $this->tanggalan->tgl_indo2($hrv->tgl_masuk); ?>
-                                            <?php echo br(); ?>
-                                            <?php echo $hrv->no_sample; ?>
-                                            <?php echo br(); ?>
-                                            <small><?php echo $this->ion_auth->user($hrv->id_analis)->row()->first_name; ?></small>
+                                        <td class="text-center"><?php echo $this->tanggalan->tgl_indo($record->tgl_masuk) ?></td>
+                                        <td class="text-left">
+                                            <a href="<?php echo base_url('file/pasien/' . strtolower($sql_pasien->kode_dpn . $sql_pasien->kode) . '/audiometri/' . $record->nama_file) ?>" target="_blank">
+                                                <i class="fas fa-file"></i> <?php echo $record->nama_file ?>
+                                            </a>
+                                            <b>Hasil : </b>
+                                            <p><?php echo $record->hasil ?></p>
                                         </td>
-                                        <td class="text-left" style="width: 90px;">
-                                            <?php if (akses::hakSA() == TRUE OR akses::hakOwner() == TRUE OR akses::hakOwner2() == TRUE OR akses::hakAnalis() == TRUE OR akses::hakDokter() == TRUE OR akses::hakPerawat() == TRUE) { ?>
-                                                <?php echo anchor(base_url('medcheck/tambah.php?act=pen_adm_input&id=' . general::enkrip($sql_medc->id) . '&id_pen=' . general::enkrip($hrv->id) . '&status=' . $this->input->get('status')), 'Input &raquo;', 'class="btn btn-warning btn-flat btn-xs text-bold" style="width: 70px;"') ?>
-                                                <?php // echo anchor(base_url('medcheck/surat/cetak_pdf_pen_hrv.php?id=' . general::enkrip($sql_medc->id) . '&id_pen=' . general::enkrip($hrv->id) . '&status=' . $this->input->get('status')), 'Cetak &raquo;', 'class="btn btn-primary btn-flat btn-xs text-bold" style="width: 70px;" target="_blank"') ?>
-                                            <?php } ?>
+                                        <td class="text-left">
+                                    <?php echo $this->ion_auth->user($record->id_user)->row()->first_name ?>
+                                        </td>
+                                        <td>
+                                            <?php
+                                            echo anchor(
+                                                base_url('medcheck/cetak_audiometri.php?id=' . general::enkrip($record->id)),
+                                                '<i class="fas fa-print"></i> Cetak',
+                                                'class="btn btn-info btn-sm" target="_blank"'
+                                            )
+                                            ?>                                            
                                         </td>
                                     </tr>
-                                    <?php $no++ ?>
-                                <?php } ?>
+    <?php $no++; ?>
+<?php } ?>
                             </tbody>
                         </table>
                     </div>
@@ -65,15 +121,29 @@
             </div>
         </div>
     </div>
-    <!-- /.card-body -->
     <div class="card-footer">
         <div class="row">
             <div class="col-lg-6">
                 <button type="button" class="btn btn-primary btn-flat" onclick="window.location.href = '<?php echo base_url('medcheck/tindakan.php?id=' . general::enkrip($sql_medc->id)) ?>'"><i class="fas fa-arrow-left"></i> Kembali</button>
             </div>
-            <div class="col-lg-6 text-right">
-
-            </div>
         </div>                            
     </div>
 </div>
+
+<!-- Add this to your existing script section -->
+<script>
+    $(document).ready(function () {
+        // Initialize datepicker
+        $('#tgl_masuk').datepicker({
+            format: 'dd-mm-yyyy',
+            autoclose: true,
+            todayHighlight: true
+        });
+
+        // Update file input label
+        $(".custom-file-input").on("change", function () {
+            var fileName = $(this).val().split("\\").pop();
+            $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+        });
+    });
+</script>

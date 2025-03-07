@@ -2847,6 +2847,112 @@ class laporan extends CI_Controller {
         }
     }
     
+    public function data_pasien_st(){
+        if (akses::aksesLogin() == TRUE) {
+            $tgl        = $this->input->get('tgl');
+            $tgl_awal   = $this->input->get('tgl_awal');
+            $tgl_akhir  = $this->input->get('tgl_akhir');
+            $case       = $this->input->get('case');
+            $hal        = $this->input->get('halaman'); // Halaman yang sedang dibuka
+            $statusPas  = $this->input->get('status_pas');
+            $jml        = $this->input->get('jml'); // Jumlah total pasien
+
+            $pengaturan = $this->db->get('tbl_pengaturan')->row();
+            $data['sql_poli'] = $this->db->get('tbl_m_poli')->result();
+
+            if ($jml > 0) {
+                $data['hasError'] = $this->session->flashdata('form_error');
+
+                // **Konfigurasi Pagination**
+                $config['base_url']  = base_url('laporan/data_pasien_st.php?case=' . $case
+                    . (!empty($tgl) ? '&tgl=' . $tgl : '')
+                    . (!empty($tgl_awal) ? '&tgl_awal=' . $tgl_awal : '')
+                    . (!empty($tgl_akhir) ? '&tgl_akhir=' . $tgl_akhir : '')
+                    . (!empty($jml) ? '&jml=' . $jml : '')
+                );
+
+                $config['total_rows']  = $jml; // Total data yang diambil
+                $config['per_page']    = $pengaturan->jml_item; // Jumlah data per halaman
+                $config['uri_segment'] = 3;
+                $config['page_query_string'] = TRUE;
+                $config['query_string_segment'] = 'halaman';
+
+                // **Tampilan Pagination**
+            $config['first_tag_open']        = '<li class="page-item">';
+            $config['first_tag_close']       = '</li>';
+            
+            $config['prev_tag_open']         = '<li class="page-item">';
+            $config['prev_tag_close']        = '</li>';
+            
+            $config['num_tag_open']          = '<li class="page-item">';
+            $config['num_tag_close']         = '</li>';
+            
+            $config['next_tag_open']         = '<li class="page-item">';
+            $config['next_tag_close']        = '</li>';
+            
+            $config['last_tag_open']         = '<li class="page-item">';
+            $config['last_tag_close']        = '</li>';
+            
+            $config['cur_tag_open']          = '<li class="page-item"><a href="#" class="page-link text-dark"><b>';
+            $config['cur_tag_close']         = '</b></a></li>';
+            
+            $config['first_link']            = '&laquo;';
+            $config['prev_link']             = '&lsaquo;';
+            $config['next_link']             = '&rsaquo;';
+            $config['last_link']             = '&raquo;';
+            $config['anchor_class']          = 'class="page-link"';
+
+                // **Inisialisasi Pagination**
+                $this->pagination->initialize($config);
+
+                // **Query untuk mendapatkan data pasien sesuai case yang dipilih**
+                switch ($case) {
+                    case 'per_rentang':
+                        $this->db->from("v_pasien");
+                        $this->db->where("DATE(tgl_simpan) >=", $tgl_awal);
+                        $this->db->where("DATE(tgl_simpan) <=", $tgl_akhir);
+
+                        if ($statusPas == "1") {
+                            $this->db->where("jumlah", '1'); // Pasien baru (jumlah = 1)
+                        } elseif ($statusPas == "2") {
+                            $this->db->where("jumlah >", '1'); // Pasien lama (jumlah > 1)
+                        }
+
+                        // Pagination: Ambil data sesuai halaman
+                        if (!empty($hal)) {
+                            $this->db->limit($config['per_page'], $hal);
+                        } else {
+                            $this->db->limit($config['per_page']);
+                        }
+
+                        $query = $this->db->get();
+                        $data['sql_pasien'] = $query->result();
+                        break;
+                }
+
+                // **Simpan data pagination**
+                $data['total_rows'] = $config['total_rows'];
+                $data['PerPage']    = $config['per_page'];
+                $data['pagination'] = $this->pagination->create_links();
+            }
+
+            // **Sidebar Menu**
+            $data['sidebar'] = 'admin-lte-3/includes/laporan/sidebar_lap';
+
+            // **Load View**
+            $this->load->view('admin-lte-3/1_atas', $data);
+            $this->load->view('admin-lte-3/2_header', $data);
+            $this->load->view('admin-lte-3/3_navbar', $data);
+            $this->load->view('admin-lte-3/includes/laporan/data_pasien_st', $data);
+            $this->load->view('admin-lte-3/5_footer', $data);
+            $this->load->view('admin-lte-3/6_bawah', $data);
+        } else {
+            $errors = $this->ion_auth->messages();
+            $this->session->set_flashdata('login', '<div class="alert alert-danger">Authentifikasi gagal, silahkan login ulang!!</div>');
+            redirect();
+        }
+    }
+
     public function data_pasien_kunj(){
         if (akses::aksesLogin() == TRUE) {
             $jml                = $this->input->get('jml');
@@ -4382,28 +4488,139 @@ class laporan extends CI_Controller {
 
     public function set_data_pasien(){
         if (akses::aksesLogin() == TRUE) {
-            $tgl        = $this->input->post('tgl');
-            $tipe       = $this->input->post('tipe');
-            
-            $pengaturan = $this->db->get('tbl_pengaturan')->row();
+            // Menentukan URL dasar
+            $redirect_url = 'laporan/data_pasien_st.php';
 
-            $tgln       = explode('-', $tgl);
-            $tgl_awal   = $this->tanggalan->tgl_indo_sys($tgl_rentang[0]);
+            // Menyimpan parameter dalam array agar lebih mudah diatur
+            $params = [];
 
-            if (!empty($tgl)) {
-                $sql = $this->db->where('tbl_m_pasien.no_hp !=', '')
-                                ->where('DAY(tbl_m_pasien.tgl_lahir)', $tgln[0])
-                                ->where('MONTH(tbl_m_pasien.tgl_lahir)', $tgln[1])
-                                ->get('tbl_m_pasien');
-                
-                # Lempar ke halaman laporan
-                redirect(base_url('laporan/data_pasien.php?case=per_tanggal'.'&tgl='.$tgln[0].'&bln='.$tgln[1].'&jml=' . $sql->num_rows()));
-            }else{                
-                $sql = $this->db->get('tbl_m_pasien');
-                
-                # Lempar ke halaman laporan
-                redirect(base_url('laporan/data_pasien.php?jml=' . $sql->num_rows()));
+            // Menentukan case berdasarkan input tanggal
+            if (!empty($tgl) && !empty($tgl_awal) && !empty($tgl_akhir)) {
+                // Jika `tgl` dan `tgl_rentang` terisi, redirect ke `per_tanggal`
+                $params['case'] = 'per_tanggal';
+                $params['tgl'] = $tgl;
+                $params['tgl_awal'] = $tgl_awal;
+                $params['tgl_akhir'] = $tgl_akhir;
+            } elseif (!empty($tgl_awal) && !empty($tgl_akhir)) {
+                // Jika hanya `tgl_rentang` yang terisi, redirect ke `per_rentang`
+                $params['case'] = 'per_rentang';
+                $params['tgl_awal'] = $tgl_awal;
+                $params['tgl_akhir'] = $tgl_akhir;
+            } elseif (!empty($tgl)) {
+                // Jika hanya `tgl` yang terisi, redirect ke `per_tanggal`
+                $params['case'] = 'per_tanggal';
+                $params['tgl'] = $tgl;
+            } else {
+                // **Jika tidak ada filter tanggal sama sekali, langsung redirect ke halaman utama**
+                redirect(base_url('laporan/data_pasien_st.php'));
+                exit; // **Pastikan eksekusi berhenti di sini agar tidak lanjut ke kode berikutnya**
             }
+
+            // Tambahkan parameter status pasien dan jumlah data
+            $params['statusPasien'] = $statusPas;
+            $params['jml'] = !empty($jumlah_data) ? $jumlah_data : 0; // Hindari NULL
+
+            // **Debugging sebelum redirect**
+            if (empty($params['tgl']) && empty($params['tgl_awal']) && empty($params['tgl_akhir'])) {
+                echo "<pre>";
+                echo "ERROR: Semua parameter tanggal kosong!";
+                print_r($params);
+                exit;
+            }
+
+            // **Gabungkan semua parameter ke dalam URL dengan http_build_query**
+            $redirect_url .= '?' . http_build_query($params);
+
+            // **Debugging untuk melihat hasil akhir URL**
+            echo "<pre>";
+            echo "Redirecting to: " . base_url($redirect_url);
+            print_r($params);
+            echo "</pre>";
+            exit;
+
+            // **Redirect ke halaman laporan dengan parameter yang benar**
+            redirect(base_url($redirect_url));
+            exit; // **Pastikan tidak ada eksekusi kode setelah redirect**
+        }else{
+            $errors = $this->ion_auth->messages();
+            $this->session->set_flashdata('login', '<div class="alert alert-danger">Authentifikasi gagal, silahkan login ulang!!</div>');
+            redirect();
+        }
+    }
+
+    public function set_data_pasien_st(){
+        if (akses::aksesLogin() == TRUE) {
+            $tgl            = $this->input->post('tgl');
+            $tgl_rtg        = $this->input->post('tgl_rentang');
+            $statusPas      = $this->input->post('statusPasien');
+            
+            $pengaturan     = $this->db->get('tbl_pengaturan')->row();
+            $tgl_rentang    = explode('-', $tgl_rtg);
+
+            $pengaturan     = $this->db->get('tbl_pengaturan')->row();
+
+            // **Mengonversi tanggal rentang jika ada**
+            $tgl_awal   = null;
+            $tgl_akhir  = null;
+
+            if (!empty($tgl_rtg)) {
+                $tgl_rentang = explode('-', $tgl_rtg);
+
+                if (count($tgl_rentang) == 2) { // Pastikan ada dua tanggal yang valid
+                    $tgl_awal  = trim($this->tanggalan->tgl_indo_sys($tgl_rentang[0]));
+                    $tgl_akhir = trim($this->tanggalan->tgl_indo_sys($tgl_rentang[1]));
+                }
+            }
+
+            // **Mengonversi tanggal masuk jika ada**
+            $tgl_masuk = !empty($tgl) ? trim($this->tanggalan->tgl_indo_sys($tgl)) : null;
+
+            // **Redirect sesuai dengan kondisi yang terpenuhi**
+            if (!empty($tgl_rtg)) {
+                // Jika hanya tanggal rentang yang terisi               
+                // **Menentukan kueri berdasarkan status pasien**
+                $this->db->select("id_pasien, tgl_simpan, kode_pasien, pasien, jumlah");
+                $this->db->from("v_pasien");
+                $this->db->where("DATE(tgl_simpan) >=", $tgl_awal);
+                $this->db->where("DATE(tgl_simpan) <=", $tgl_akhir);
+
+                if ($statusPas == "1") {
+                    // Jika statusPas = 1 (Pasien Baru), cari yang jumlahnya = 1
+                    $this->db->where("jumlah", '1');
+                } elseif ($statusPas == "2") {
+                    // Jika statusPas = 2 (Pasien Lama), cari yang jumlahnya > 1
+                    $this->db->where("jumlah >", '1');
+                }
+
+                $query = $this->db->get();
+                $jml = $query->num_rows(); // Hitung jumlah hasil kueri
+
+                // Redirect ke halaman laporan dengan parameter pencarian
+                redirect(base_url('laporan/data_pasien_st.php?case=per_rentang&tgl_awal=' . $tgl_awal . '&tgl_akhir=' . $tgl_akhir . '&status_pas=' . $statusPas . '&jml=' . $jml));
+            } elseif (!empty($tgl)) {
+                // Jika hanya tanggal spesifik yang terisi             
+                // **Menentukan kueri berdasarkan status pasien**
+                $this->db->select("id_pasien, tgl_simpan, kode_pasien, pasien, jumlah");
+                $this->db->from("v_pasien");
+                $this->db->where("DATE(tgl_simpan)", $tgl_masuk);
+
+                if ($statusPas == "1") {
+                    // Jika statusPas = 1 (Pasien Baru), cari yang jumlahnya = 1
+                    $this->db->where("jumlah", '1');
+                } elseif ($statusPas == "2") {
+                    // Jika statusPas = 2 (Pasien Lama), cari yang jumlahnya > 1
+                    $this->db->where("jumlah >", '1');
+                }
+
+                $query = $this->db->get();
+                $jml = $query->num_rows(); // Hitung jumlah hasil kueri
+                
+                redirect(base_url('laporan/data_pasien_st.php?case=per_tanggal&tgl=' . $tgl_masuk . '&status_pas=' . $statusPas));
+            } else {
+                // Jika tidak ada filter yang terisi, redirect ke halaman utama
+                redirect(base_url('laporan/data_pasien_st.php'));
+            }
+            exit; // Pastikan script berhenti setelah redirect
         }else{
             $errors = $this->ion_auth->messages();
             $this->session->set_flashdata('login', '<div class="alert alert-danger">Authentifikasi gagal, silahkan login ulang!!</div>');
@@ -6272,7 +6489,7 @@ class laporan extends CI_Controller {
             
             switch ($case) {
                     case 'per_tanggal':
-                        $sql_pembelian     = $this->db->select('tbl_trans_beli.id, tbl_trans_beli.tgl_masuk, tbl_trans_beli.no_nota, tbl_trans_beli_det.kode, tbl_trans_beli_det.produk, tbl_trans_beli_det.harga, tbl_trans_beli_det.jml, tbl_trans_beli_det.diskon, tbl_trans_beli_det.subtotal, tbl_m_supplier.nama')
+                        $sql_pembelian     = $this->db->select('tbl_trans_beli.id, tbl_trans_beli.tgl_masuk, tbl_trans_beli.no_nota, tbl_trans_beli_det.kode, tbl_trans_beli_det.produk, tbl_trans_beli_det.harga, tbl_trans_beli_det.harga, tbl_trans_beli_det.jml, tbl_trans_beli_det.diskon, tbl_trans_beli_det.subtotal, tbl_m_supplier.nama')
                                                           ->join('tbl_trans_beli', 'tbl_trans_beli.id=tbl_trans_beli_det.id_pembelian')
                                                           ->join('tbl_m_supplier', 'tbl_m_supplier.id=tbl_trans_beli.id_supplier')
                                                           ->where('DATE(tbl_trans_beli.tgl_masuk)', $this->tanggalan->tgl_indo_sys($tgl))
@@ -6281,7 +6498,7 @@ class laporan extends CI_Controller {
                         break;
                     
                     case 'per_rentang':
-                        $sql_pembelian     = $this->db->select('tbl_trans_beli.id, tbl_trans_beli.tgl_masuk, tbl_trans_beli.no_nota, tbl_trans_beli_det.kode, tbl_trans_beli_det.produk, tbl_trans_beli_det.harga, tbl_trans_beli_det.jml, tbl_trans_beli_det.diskon, tbl_trans_beli_det.subtotal, tbl_m_supplier.nama')
+                        $sql_pembelian     = $this->db->select('tbl_trans_beli.id, tbl_trans_beli.tgl_masuk, tbl_trans_beli.no_nota, tbl_trans_beli_det.kode, tbl_trans_beli_det.produk, tbl_trans_beli_det.harga, tbl_trans_beli_det.harga_het, tbl_trans_beli_det.jml, tbl_trans_beli_det.diskon, tbl_trans_beli_det.subtotal, tbl_m_supplier.nama')
                                                           ->join('tbl_trans_beli', 'tbl_trans_beli.id=tbl_trans_beli_det.id_pembelian')
                                                           ->join('tbl_m_supplier', 'tbl_m_supplier.id=tbl_trans_beli.id_supplier')
                                                           ->where('DATE(tbl_trans_beli.tgl_masuk) >=', $this->tanggalan->tgl_indo_sys($tgl_awal))
@@ -6295,9 +6512,9 @@ class laporan extends CI_Controller {
             $objPHPExcel = new PHPExcel();
 
             // Header Tabel Nota
-            $objPHPExcel->getActiveSheet()->getStyle('A4:H4')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-            $objPHPExcel->getActiveSheet()->getStyle('A4:H4')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
-            $objPHPExcel->getActiveSheet()->getStyle('A4:H4')->getFont()->setBold(TRUE);
+            $objPHPExcel->getActiveSheet()->getStyle('A4:I4')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+            $objPHPExcel->getActiveSheet()->getStyle('A4:I4')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+            $objPHPExcel->getActiveSheet()->getStyle('A4:I4')->getFont()->setBold(TRUE);
 //            $objPHPExcel->getActiveSheet()->getRowDimension('4')->setRowHeight(40);
 
             $objPHPExcel->setActiveSheetIndex(0)
@@ -6308,7 +6525,8 @@ class laporan extends CI_Controller {
                     ->setCellValue('E4', 'Item')
                     ->setCellValue('F4', 'Harga')
                     ->setCellValue('G4', 'Jml')
-                    ->setCellValue('H4', 'Subtotal');
+                    ->setCellValue('H4', 'Subtotal')
+                    ->setCellValue('I4', 'HET');
 
             $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(6);
             $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(10);
@@ -6329,8 +6547,8 @@ class laporan extends CI_Controller {
                     $objPHPExcel->getActiveSheet()->getStyle('A'.$cell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
                     $objPHPExcel->getActiveSheet()->getStyle('B'.$cell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
                     $objPHPExcel->getActiveSheet()->getStyle('C'.$cell.':E'.$cell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
-                    $objPHPExcel->getActiveSheet()->getStyle('F'.$cell.':H'.$cell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-                    $objPHPExcel->getActiveSheet()->getStyle('F'.$cell.':H'.$cell)->getNumberFormat()->setFormatCode("_(\"\"* #,##0_);_(\"\"* \(#,##0\);_(\"\"* \"-\"??_);_(@_)");
+                    $objPHPExcel->getActiveSheet()->getStyle('F'.$cell.':I'.$cell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+                    $objPHPExcel->getActiveSheet()->getStyle('F'.$cell.':I'.$cell)->getNumberFormat()->setFormatCode("_(\"\"* #,##0_);_(\"\"* \(#,##0\);_(\"\"* \"-\"??_);_(@_)");
                
                     $objPHPExcel->setActiveSheetIndex(0)
                             ->setCellValue('A'.$cell, $no)
@@ -6340,7 +6558,8 @@ class laporan extends CI_Controller {
                             ->setCellValue('E'.$cell, $item->produk)
                             ->setCellValue('F'.$cell, $item->harga)
                             ->setCellValue('G'.$cell, (float)$item->jml)
-                            ->setCellValue('H'.$cell, $item->subtotal);
+                            ->setCellValue('H'.$cell, $item->subtotal)
+                            ->setCellValue('I'.$cell, $item->harga_het);
 
                     $no++;
                     $cell++;
@@ -9643,6 +9862,115 @@ class laporan extends CI_Controller {
             redirect();
         }
     }
+    
+    public function xls_data_pasien_st() {
+    if (akses::aksesLogin() == TRUE) {
+        // Ambil parameter dari URL
+        $jml        = $this->input->get('jml');
+        $tgl        = $this->input->get('tgl');
+        $tgl_awal   = $this->input->get('tgl_awal');
+        $tgl_akhir  = $this->input->get('tgl_akhir');
+        $statusPas  = $this->input->get('status_pas');
+        $case       = $this->input->get('case');
+
+        // Pilih data berdasarkan filter
+        switch ($case) {
+            case 'per_tanggal':
+                $this->db->from("v_pasien");
+                $this->db->where("DATE(tgl_simpan)", $tgl);
+                if ($statusPas == "1") {
+                    $this->db->where("jumlah", '1'); // Pasien Baru
+                } elseif ($statusPas == "2") {
+                    $this->db->where("jumlah >", '1'); // Pasien Lama
+                }
+                break;
+
+            case 'per_rentang':
+                $this->db->from("v_pasien");
+                $this->db->where("DATE(tgl_simpan) >=", $tgl_awal);
+                $this->db->where("DATE(tgl_simpan) <=", $tgl_akhir);
+                if ($statusPas == "1") {
+                    $this->db->where("jumlah", '1'); // Pasien Baru
+                } elseif ($statusPas == "2") {
+                    $this->db->where("jumlah >", '1'); // Pasien Lama
+                }
+                break;
+                
+            default:
+                $this->db->from("v_pasien");
+                break;
+        }
+
+        $query = $this->db->get();
+        $sql_pasien = $query->result();
+
+        // **Load PHPExcel**
+        $objPHPExcel = new PHPExcel();
+
+        // **Header Tabel**
+        $objPHPExcel->setActiveSheetIndex(0)
+            ->setCellValue('A1', 'No')
+            ->setCellValue('B1', 'No. RM')
+            ->setCellValue('C1', 'Pasien')
+            ->setCellValue('D1', 'Alamat')
+            ->setCellValue('E1', 'Tgl Lahir')
+            ->setCellValue('F1', 'No. HP');
+
+        // **Set Lebar Kolom**
+        $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(5);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(15);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(35);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(55);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('E')->setWidth(15);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('F')->setWidth(15);
+
+        // **Set Style Header**
+        $objPHPExcel->getActiveSheet()->getStyle("A1:F1")->getFont()->setBold(TRUE);
+        $objPHPExcel->getActiveSheet()->getStyle("A1:F1")->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+
+        // **Isi Data Pasien**
+        $cell = 2;
+        $no = 1;
+
+        foreach ($sql_pasien as $pasien) {
+            $objPHPExcel->setActiveSheetIndex(0)
+                ->setCellValue('A' . $cell, $no++)
+                ->setCellValue('B' . $cell, $pasien->kode_pasien)
+                ->setCellValue('C' . $cell, $pasien->pasien)
+                ->setCellValue('D' . $cell, $pasien->alamat)
+                ->setCellValue('E' . $cell, $this->tanggalan->tgl_indo2($pasien->tgl_lahir))
+                ->setCellValue('F' . $cell, (!empty($pasien->no_hp) ? "62" . substr($pasien->no_hp, 1) : ''));
+            $cell++;
+        }
+
+        // **Set Nama Sheet**
+        $objPHPExcel->getActiveSheet()->setTitle('Data Pasien');
+
+        // Tentukan nama file berdasarkan status pasien
+        $filename = "data_pasien";
+        if ($statusPas == "1") {
+            $filename .= "_baru.xlsx"; // Jika pasien baru
+        } elseif ($statusPas == "2") {
+            $filename .= "_lama.xlsx"; // Jika pasien lama
+        } else {
+            $filename .= ".xlsx"; // Default tanpa status
+        }
+
+        // **Set Format Header**
+        header('Content-Type: application/vnd.ms-excel');
+        header('Content-Disposition: attachment;filename="' . $filename . '"');
+        header('Cache-Control: max-age=0');
+
+
+        $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+        ob_end_clean(); // Menghindari error karena output buffering
+        $objWriter->save('php://output');
+        exit;
+    } else {
+        $this->session->set_flashdata('login', '<div class="alert alert-danger">Authentifikasi gagal, silahkan login ulang!!</div>');
+        redirect();
+    }
+}
 
     public function xls_data_pasien_kunj(){
         if (akses::aksesLogin() == TRUE) {
@@ -10936,6 +11264,189 @@ class laporan extends CI_Controller {
         }
     }
     
+    
+    public function laporan_referal() {
+        if (akses::aksesLogin() == TRUE) {
+            try {
+                $pengaturan = $this->db->get('tbl_pengaturan')->row();
+
+                // Get filters
+                $tgl = $this->input->get('filter_tgl');
+                $dokter = $this->input->get('filter_dokter');
+                $status = $this->input->get('filter_status');
+                $hal = $this->input->get('halaman');
+
+                // Get doctors for filter dropdown
+                $data['sql_doc'] = $this->db->where('id_user_group', '10')
+                        ->get('tbl_m_karyawan')
+                        ->result();
+                
+                // Count total rows first
+                $query = $this->db->select('COUNT(*) as total')
+                        ->from('tbl_trans_medcheck')
+                        ->join('tbl_m_karyawan', 'tbl_m_karyawan.id_user = tbl_trans_medcheck.id_dokter', 'left')
+                        ->where('tbl_trans_medcheck.status_hps', '0')
+                        ->where('tbl_trans_medcheck.jml_fee >', 0);
+
+                // Apply filters to count query
+                if (!empty($tgl)) {
+                    $query->where('DATE(tbl_trans_medcheck.tgl_masuk)', $this->tanggalan->tgl_indo_sys($tgl));
+                }
+                if (!empty($dokter)) {
+                    $query->where('tbl_trans_medcheck.id_dokter', $dokter);
+                }
+                
+                if ($status !== '') {
+                    $query->where('tbl_trans_medcheck.status_fee', $status);
+                }
+
+                $count_result = $query->get();
+
+                if ($count_result === FALSE) {
+                    throw new Exception('Error executing count query: ' . $this->db->error()['message']);
+                }
+
+                $jml_sql = $count_result->row()->total;
+
+                // Configure pagination
+                $config['base_url'] = base_url('laporan/laporan_referal.php');
+                $config['total_rows'] = $jml_sql;
+                $config['per_page'] = $pengaturan->jml_item;
+                $config['page_query_string'] = TRUE;
+                $config['query_string_segment'] = 'halaman';
+                $config['num_links'] = 2;
+                $config['use_page_numbers'] = TRUE;
+                $config['reuse_query_string'] = TRUE;
+
+                $this->pagination->initialize($config);
+
+                // Get paginated data
+                $offset = ($hal) ? ($hal - 1) * $config['per_page'] : 0;
+
+                // Main data query
+                $data_query = $this->db->select('
+               tbl_trans_medcheck.id,
+               tbl_trans_medcheck.tgl_masuk,
+               tbl_trans_medcheck.tgl_bayar_fee,
+               tbl_trans_medcheck.status_fee,
+               tbl_trans_medcheck.ket_fee,
+               tbl_trans_medcheck.jml_fee,
+               tbl_trans_medcheck.pasien,
+               tbl_m_karyawan.nama_dpn,
+               tbl_m_karyawan.nama,
+               tbl_m_karyawan.nama_blk
+           ')
+                        ->from('tbl_trans_medcheck')
+                        ->join('tbl_m_karyawan', 'tbl_m_karyawan.id_user = tbl_trans_medcheck.id_dokter', 'left')
+                        ->where('tbl_trans_medcheck.status_hps', '0')
+                        ->where('tbl_trans_medcheck.jml_fee >', 0);
+
+                // Apply filters to data query
+                if (!empty($tgl)) {
+                    $data_query->where('DATE(tbl_trans_medcheck.tgl_masuk)', $this->tanggalan->tgl_indo_sys($tgl));
+                }
+                if (!empty($dokter)) {
+                    $data_query->where('tbl_trans_medcheck.id_dokter', $dokter);
+                }
+                if ($status !== '') {
+                    $data_query->where('tbl_trans_medcheck.status_fee', $status);
+                }
+
+                $data_query->limit($config['per_page'], $offset)
+                        ->order_by('tbl_trans_medcheck.tgl_masuk', 'DESC');
+
+                $result = $data_query->get();
+
+                if ($result === FALSE) {
+                    throw new Exception('Error executing data query: ' . $this->db->error()['message']);
+                }
+
+                $data['referal'] = $result->result();
+
+                // Calculate total fee
+                $data['total_all_fee'] = 0;
+                foreach ($data['referal'] as $row) {
+                    $data['total_all_fee'] += $row->jml_fee;
+                }
+
+                // Pagination data
+                $data['total_rows'] = $jml_sql;
+                $data['pagination'] = $this->pagination->create_links();
+
+                /* Sidebar Menu */
+                $data['sidebar'] = 'admin-lte-3/includes/laporan/sidebar_lap';
+
+                /* Load views */
+                $this->load->view('admin-lte-3/1_atas', $data);
+                $this->load->view('admin-lte-3/2_header', $data);
+                $this->load->view('admin-lte-3/3_navbar', $data);
+                $this->load->view('admin-lte-3/includes/medcheck/laporan_referal', $data);
+                $this->load->view('admin-lte-3/5_footer', $data);
+                $this->load->view('admin-lte-3/6_bawah', $data);
+            } catch (Exception $e) {
+                log_message('error', $e->getMessage());
+                $this->session->set_flashdata('error', 'Terjadi kesalahan saat memuat data: ' . $e->getMessage());
+                redirect('laporan');
+            }
+        } else {
+            $this->session->set_flashdata('login', '<div class="alert alert-danger">Authentifikasi gagal, silahkan login ulang!!</div>');
+            redirect();
+        }
+    }
+
+    public function set_cari_referal() {
+       if (akses::aksesLogin() == TRUE) {
+           $tgl = $this->input->post('tgl');
+           $dokter = $this->input->post('dokter');
+           $status = $this->input->post('status');
+           
+           redirect(base_url('laporan/laporan_referal.php?'.
+               (!empty($tgl) ? 'filter_tgl='.$tgl : '').
+               (!empty($dokter) ? '&filter_dokter='.$dokter : '').
+               (isset($status) ? '&filter_status='.$status : '')));
+               
+       } else {
+           $this->session->set_flashdata('login', '<div class="alert alert-danger">Authentifikasi gagal, silahkan login ulang!!</div>');
+           redirect();
+       }
+   }
+   
+   public function set_bayar_referal() {
+       if (akses::aksesLogin() == TRUE) {
+           try {
+               $this->db->trans_begin();
+               
+               $id_medcheck = general::dekrip($this->input->post('id_medcheck'));
+               $tgl_bayar = $this->tanggalan->tgl_indo_sys($this->input->post('tgl_bayar'));
+               $keterangan = $this->input->post('keterangan');
+               
+               $data = array(
+                   'tgl_bayar_fee' => $tgl_bayar,
+                   'status_fee' => '1',
+                   'ket_fee' => $keterangan
+               );
+               
+               $this->db->where('id', $id_medcheck)->update('tbl_trans_medcheck', $data);
+               
+               if ($this->db->trans_status() === FALSE) {
+                   throw new Exception('Gagal menyimpan pembayaran');
+               }
+               
+               $this->db->trans_commit();
+               $this->session->set_flashdata('form_error', '<div class="alert alert-success">Pembayaran berhasil disimpan</div>');
+               
+           } catch (Exception $e) {
+               $this->db->trans_rollback();
+               $this->session->set_flashdata('form_error', '<div class="alert alert-danger">'.$e->getMessage().'</div>');
+           }
+           
+           redirect($_SERVER['HTTP_REFERER']);
+           
+       } else {
+           $this->session->set_flashdata('login', '<div class="alert alert-danger">Authentifikasi gagal, silahkan login ulang!!</div>');
+           redirect();
+       }
+   }
     
     
     

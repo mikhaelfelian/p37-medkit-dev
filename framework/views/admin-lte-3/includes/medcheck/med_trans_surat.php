@@ -68,7 +68,6 @@
                                     </div>
                                     <div id="1" class="divSurat">
                                         <!--SURAT SEHAT-->
-
                                         <div id="inputTglSuratMasuk" class="form-group row <?php // echo (!empty($hasError['tinggi']) ? 'text-danger' : '')         ?>">
                                             <label for="inputTglSuratSehat" class="col-sm-3 col-form-label">Tgl Surat</label>
                                             <div class="col-sm-9">
@@ -79,7 +78,7 @@
                                                     <?php echo form_input(array('id' => 'tgl_masuk_sht', 'name' => 'tgl_masuk', 'class' => 'form-control text-middle' . (!empty($hasError['pasien']) ? ' is-invalid' : ''), 'style' => 'vertical-align: middle;', 'placeholder' => 'Tgl Surat ...')) ?>
                                                 </div>
                                             </div>
-                                        </div>                                  
+                                        </div>
                                         <div id="inputTB" class="form-group row <?php echo (!empty($hasError['tinggi']) ? 'text-danger' : '') ?>">
                                             <label for="inputTinggi" class="col-sm-3 col-form-label">Tinggi</label>
                                             <div class="col-sm-3">

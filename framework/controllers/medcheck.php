@@ -1362,8 +1362,10 @@ class medcheck extends CI_Controller {
             $cs      = $this->input->get('filter_nama');
             $sn      = $this->input->get('filter_status');
             $sl      = $this->input->get('filter_sales');
+            $poli    = $this->input->get('poli');
             $stts    = $this->input->get('status');
             $jml     = $this->input->get('jml');
+            $tipe    = $this->input->get('tipe');
 //            $jml_sql = ($id_grup->name == 'superadmin' || $id_grup->name == 'owner' || $id_grup->name == 'admin' ? $this->db->get('tbl_trans_jual')->num_rows() : $this->db->where('id_user', $id_user)->where('tgl_masuk', date('Y-m-d'))->get('tbl_trans_jual')->num_rows());
 
             if(!empty($jml)){
@@ -1382,7 +1384,7 @@ class medcheck extends CI_Controller {
             $data['hasError']                = $this->session->flashdata('form_error');
 
             /* -- Blok Pagination -- */
-            $config['base_url']              = base_url('medcheck/data_pendaftaran.php?'.(!empty($cs) ? '&filter_nama='.$cs : '').(!empty($tg) ? '&filter_tgl='.$tg : '').'&jml='.$jml);
+            $config['base_url']              = base_url('medcheck/data_pendaftaran.php?'.(!empty($cs) ? '&filter_nama='.$cs : '').(!empty($tg) ? '&filter_tgl='.$tg : '').(!empty($tipe) ? '&tipe='.$tipe : '').'&jml='.$jml);
             $config['total_rows']            = $jml_hal;
 
             $config['query_string_segment']  = 'halaman';
@@ -1421,6 +1423,8 @@ class medcheck extends CI_Controller {
                            ->where('status_akt !=', '2')
                            ->like('DATE(tgl_masuk)', (!empty($tg) ? $tg : ''), (!empty($tg) ? 'none' : ''))
                            ->like('nama', $cs)
+                           ->like('id_poli', $poli)
+                           ->like('tipe_rawat', $tipe)
                            ->limit($config['per_page'],$hal)
                            ->group_by('tgl_simpan, nama')
                            ->order_by('status_gc','desc')
@@ -1431,6 +1435,8 @@ class medcheck extends CI_Controller {
                            ->where('status_akt !=', '2')
                            ->like('DATE(tgl_masuk)', (!empty($tg) ? $tg : ''), (!empty($tg) ? 'none' : ''))
                            ->like('nama', $cs)
+                           ->like('id_poli', $poli)
+                           ->like('tipe_rawat', $tipe)
                            ->limit($config['per_page'])
                            ->group_by('tgl_simpan, nama')
                            ->order_by('status_gc','desc')
@@ -1447,6 +1453,7 @@ class medcheck extends CI_Controller {
             /* --End Blok pagination-- */
             
             $data['pengaturan'] = $pengaturan;
+            $data['sql_poli']       = $this->db->get('tbl_m_poli')->result();
             
             /* Sidebar Menu */
             $data['sidebar']    = 'admin-lte-3/includes/medcheck/sidebar_med';
@@ -1488,11 +1495,11 @@ class medcheck extends CI_Controller {
             if(!empty($jml)){
                 $jml_hal = $jml;
             }else{
-                $jml_hal = $this->db->select('*')
-                                ->where('status_akt !=', '2')
-                                ->where('DATE(tgl_masuk)', (!empty($tg) ? $tg : date('Y-m-d')))
-                                ->like('nama', $cs)
-                                ->get('tbl_pendaftaran')->num_rows();
+                $jml_hal =  $this->db->select('*')
+                                     ->where('ddate', date('Y-m-d'))->where('status !=', '2')
+                                     ->like('ddate', $tg)
+                                     ->like('cnoro', $pl)->limit(100)
+                                     ->get('tr_queue')->num_rows();
             }
             /* -- End Blok Filter -- */
 
@@ -1500,7 +1507,7 @@ class medcheck extends CI_Controller {
             $data['hasError']                = $this->session->flashdata('form_error');
 
             /* -- Blok Pagination -- */
-            $config['base_url']              = base_url('medcheck/data_pendaftaran.php?'.(!empty($filter_nama) ? '&filter_nama='.$filter_nama : '').'&jml='.$jml);
+            $config['base_url']              = base_url('medcheck/data_antrian.php?'.(!empty($filter_nama) ? '&filter_nama='.$filter_nama : '').'&jml='.$jml);
             $config['total_rows']            = $jml_hal;
 
             $config['query_string_segment']  = 'halaman';
@@ -1751,6 +1758,7 @@ class medcheck extends CI_Controller {
             $data['platform']       = $this->db->get('tbl_m_platform')->result();
             $data['gelar']          = $this->db->get('tbl_m_gelar')->result();
             $data['sql_doc']        = $this->db->where('id_user_group', '10')->where('status_aps', '0')->get('tbl_m_karyawan')->result();
+            $data['sql_kary']       = $this->db->where('status_aps', '0')->get('tbl_m_karyawan')->result();
             $data['kerja']          = $this->db->get('tbl_m_jenis_kerja')->result();
             $data['sql_poli']       = $this->db->where('id', $data['sql_dft_id']->id_poli)->get('tbl_m_poli')->row();
             $data['sql_dft_id']     = $this->db->where('id', general::dekrip($dft_id))->get('tbl_pendaftaran')->row();            
@@ -1962,7 +1970,7 @@ class medcheck extends CI_Controller {
             $alergi       = $this->input->post('alergi');
             $inst         = $this->input->post('instansi');
             $inst_alamat  = $this->input->post('instansi_almt');
-            
+            $referall     = $this->input->post('referall');
             $tgl_masuk    = $this->input->post('tgl_masuk');
             $plat         = $this->input->post('platform');
             $tipe         = $this->input->post('tipe');
@@ -2070,6 +2078,7 @@ class medcheck extends CI_Controller {
                             'id_dokter'    => (!empty($dokter) ? $dokter : '0'),
                             'id_pekerjaan' => (!empty($pekerjaan) ? $pekerjaan : '0'),
                             'id_instansi'  => (!empty($inst) ? $sql_ins->id : '0'),
+                            'id_referall' => (!empty($referall) ? $referall : '0'),
                             'no_urut'      => $no_urut,
                             'nik'          => $nik_lama,
                             'nama'         => stripslashes($nama),
@@ -2168,6 +2177,7 @@ class medcheck extends CI_Controller {
                             'id_dokter'    => (!empty($dokter) ? $dokter : 0),
                             'id_pekerjaan' => (!empty($pekerjaan) ? $pekerjaan : 0),
                             'id_instansi'  => (!empty($inst) ? $sql_ins->id : '0'),
+                            'id_referall' => (!empty($referall) ? $referall : '0'),
                             'tipe_bayar'   => (!empty($plat) ? $plat : '0'),
                             'no_urut'      => $no_urut,
                             'nik'          => $nik_baru,
@@ -2587,6 +2597,7 @@ class medcheck extends CI_Controller {
                         $data['sql_ass_syrfr']  = $this->db->where('status', '1')->where('tipe', '14')->where('status_posisi', 'R')->get('tbl_m_ass_pny');
                         $data['sql_ass_riw1']   = $this->db->where('status', '1')->where('tipe', '15')->get('tbl_m_ass_pny');
                         $data['sql_ass_riw2']   = $this->db->where('status', '1')->where('tipe', '16')->get('tbl_m_ass_pny');
+                        $data['sql_ass_riw3']   = $this->db->where('status', '1')->where('tipe', '17')->get('tbl_m_ass_pny');
                         
                         $view = 'med_trans_ass_fisik';
                         break;
@@ -3805,7 +3816,6 @@ class medcheck extends CI_Controller {
             redirect();            
         }
     }
-    
     public function set_medcheck() {
         if (akses::aksesLogin() == TRUE) {
             $pasien     = $this->input->post('id_pasien');
@@ -3848,7 +3858,6 @@ class medcheck extends CI_Controller {
             $this->form_validation->set_rules('ttv_laju', 'ID', 'required');
             $this->form_validation->set_rules('ttv_skala', 'ID', 'required');
             
-
             if ($this->form_validation->run() == FALSE) {
                 $msg_error = array(
                     'tipe'          => form_error('tipe'),
@@ -3867,9 +3876,7 @@ class medcheck extends CI_Controller {
                     'ttv_skala'     => form_error('ttv_skala'),
                 );
 
-                $this->session->set_flashdata('form_error', $msg_error);
-                
-                $this->session->set_flashdata('form_error', $msg_error);
+                $this->session->set_flashdata('form_error', $msg_error); 
                 
                 $this->session->set_flashdata('keluhan', $keluhan);
                 $this->session->set_flashdata('ttv_st', $ttv_st);
@@ -3913,6 +3920,7 @@ class medcheck extends CI_Controller {
                     'id_poli'      => (!empty($poli) ? $poli :'0'),
                     'id_dft'       => (!empty($dft_id) ? $dft_id : '0'),
                     'id_ant'       => (!empty($ant_id) ? $ant_id : '0'),
+                    'id_referall'  => $sql_dft->id_referall,
                     'tgl_simpan'   => date('Y-m-d H:i:s'),
                     'tgl_masuk'    => date('Y-m-d H:i:s'),
                     'pasien'       => $sql_pas->nama_pgl,
@@ -4087,6 +4095,7 @@ class medcheck extends CI_Controller {
             redirect();
         }
     }
+    
     
     public function set_pasien() {
         if (akses::aksesLogin() == TRUE) {
@@ -4433,7 +4442,8 @@ class medcheck extends CI_Controller {
                         $sql_res_det_rc = $this->db->where('id_resep', $det->id_resep)->get('tbl_trans_medcheck_resep_det_rc')->result();
                     
                         $harga          = $sql_item->harga_jual;
-                        $ass            = $harga * $sql_pnjm->persen;
+                        $percent        = $sql_pnjm->persen / 100;
+                        $ass            = ($harga * $sql_pnjm->persen);
                         $harga_pcs      = ($sql_pnjm->persen != 0 ? $ass : $harga); # Jika penjamin asuransi, maka harga obat di tambah sesuai setelan % pada database
                         $harga_tot      = ($sql_item->status_racikan == '1' ? $harga : $harga_pcs);
                         $potongan       = $det->potongan;
@@ -4460,6 +4470,7 @@ class medcheck extends CI_Controller {
                         foreach ($sql_res_det_rc as $racikan){
                             $sql_item_rc    = $this->db->where('id', $racikan->id_item)->get('tbl_m_produk')->row();
                             $harga_rc       = $sql_item_rc->harga_jual;
+                            $percent        = $sql_pnjm->persen / 100;
                             $ass_rc         = $harga_rc * $sql_pnjm->persen;
                             $harga_tot_rc   = ($sql_pnjm->persen != 0 ? $ass_rc : $harga_rc); # Jika penjamin asuransi, maka harga obat racikan di tambah sesuai setelan % pada database
                         
@@ -4495,7 +4506,8 @@ class medcheck extends CI_Controller {
                         $sql_res_det_rc = $this->db->where('id_resep_det', $det->id)->get('tbl_trans_medcheck_resep_det_rc')->result();
                     
                         $harga          = $sql_item->harga_jual;
-                        $ass            = $harga * $sql_pnjm->persen;
+                        $percent        = $sql_pnjm->persen / 100;
+                        $ass            = ($harga * $sql_pnjm->persen);
                         $harga_pcs      = ($sql_pnjm->persen != 0 ? $ass : $harga); # Jika penjamin asuransi, maka harga obat di tambah sesuai setelan % pada database
                         $harga_tot      = ($sql_item->status_racikan == '1' ? $harga : $harga_pcs);
                         $potongan       = $det->potongan;
@@ -4506,7 +4518,8 @@ class medcheck extends CI_Controller {
                         $diskon         = $harga_tot - $disk3;
                         $subtotal       = ($disk3 - $potongan) * (int)$det->jml;
                         $harga          = $sql_item->harga_jual;
-                        $ass            = $harga * $sql_pnjm->persen;
+                        $percent        = $sql_pnjm->persen / 100;
+                        $ass            = ($harga * $sql_pnjm->persen);
                         $harga_pcs      = ($sql_pnjm->persen != 0 ? $ass : $harga); # Jika penjamin asuransi, maka harga obat di tambah sesuai setelan % pada database
                         $harga_tot      = ($sql_item->status_racikan == '1' ? $harga : $harga_pcs);
                         $potongan       = $det->potongan;
@@ -4532,7 +4545,8 @@ class medcheck extends CI_Controller {
                         foreach ($sql_res_det_rc as $racikan){
                             $sql_item_rc    = $this->db->where('id', $racikan->id_item)->get('tbl_m_produk')->row();
                             $harga_rc       = $sql_item_rc->harga_jual;
-                            $ass_rc         = $harga_rc * $sql_pnjm->persen;
+                            $percent        = $sql_pnjm->persen / 100;
+                            $ass_rc         = ($harga_rc * $sql_pnjm->persen);
                             $harga_tot_rc   = ($sql_pnjm->persen != 0 ? $ass_rc : $harga_rc); # Jika penjamin asuransi, maka harga obat racikan di tambah sesuai setelan % pada database
                         
                             $subtotal_rc    = $harga_tot_rc * (int)$racikan->jml;
@@ -6634,6 +6648,170 @@ class medcheck extends CI_Controller {
             redirect(base_url('medcheck/tambah.php?act='.$act.'&id='.$id.'&status='.$status));
         } else {
             $errors = $this->ion_auth->messages();
+            $this->session->set_flashdata('login', '<div class="alert alert-danger">Authentifikasi gagal, silahkan login ulang!!</div>');
+            redirect();
+        }
+    }
+    
+public function set_medcheck_lab_adm_save() {
+   if (akses::aksesLogin() == TRUE) {
+       try {
+           $this->db->trans_begin();
+           
+           // Sanitize and get POST data
+           $id_medcheck = $this->security->xss_clean($this->input->post('id_medcheck'));
+           $id_pasien = $this->security->xss_clean($this->input->post('id_pasien')); 
+           $tgl_masuk = $this->security->xss_clean($this->input->post('tgl_masuk'));
+           $hasil = $this->security->xss_clean($this->input->post('hasil'));
+           $status = $this->security->xss_clean($this->input->post('status'));
+           
+           // Validate required data
+           if (empty($id_medcheck) || empty($id_pasien) || empty($tgl_masuk)) {
+               throw new Exception('Data tidak lengkap');
+           }
+           
+           // Decrypt IDs
+           $id_medcheck_dec = general::dekrip($id_medcheck);
+           $id_pasien_dec = general::dekrip($id_pasien);
+           
+           // Format date
+           $tgl_masuk_formatted = $this->tanggalan->tgl_indo_sys($tgl_masuk);
+           
+           // Get patient info
+           $sql_pasien = $this->db->where('id', $id_pasien_dec)
+                                 ->get('tbl_m_pasien')
+                                 ->row();
+                                 
+           if (!$sql_pasien) {
+               throw new Exception('Data pasien tidak ditemukan');
+           }
+           
+           // Setup file paths
+           $kode_pasien = preg_replace('/[^A-Za-z0-9\-]/', '', 
+               strtolower($sql_pasien->kode_dpn . $sql_pasien->kode)
+           );
+           
+           $base_path = './file/pasien/' . $kode_pasien;
+           $upload_path = $base_path . '/audiometri';
+           
+           // Create directories if needed
+           if (!is_dir($base_path)) {
+               mkdir($base_path, 0777, true);
+           }
+           if (!is_dir($upload_path)) {
+               mkdir($upload_path, 0777, true);
+           }
+           
+           // Configure upload
+           $config = array(
+               'upload_path' => $upload_path,
+               'allowed_types' => 'pdf|jpg|jpeg|png',
+               'max_size' => 5120,
+               'file_name' => 'audiometri_' . date('YmdHis'),
+               'remove_spaces' => TRUE,
+               'overwrite' => TRUE
+           );
+           
+           $this->load->library('upload');
+           $this->upload->initialize($config);
+           
+           if (!$this->upload->do_upload('file_audiometri')) {
+               throw new Exception($this->upload->display_errors('', ''));
+           }
+           
+           $upload_data = $this->upload->data();
+           
+           // Prepare data for insert
+           $data = array(
+               'id_medcheck' => $id_medcheck_dec,
+               'id_user' => $this->ion_auth->user()->row()->id,
+               'tgl_simpan' => date('Y-m-d H:i:s'),
+               'tgl_masuk' => $tgl_masuk_formatted,
+               'hasil' => $hasil,
+               'nama_file' => $upload_data['file_name']
+           );
+           
+           // Insert data
+           $this->db->insert('tbl_trans_medcheck_lab_audiometri', $data);
+           
+           if ($this->db->trans_status() === FALSE) {
+               throw new Exception('Gagal menyimpan data audiometri');
+           }
+           
+           $this->db->trans_commit();
+           $this->session->set_flashdata('form_error', 
+               '<div class="alert alert-success">Data audiometri berhasil disimpan</div>'
+           );
+           
+       } catch (Exception $e) {
+           $this->db->trans_rollback();
+           $this->session->set_flashdata('form_error', 
+               '<div class="alert alert-danger">'.$e->getMessage().'</div>'
+           );
+       }
+       
+       // Clean redirect parameters
+       $redirect_id = urlencode($this->security->xss_clean($id_medcheck));
+       $redirect_status = urlencode($this->security->xss_clean($status));
+       
+       redirect(base_url('medcheck/tambah.php?act=pen_adm&id=' . $redirect_id . '&status=' . $redirect_status));
+       
+   } else {
+       $this->session->set_flashdata('login', 
+           '<div class="alert alert-danger">Authentifikasi gagal, silahkan login ulang!!</div>'
+       );
+       redirect();
+   }
+}
+    
+    public function set_medcheck_lab_adm_delete() {
+        if (akses::aksesLogin() == TRUE) {
+            try {
+                $this->db->trans_begin();
+
+                // Get and clean parameters
+                $id_medcheck = $this->security->xss_clean($this->input->get('id'));
+                $item_id = $this->security->xss_clean($this->input->get('item_id'));
+                $status = $this->security->xss_clean($this->input->get('status'));
+
+                // Decrypt IDs
+                $id_medcheck_dec = general::dekrip($item_id);
+
+                // Get file info before delete
+                $audiometri = $this->db->where('id', $id_medcheck_dec)->get('tbl_trans_medcheck_lab_audiometri')->row();
+
+                if ($audiometri) {
+                    // Get patient info for file path
+                    $sql_medc = $this->db->where('id', general::dekrip($id_medcheck))->get('tbl_trans_medcheck')->row();
+                    $sql_pasien = $this->db->where('id', $sql_medc->id_pasien)->get('tbl_m_pasien')->row();
+                    $kode_pasien = strtolower($sql_pasien->kode_dpn . $sql_pasien->kode);
+
+                    // Delete physical file
+                    $file_path = './file/pasien/' . $kode_pasien . '/audiometri/' . $audiometri->nama_file;
+                    if (file_exists($file_path)) {
+                        unlink($file_path);
+                    }
+
+                    // Delete database record
+                    $this->db->where('id', $id_medcheck_dec)->delete('tbl_trans_medcheck_lab_audiometri');
+
+                    if ($this->db->affected_rows() > 0) {
+                        $this->db->trans_commit();
+                        $this->session->set_flashdata('form_error', '<div class="alert alert-success">Data audiometri berhasil dihapus</div>');
+                    } else {
+                        throw new Exception('Gagal menghapus data');
+                    }
+                } else {
+                    throw new Exception('Data tidak ditemukan');
+                }
+            } catch (Exception $e) {
+                $this->db->trans_rollback();
+                $this->session->set_flashdata('form_error', '<div class="alert alert-danger">' . $e->getMessage() . '</div>');
+            }
+
+            // Redirect back with status parameter using base_url()
+            redirect(base_url('medcheck/tambah.php?act=pen_adm&id=' . $id_medcheck . '&status=' . $status));
+        } else {
             $this->session->set_flashdata('login', '<div class="alert alert-danger">Authentifikasi gagal, silahkan login ulang!!</div>');
             redirect();
         }
@@ -10207,11 +10385,13 @@ class medcheck extends CI_Controller {
                 $sql_ass_pny        = $this->db->where('status', '1')->where('tipe', '1')->get('tbl_m_ass_pny')->result();
                 $sql_ass_pny2       = $this->db->where('status', '1')->where('tipe', '15')->get('tbl_m_ass_pny')->result();
                 $sql_ass_pny3       = $this->db->where('status', '1')->where('tipe', '16')->get('tbl_m_ass_pny')->result();
+                $sql_ass_pny4       = $this->db->where('status', '1')->where('tipe', '17')->get('tbl_m_ass_pny')->result();
                 $sql_medc           = $this->db->where('id', general::dekrip($id))->get('tbl_trans_medcheck')->row(); 
                 $sql_medc_ass       = $this->db->where('id', general::dekrip($id_ass))->get('tbl_trans_medcheck_ass_fisik')->row(); 
                 $sql_medc_ass_ck    = $this->db->where('id_medcheck', $sql_medc->id)->where('tipe', '1')->get('tbl_trans_medcheck_ass_fisik_hsl'); 
                 $sql_medc_ass_ck2   = $this->db->where('id_medcheck', $sql_medc->id)->where('tipe', '15')->get('tbl_trans_medcheck_ass_fisik_hsl'); 
                 $sql_medc_ass_ck3   = $this->db->where('id_medcheck', $sql_medc->id)->where('tipe', '16')->get('tbl_trans_medcheck_ass_fisik_hsl'); 
+                $sql_medc_ass_ck4   = $this->db->where('id_medcheck', $sql_medc->id)->where('tipe', '17')->get('tbl_trans_medcheck_ass_fisik_hsl'); 
                 $pengaturan         = $this->db->get('tbl_pengaturan')->row();
 
                 foreach ($sql_ass_pny as $pny){
@@ -10234,10 +10414,6 @@ class medcheck extends CI_Controller {
                     }else{
                         $this->db->where('id_medcheck', $sql_medc->id)->where('id_medcheck_ass', $sql_medc_ass->id)->where('id_item', $pny->id)->where('tipe', '1')->update('tbl_trans_medcheck_ass_fisik_hsl', $data_pny);
                     }
-                    
-//                    echo '<pre>';
-//                    print_r($data_pny);
-//                    echo '</pre>';
                 }
 
                 # Riwayat pingsan
@@ -10261,10 +10437,6 @@ class medcheck extends CI_Controller {
                     }else{
                         $this->db->where('id_medcheck', $sql_medc->id)->where('id_medcheck_ass', $sql_medc_ass->id)->where('id_item', $pny2->id)->where('tipe', '15')->update('tbl_trans_medcheck_ass_fisik_hsl', $data_pny2);
                     }
-                    
-//                    echo '<pre>';
-//                    print_r($data_pny2);
-//                    echo '</pre>';
                 }
 
                 # Riwayat kebiasaan sehari hari
@@ -10289,10 +10461,30 @@ class medcheck extends CI_Controller {
                     }else{
                         $this->db->where('id_medcheck', $sql_medc->id)->where('id_medcheck_ass', $sql_medc_ass->id)->where('id_item', $pny3->id)->where('tipe', '16')->update('tbl_trans_medcheck_ass_fisik_hsl', $data_pny3);
                     }
+                }
+
+                # Riwayat kebiasaan sehari hari
+                foreach ($sql_ass_pny4 as $pny4){
+                    $data_pny4 = array(
+                        'tgl_simpan'        => date('Y-m-d H:i:s'),
+                        'id_medcheck'       => $sql_medc->id,
+                        'id_medcheck_ass'   => $sql_medc_ass->id,
+                        'id_item'           => $pny4->id,
+                        'id_user'           => $this->ion_auth->user()->row()->id,
+                        'item_name'         => $pny4->penyakit,
+                        'item_value'        => (!empty($_POST['riw3'][$pny4->id]) ? $_POST['riw3'][$pny4->id] : '0'),
+                        'item_value2'       => (!empty($_POST['riw3_jwb'][$pny4->id]) ? $_POST['riw3_jwb'][$pny4->id] : ''),
+                        'tipe'              => 17,
+                        'status_posisi'     => $pny4->status_posisi,
+                    );
                     
-//                    echo '<pre>';
-//                    print_r($data_pny3);
-//                    echo '</pre>';
+                    # cek bila sudah ada datanya silahkan hapus
+                    if($sql_medc_ass_ck4->num_rows() == 0){
+                        # Simpan ke tabel ass hasil
+                        $this->db->insert('tbl_trans_medcheck_ass_fisik_hsl', $data_pny4);
+                    }else{
+                        $this->db->where('id_medcheck', $sql_medc->id)->where('id_medcheck_ass', $sql_medc_ass->id)->where('id_item', $pny4->id)->where('tipe', '17')->update('tbl_trans_medcheck_ass_fisik_hsl', $data_pny4);
+                    }
                 }
                 
                 if ($this->db->affected_rows() > 0) {
@@ -12160,7 +12352,8 @@ class medcheck extends CI_Controller {
                 $sql_sat    = $this->db->where('id', $sql_item->id_satuan)->get('tbl_m_satuan')->row();
                 $sql_sat_pk = $this->db->where('id', $dos_sat)->get('tbl_m_satuan_pakai')->row();
                 $harga      = general::format_angka_db($hrg);
-                $ass        = $harga * $sql_pnjm->persen;
+                $percent    = $sql_pnjm->persen / 100;
+                $ass            = ($harga * $sql_pnjm->persen);
                 $harga_tot  = ($sql_item->status_racikan == '1' ? $harga : ($sql_pnjm->persen != 0 ? $ass : $harga)); # Jika penjamin asuransi, maka harga obat di tambah sesuai setelan % pada database
                 $potongan   = general::format_angka_db($pot);
                 $dokter     = (!empty($id_dokter) ? $id_dokter : $sql_medc->id_dokter);
@@ -12276,7 +12469,8 @@ class medcheck extends CI_Controller {
                 $sql_sat    = $this->db->where('id', $sql_item->id_satuan)->get('tbl_m_satuan')->row();
                 $sql_sat_pk = $this->db->where('id', $dos_sat)->get('tbl_m_satuan_pakai')->row();
                 $harga      = general::format_angka_db($hrg);
-                $ass        = $harga * $sql_pnjm->persen;
+                $percent    = $sql_pnjm->persen / 100;
+                $ass            = ($harga * $sql_pnjm->persen);
                 $harga_tot  = ($sql_item->status_racikan == '1' ? $harga : ($sql_pnjm->persen != 0 ? $ass : $harga)); # Jika penjamin asuransi, maka harga obat di tambah sesuai setelan % pada database
                 $potongan   = general::format_angka_db($pot);
                 $dokter     = (!empty($id_dokter) ? $id_dokter : $sql_medc->id_dokter);
@@ -12415,7 +12609,8 @@ class medcheck extends CI_Controller {
                 $sql_sat    = $this->db->where('id', $sql_item_rc->id_satuan)->get('tbl_m_satuan')->row();
                 $sql_sat_pk = $this->db->where('id', $dos_sat)->get('tbl_m_satuan_pakai')->row();
                 $harga      = general::format_angka_db($hrg);
-                $ass        = $harga * $sql_pnjm->persen;
+                $percent    = $sql_pnjm->persen / 100;
+                $ass            = ($harga * $sql_pnjm->persen);
                 $harga_tot  = ($sql_pnjm->persen != 0 ? $ass : $harga); # Jika penjamin asuransi, maka harga obat di tambah sesuai setelan % pada database
                 $potongan   = general::format_angka_db($pot);
                 $dokter     = (!empty($id_dokter) ? $id_dokter : $sql_medc->id_dokter);
@@ -15694,16 +15889,16 @@ class medcheck extends CI_Controller {
             
             $fill = FALSE;
             $pdf->SetFont('Arial', 'B', '9');
-            $pdf->Cell(7, .5, 'PEMERIKSAAN', 'T', 0, 'L', $fill);
+            $pdf->Cell(6, .5, 'PEMERIKSAAN', 'T', 0, 'L', $fill);
             $pdf->Cell(4.5, .5, 'HASIL', 'T', 0, 'L', $fill);
-            $pdf->Cell(5.5, .5, 'NILAI RUJUKAN', 'T', 0, 'L', $fill);
-            $pdf->Cell(2, .5, 'SATUAN', 'T', 0, 'L', $fill);
+            $pdf->Cell(4, .5, 'NILAI RUJUKAN', 'T', 0, 'L', $fill);
+            $pdf->Cell(4.5, .5, 'SATUAN', 'T', 0, 'L', $fill);
             $pdf->Ln();
             $pdf->SetFont('Arial', 'Bi', '9');
-            $pdf->Cell(7, .5, 'EXAMINATION', 'B', 0, 'L', $fill);
+            $pdf->Cell(6, .5, 'EXAMINATION', 'B', 0, 'L', $fill);
             $pdf->Cell(4.5, .5, 'RESULT', 'B', 0, 'L', $fill);
-            $pdf->Cell(5.5, .5, 'REFERENCE VALUE', 'B', 0, 'L', $fill);
-            $pdf->Cell(2, .5, 'MEASURE', 'B', 0, 'L', $fill);
+            $pdf->Cell(4, .5, 'REFERENCE VALUE', 'B', 0, 'L', $fill);
+            $pdf->Cell(4.5, .5, 'MEASURE', 'B', 0, 'L', $fill);
             $pdf->Ln();
             
             # Jika status cetak 1, maka akan di cetak semua
@@ -15731,7 +15926,7 @@ class medcheck extends CI_Controller {
                         $pdf->SetFont('Arial', '', '8');
 
                         if (!empty($det->id_lab_kat)) {
-                            $pdf->Cell(.25, .5, '', '', 0, 'L', $fill);
+                            // $pdf->Cell(.25, .5, '', '', 0, 'L', $fill);
                         }
 
                         $pdf->Cell(18.5, .5, $medc->item, '', 0, 'L', $fill);
@@ -15744,15 +15939,15 @@ class medcheck extends CI_Controller {
                             }
 
                             $pdf->Cell(.25, .5, '', '', 0, 'L', $fill);
-                            $pdf->Cell(7, .5, ' - ' . html_entity_decode($lab->item_name) . ($lab->status_hsl_lab == '1' ? '*' : ''), '', 0, 'L', $fill);
+                            $pdf->Cell(6, .5, ' - ' . html_entity_decode($lab->item_name) . ($lab->status_hsl_lab == '1' ? '*' : ''), '', 0, 'L', $fill);
 //                            $pdf->Cell(7, .5, '', 'B', 0, 'L', $fill);
                             $pdf->Cell(4.5, .5, html_entity_decode($lab->item_hasil, ENT_NOQUOTES, 'utf-8') . ($lab_det->status_hsl_lab == '1' ? '*' : ''), '', 0, 'L', $fill);
                             
                             $x = $pdf->GetX();
                             $y = $pdf->GetY();                           
-                            $pdf->MultiCell(5.5, .5, html_entity_decode($lab->item_value, ENT_NOQUOTES, 'utf-8'), '', 'L');                            
-                            $pdf->SetXY($x + 5.5, $y);                            
-                            $pdf->Cell(2, .5, html_entity_decode($lab->item_satuan, ENT_NOQUOTES, 'utf-8'), '', 0, 'L', $fill);
+                            $pdf->MultiCell(4.5, .5, html_entity_decode($lab->item_value, ENT_NOQUOTES, 'utf-8'), '', 'L');                            
+                            $pdf->SetXY($x + 5, $y);                            
+                            $pdf->Cell(3.5, .5, html_entity_decode($lab->item_satuan, ENT_NOQUOTES, 'utf-8'), '', 0, 'L', $fill);
 //                            $pdf->Cell(5.5, .5, html_entity_decode($lab->item_value, ENT_NOQUOTES, 'utf-8'), '', 0, 'L', $fill);
 //                            $pdf->Cell(2, .5, html_entity_decode($lab->item_satuan, ENT_NOQUOTES, 'utf-8'), '', 0, 'L', $fill);
                             $pdf->Ln();
@@ -15791,12 +15986,13 @@ class medcheck extends CI_Controller {
 
                         if (!empty($det2->id_lab_kat)) {
 //                            if ($sess_print[$i]['value'] == '1' AND $sess_print[$i]['id_kat'] == $det->id_lab_kat) {
-                                $pdf->Cell(.25, .5, '', '', 0, 'L', $fill);
+                                $pdf->Cell(.10, .5, '', '', 0, 'L', $fill);
 //                            }
                         }
                         
                         if(strtoupper($sql_lab2->row()->item_name) != strtoupper($medc2->item)){
-                            $pdf->Cell(18.5, .5, $medc2->item . ($lab_det2->status_hsl_lab == '1' ? '*' : ''), '', 0, 'L', $fill);
+                            $pdf->Cell(18.75, .5, $medc2->item . ($lab_det2->status_hsl_lab == '1' ? '*' : ''), '', 0, 'L', $fill);
+//                            $pdf->Cell(.25, .5, '', '', 0, 'L', $fill);
                             $pdf->Ln();                         
                         }
 
@@ -15806,7 +16002,7 @@ class medcheck extends CI_Controller {
                                 
 //                            if ($sess_print[$i]['value'] == '1' AND $sess_print[$i]['id_lab_hsl'] == $lab->id) {
                                 if(strtoupper($sql_lab2->row()->item_name) != strtoupper($medc2->item)){
-                                    $pdf->Cell(.25, .5, '', '', 0, 'L', $fill);
+                                    $pdf->Cell(.10, .5, '', '', 0, 'L', $fill);
                                 }
                                 
                                 # Jika warna hasil di tandai merah
@@ -15820,22 +16016,21 @@ class medcheck extends CI_Controller {
                                 $len        = strlen($lab2->item_hasil);
                                 $itm_spasi  = ($len > 36 ? 0.25 : 0);
                                 $itm_hsl    = (ceil(($itm_txt / $itm_lbr)) * $itm_tg) + $itm_spasi;
+                                                            
                                 
-                                $pdf->Cell(6.75, .5, ' - '.html_entity_decode($lab2->item_name), '', 0, 'L', $fill);
+                                if(strtoupper($sql_lab2->row()->item_name) != strtoupper($medc2->item)){
+                                    $pdf->Cell(6, .5, ' - '.html_entity_decode($lab2->item_name), '', 0, 'L', $fill);
+                                }else{
+//                                    $pdf->Cell(.5, .5, '', '1', 0, 'L', $fill);
+                                    $pdf->Cell(6, .5, ' - '.html_entity_decode($lab2->item_name), '', 0, 'L', $fill);
+                                }
+                                
                                 $pdf->MultiCell(4.5, .5, html_entity_decode($lab2->item_hasil, ENT_NOQUOTES, 'utf-8'), '', 'J');
                                 $pdf->SetXY($x + 11.5, $y);
-                                $pdf->MultiCell(5.5, $itm_hsl, html_entity_decode($lab2->item_value, ENT_NOQUOTES, 'utf-8'), '', 'L'); 
-                                $pdf->SetXY($x + 17, $y);
-                                $pdf->MultiCell(2, $itm_hsl, html_entity_decode($lab2->item_satuan, ENT_NOQUOTES, 'utf-8'), '', 'L'); 
+                                $pdf->MultiCell(4, $itm_hsl, html_entity_decode($lab2->item_value, ENT_NOQUOTES, 'utf-8'), '', 'L'); 
+                                $pdf->SetXY($x + 15.5, $y);
+                                $pdf->MultiCell(3.5, $itm_hsl, html_entity_decode($lab2->item_satuan, ENT_NOQUOTES, 'utf-8'), '', 'L'); 
                                 $pdf->Ln(0);
-
-//                                $len = strlen($lab2->item_hasil);
-////                                $len = $itm_txt;
-//                                if($len > 36){
-//                                    $pdf->Ln(0);
-//                                }else{
-//                                    $pdf->Ln(0);
-//                                }
                                 
                                 # Jika warna hasil di tandai merah
                                 if($lab2->status_hsl_wrn == 1){
@@ -16159,7 +16354,7 @@ class medcheck extends CI_Controller {
             $pdf->Cell(3, .5, 'Alamat', '0', 0, 'L', $fill);
             $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
             $pdf->MultiCell(15.5, .5, (!empty($sql_pasien->alamat) ? general::bersih($sql_pasien->alamat) : (!empty($sql_pasien->alamat_dom) ? $sql_pasien->alamat_dom : '-')), '0', 'L');
-            $pdf->Ln();
+//            $pdf->Ln();
             $pdf->Cell(3, .5, 'Tinggi Badan', '0', 0, 'L', $fill);
             $pdf->Cell(.5, .5, ':', '0', 0, 'C', $fill);
             $pdf->Cell(4.5, .5, (float)$sql_medc_lab->tb.' cm', '0', 0, 'L', $fill);
@@ -16290,7 +16485,7 @@ class medcheck extends CI_Controller {
             $setting            = $this->db->get('tbl_pengaturan')->row();
             $id_medcheck        = $this->input->get('id');
             $id_lab             = $this->input->get('id_lab');
-            $status_ctk         = $this->input->get('status_ctk');
+            $status_ctk         = $this->input->get('status_ctk'); 
             
             $sql_medc           = $this->db->where('id', general::dekrip($id_medcheck))->get('tbl_trans_medcheck')->row();
             $sql_medc_lab       = $this->db->where('id', general::dekrip($id_lab))->get('tbl_trans_medcheck_lab_ekg')->row();
@@ -16417,6 +16612,8 @@ class medcheck extends CI_Controller {
             // Gambar VALIDASI
             $getY = $pdf->GetY() + 1;
             $pdf->Image($gambar6,14,14,2,2);
+            $kesimpulan = utf8_decode($sql_medc_lab->kesimpulan);
+
             
             $pdf->Cell(9.5, .5, '', 'L', 0, 'L', $fill);
             $pdf->Cell(9.5, .5, '('.$this->ion_auth->user($sql_medc_lab->id_user)->row()->first_name.')', 'R', 0, 'C', $fill);
@@ -16467,7 +16664,7 @@ class medcheck extends CI_Controller {
             $pdf->Cell(.5, .5, ':', '', 0, 'C', $fill);
             $pdf->Cell(6.5, .5, $sql_medc_lab->hsl_lain, 'R', 0, 'L', $fill);
             $pdf->Ln();
-            $pdf->MultiCell(19, .5, 'Kesimpulan : '.$sql_medc_lab->kesimpulan, '1', 'L');
+            $pdf->MultiCell(19, .5, 'Kesimpulan : '.$kesimpulan, '1', 'L');
             
             
             $pdf->Cell(19, .5, '', 'T', 0, 'C', $fill);
@@ -16531,7 +16728,450 @@ class medcheck extends CI_Controller {
             redirect();
         }
     }
+
+    public function pdf_medcheck_lab_audio() {
+        if (akses::aksesLogin() == TRUE) {
+            $setting            = $this->db->get('tbl_pengaturan')->row();
+            $id_medcheck        = $this->input->get('id');
+            $id_lab             = $this->input->get('id_lab');
+            $status_ctk         = $this->input->get('status_ctk');
+
+            
+                // Get audiometri data with proper error handling
+            $query = $this->db->select('
+                    tbl_trans_medcheck_lab_audiometri.*,
+                    tbl_trans_medcheck.pasien,
+                    tbl_trans_medcheck.no_rm,
+                    tbl_trans_medcheck.tgl_masuk as tgl_periksa,
+                    tbl_m_pasien.kode_dpn,
+                    tbl_m_pasien.kode,
+                    tbl_m_pasien.nama_pgl,
+                    tbl_m_pasien.tgl_lahir,
+                    tbl_m_pasien.jns_klm,
+                    tbl_m_pasien.alamat,
+                    tbl_m_karyawan.nama_dpn,
+                    tbl_m_karyawan.nama,
+                    tbl_m_karyawan.nama_blk
+                ')
+                    ->from('tbl_trans_medcheck_lab_audiometri')
+                    ->join('tbl_trans_medcheck', 'tbl_trans_medcheck.id = tbl_trans_medcheck_lab_audiometri.id_medcheck')
+                    ->join('tbl_m_pasien', 'tbl_m_pasien.id = tbl_trans_medcheck.id_pasien')
+                    ->join('tbl_m_karyawan', 'tbl_m_karyawan.id_user = tbl_trans_medcheck_lab_audiometri.id_user', 'left')
+                    ->where('tbl_trans_medcheck_lab_audiometri.id', general::dekrip($id_medcheck))->get()->row();
+            
+            $sql_medc           = $this->db->where('id', $query->id_medcheck)->get('tbl_trans_medcheck')->row();
+            $sql_medc_lab       = $this->db->where('id', $sql_medc->id)->get('tbl_trans_medcheck_lab_audiometri')->row();
+            $sql_medc_lab_ekg   = $this->db->where('id_lab_ekg', general::dekrip($id_lab))->get('tbl_trans_medcheck_lab_ekg_file')->row();
+            $sql_poli           = $this->db->where('id', $sql_medc->id_poli)->get('tbl_m_poli')->row(); 
+            $sql_pasien         = $this->db->where('id', $sql_medc->id_pasien)->get('tbl_m_pasien')->row(); 
+            $sql_pekerjaan      = $this->db->where('id', $sql_pasien->id_pekerjaan)->get('tbl_m_jenis_kerja')->row();
+            $sql_dokter         = $this->db->where('id_user', $sql_medc->id_dokter)->get('tbl_m_karyawan')->row();
+            $kode_pasien        = $sql_pasien->kode_dpn.$sql_pasien->kode;
+            $no_rm              = strtolower($sql_pasien->kode_dpn).$sql_pasien->kode;
+            
+            $folder             = realpath('./file/pasien/'.$no_rm);
+
+            $gambar1            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-esensia-2.png'; // base_url('assets/theme/admin-lte-3/dist/img/logo-esensia-2.png');
+            $gambar2            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-bw-bg2-1440px.png'; // base_url('assets/theme/admin-lte-3/dist/img/logo-bw-bg2-1440px.png');
+            $gambar3            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-footer.png'; // base_url('assets/theme/admin-lte-3/dist/img/logo-footer.png');
+            $file_ekg           = $folder.'/'.$sql_medc_lab_ekg->file_name;
+            $sess_print         = $this->session->userdata('lab_print');
+            
+            $judul              = "HASIL PEMBACAAN AUDIOMETRI";
+
+            $this->load->library('MedLabPDF');
+            $pdf = new MedLabPDF('P', 'cm', array(21.5,33));
+            $pdf->SetAutoPageBreak('auto', 7);
+            $pdf->SetMargins(1,0.35,1);
+            $pdf->header = 0;
+            $pdf->addPage('','',false);
+            
+            // Gambar Watermark Tengah
+            $pdf->Image($gambar2,5,4,15,19);
+            
+                // Add audiometri image if exists
+                if (!empty($query->nama_file)) {
+                    $pdf->Ln(0.5);
+                    $image_path = FCPATH . 'file/pasien/' . strtolower($query->kode_dpn . $query->kode) . '/audiometri/' . $query->nama_file;
+                    
+                    if (file_exists($image_path)) {
+                        $ext = strtolower(pathinfo($image_path, PATHINFO_EXTENSION));
+                        if ($ext == 'jpg' || $ext == 'jpeg' || $ext == 'png') {
+                            list($width, $height) = getimagesize($image_path);
+                            $aspect = $width / $height;
+                            
+                            // Set max width to 18cm (page width minus margins)
+                            $max_width = 18;
+                            $new_width = min($width/10, 9);
+                            $new_height = $new_width / $aspect;
+                            
+                            // Center the image
+                            $x = (21 - $new_width) / 2;
+                            try {
+                                $pdf->Image($image_path,3.5,5,10,11);
+//                                $pdf->Ln($new_height + 0.5);
+                            } catch (Exception $e) {
+                                log_message('error', 'Failed to load image: ' . $image_path . ' - ' . $e->getMessage());
+                            }
+                        }
+                    } else {
+                        log_message('error', 'Image file not found: ' . $image_path);
+                    }
+                }
+            
+            # Blok Judul & ID Pasien
+            $pdf->SetFont('Arial', 'B', '13');
+            $pdf->Cell(7, .5, '', 'LTR', 0, 'L', $fill);
+            $pdf->SetFont('Arial', '', '9');
+            $pdf->Cell(2, .5, 'Nama', 'T', 0, 'L', $fill);
+            $pdf->Cell(.5, .5, ':', 'T', 0, 'C', $fill);
+            $pdf->Cell(9.5, .5, general::bersih($query->pasien).' ('.$query->jns_klm.')', 'TR', 0, 'L', $fill);
+            $pdf->Ln();
+            $pdf->SetFont('Arial', 'B', '11');
+            $pdf->Cell(7, .5, $judul, 'LR', 0, 'C', $fill);
+            $pdf->SetFont('Arial', '', '9');
+            $pdf->Cell(2, .5, 'No. RM', '', 0, 'L', $fill);
+            $pdf->Cell(.5, .5, ':', '', 0, 'C', $fill);
+//            $pdf->Cell(9.5, .5, $file_ekg, 'R', 0, 'L', $fill);
+            $pdf->Cell(9.5, .5, $query->kode_dpn.$query->kode, 'R', 0, 'L', $fill);
+            $pdf->Ln();
+            $pdf->SetFont('Arial', 'B', '13');
+            $pdf->Cell(7, .5, '', 'LBR', 0, 'C', $fill);
+            $pdf->SetFont('Arial', '', '9');
+            $pdf->Cell(2, .5, 'Tanggal Lahir', 'LB', 0, 'L', $fill);
+            $pdf->Cell(.5, .5, ':', 'B', 0, 'C', $fill);
+            $pdf->Cell(9.5, .5, $this->tanggalan->tgl_indo2($query->tgl_lahir).' / '.$this->tanggalan->usia_lkp($query->tgl_lahir), 'BR', 0, 'L', $fill);
+            $pdf->Ln();
+            
+            # Blok Lampiran hasil EKG
+            $pdf->SetFont('Times', '', '10');
+            $pdf->Cell(19, .5, '', 'LR', 0, 'L', $fill);
+            $pdf->Ln();
+            $pdf->SetFont('Times', 'B', '13');
+            $pdf->Cell(19, .5, '', 'LR', 0, 'L', $fill);
+            $pdf->Ln();
+            $pdf->SetFont('Times', '', '10');
+            $pdf->Cell(19, .5, '', 'LR', 0, 'L', $fill);
+            $pdf->Ln();
+            $pdf->Cell(19, .5, '', 'LR', 0, 'L', $fill);
+            $pdf->Ln();
+            $pdf->Cell(19, .5, '', 'LR', 0, 'L', $fill);
+            $pdf->Ln();
+            $pdf->Cell(19, .5, '', 'LR', 0, 'L', $fill);
+            $pdf->Ln();
+            $pdf->Cell(19, .5, '', 'LR', 0, 'L', $fill);
+            $pdf->Ln();
+            $pdf->Cell(19, .5, '', 'LR', 0, 'L', $fill);
+            $pdf->Ln();
+            $pdf->Cell(19, .5, '', 'LR', 0, 'L', $fill);
+            $pdf->Ln();
+            $pdf->Cell(19, .5, '', 'LR', 0, 'L', $fill);
+            $pdf->Ln();
+            $pdf->Cell(19, .5, '', 'LR', 0, 'L', $fill);
+            $pdf->Ln();
+            $pdf->Cell(19, .5, '', 'LR', 0, 'L', $fill);
+            $pdf->Ln();
+            $pdf->Cell(19, .5, '', 'LR', 0, 'L', $fill);
+            $pdf->Ln();
+            $pdf->Cell(19, .5, '', 'LR', 0, 'L', $fill);
+            $pdf->Ln();
+            $pdf->Cell(19, .5, '', 'LR', 0, 'L', $fill);
+            $pdf->Ln();
+            $pdf->Cell(19, .5, '', 'LR', 0, 'L', $fill);
+            $pdf->Ln();
+            $pdf->Cell(19, .5, '', 'LR', 0, 'L', $fill);
+            $pdf->Ln();
+            $pdf->Cell(19, .5, '', 'LR', 0, 'L', $fill);
+            $pdf->Ln();
+            $pdf->Cell(19, .5, '', 'LR', 0, 'L', $fill);
+            $pdf->Ln();
+            $pdf->Cell(19, .5, '', 'LR', 0, 'L', $fill);
+            $pdf->Ln();
+            $pdf->Cell(19, .5, '', 'LR', 0, 'L', $fill);
+            $pdf->Ln();
+            $pdf->Cell(19, .5, '', 'LR', 0, 'L', $fill);
+            $pdf->Ln();
+            $pdf->Cell(19, .5, '', 'LR', 0, 'L', $fill);
+            $pdf->Ln();            
+           
+            // QR GENERATOR VALIDASI
+            $qr_validasi        = FCPATH.'/file/pasien/'.strtolower($kode_pasien).'/qr-validasi-'.strtolower($kode_pasien).'.png';
+            $params['data']     = 'Telah diverifikasi dan ditandatangani secara elektronik oleh petugas '.$this->ion_auth->user($sql_medc_lab->id_user)->row()->first_name;
+            $params['level']    = 'H';
+            $params['size']     = 2;
+            $params['savename'] = $qr_validasi;
+            $this->ciqrcode->generate($params);  
+            
+            $gambar6            = $qr_validasi;  
+            
+            // Gambar VALIDASI
+            $getY = $pdf->GetY() + 1;
+            $pdf->Image($gambar6,14,14,2,2);
+            
+            $pdf->Cell(9.5, .5, '', 'L', 0, 'L', $fill);
+            $pdf->Cell(9.5, .5, '('.$this->ion_auth->user($sql_medc_lab->id_user)->row()->first_name.')', 'R', 0, 'C', $fill);
+            $pdf->Ln();
+            $pdf->SetFont('Times', 'B', '10');
+            $pdf->Cell(19, .5, 'Hasil Pembacaan :', '1', 0, 'L', $fill);
+            $pdf->Ln();
+            $pdf->SetFont('Times', '', '9');
+            $pdf->MultiCell(19, .5, $query->hasil, 'LRB', 'L');
+            
+            
+            $pdf->Cell(19, .5, '', 'T', 0, 'C', $fill);
+            $pdf->Ln();
+           
+            // QR GENERATOR VALIDASI
+            $qr_validasi        = FCPATH.'/file/pasien/'.strtolower($kode_pasien).'/qr-validasi-'.strtolower($kode_pasien).'.png';
+            $params['data']     = 'Telah diverifikasi dan ditandatangani secara elektronik oleh manajemen '.$setting->judul.'. Pasien a/n. ';
+            $params['data']    .= strtoupper($sql_pasien->nama_pgl).' ('.strtoupper($kode_pasien).')';
+            $params['level']    = 'H';
+            $params['size']     = 2;
+            $params['savename'] = $qr_validasi;
+            $this->ciqrcode->generate($params);
+                     
+            $gambar4            = $qr_validasi;         
+                        
+            // QR GENERATOR DOKTER
+            $qr_dokter          = FCPATH.'/file/pasien/'.strtolower($kode_pasien).'/qr-dokter-'.strtolower($sql_dokter2->id).'.png';
+            $params['data']     = 'Telah diverifikasi dan ditandatangani secara elektronik oleh dokter penanggung jawab ['.(!empty($sql_dokter2->nama_dpn) ? $sql_dokter2->nama_dpn.' ' : '').$sql_dokter2->nama.(!empty($sql_dokter2->nama_blk) ? ', '.$sql_dokter2->nama_blk : '').']';
+            $params['level']    = 'H';
+            $params['size']     = 2;
+            $params['savename'] = $qr_dokter;
+            $this->ciqrcode->generate($params);
+            
+            $gambar5            = $qr_dokter;
+//            $gambar5            = base_url('file/qr/dokter-'.strtolower($sql_dokter2->id).'.png');
+            
+            // Gambar VALIDASI
+            $getY = $pdf->GetY() + 1;
+            $pdf->Image($gambar4,2,$getY,2,2);
+            $pdf->Image($gambar5,12,$getY,2,2);
+            
+            
+            $pdf->SetFont('Arial', '', '10');
+            $pdf->Cell(10.5, .5, '', '', 0, 'L', $fill);
+            $pdf->Cell(7.5, .5, 'Semarang, '.$this->tanggalan->tgl_indo3($sql_medc_lab->tgl_masuk), '', 0, 'L', $fill);
+            $pdf->Ln();
+            $pdf->SetFont('Arial', 'B', '10');
+            $pdf->Cell(4, .5, 'Validasi', '0', 0, 'C', $fill);
+            $pdf->Cell(6.5, .5, '', '0', 0, 'C', $fill);
+            $pdf->SetFont('Arial', '', '10');
+            $pdf->Cell(7.5, .5, 'Dokter Yang Memeriksa,', '0', 0, 'L', $fill);
+            $pdf->Ln(2.5);
+            
+            $pdf->SetFont('Arial', '', '10');
+            $pdf->Cell(10.5, .5, '', '', 0, 'L', $fill);
+            $pdf->Cell(7.5, .5, (!empty($sql_dokter->nama_dpn) ? $sql_dokter->nama_dpn.' ' : '').$sql_dokter->nama.(!empty($sql_dokter->nama_blk) ? ', '.$sql_dokter->nama_blk : ''), '', 0, 'L', $fill);
+            $pdf->Ln();
+            $pdf->Cell(10.5, .5, '', '', 0, 'L', $fill);
+            $pdf->Cell(7.5, .5, $sql_dokter->nik, '', 0, 'L', $fill);
+            $pdf->Ln();
+            
+            $type = (isset($_GET['type']) ? $_GET['type'] : 'I');
+            
+            ob_start();
+            $pdf->Output($query->pasien. '.pdf', $type);
+            ob_end_flush();
+        } else {
+            $errors = $this->ion_auth->messages();
+            $this->session->set_flashdata('login', '<div class="alert alert-danger">Authentifikasi gagal, silahkan login ulang!!</div>');
+            redirect();
+        }
+    }
     
+    public function cetak_audiometri() {
+        if (akses::aksesLogin() == TRUE) {
+            try {
+                // Get and validate ID
+                $id = $this->security->xss_clean($this->input->get('id'));
+                if (empty($id)) {
+                    throw new Exception('ID tidak valid');
+                }
+
+                $id_dec = general::dekrip($id);
+                $gambar2 = FCPATH . '/assets/theme/admin-lte-3/dist/img/logo-bw-bg2-1440px.png';
+                $judul = "HASIL PEMERIKSAAN LABORATORIUM";
+                $judul2 = "Laboratory Result";
+
+                // Get audiometri data with proper error handling
+                $query = $this->db->select('
+                    tbl_trans_medcheck_lab_audiometri.*,
+                    tbl_trans_medcheck.pasien,
+                    tbl_trans_medcheck.no_rm,
+                    tbl_trans_medcheck.tgl_masuk as tgl_periksa,
+                    tbl_m_pasien.kode_dpn,
+                    tbl_m_pasien.kode,
+                    tbl_m_pasien.nama_pgl,
+                    tbl_m_pasien.tgl_lahir,
+                    tbl_m_pasien.jns_klm as jk,
+                    tbl_m_pasien.alamat,
+                    tbl_m_karyawan.nama_dpn,
+                    tbl_m_karyawan.nama,
+                    tbl_m_karyawan.nama_blk
+                ')
+                        ->from('tbl_trans_medcheck_lab_audiometri')
+                        ->join('tbl_trans_medcheck', 'tbl_trans_medcheck.id = tbl_trans_medcheck_lab_audiometri.id_medcheck')
+                        ->join('tbl_m_pasien', 'tbl_m_pasien.id = tbl_trans_medcheck.id_pasien')
+                        ->join('tbl_m_karyawan', 'tbl_m_karyawan.id_user = tbl_trans_medcheck_lab_audiometri.id_user', 'left')
+                        ->where('tbl_trans_medcheck_lab_audiometri.id', $id_dec);
+
+                $result = $query->get();
+
+                if (!$result) {
+                    throw new Exception('Error executing query: ' . $this->db->error()['message']);
+                }
+
+                $audiometri = $result->row();
+
+                if (!$audiometri) {
+                    throw new Exception('Data audiometri tidak ditemukan');
+                }
+
+                // Get settings with error handling
+                $pengaturan = $this->db->get('tbl_pengaturan');
+                if (!$pengaturan) {
+                    throw new Exception('Error getting settings: ' . $this->db->error()['message']);
+                }
+                $pengaturan = $pengaturan->row();
+
+                // Create PDF
+                $this->load->library('MedLabPDF');
+                $pdf = new MedLabPDF('P', 'cm', array(21.5,33));
+                $pdf->SetAutoPageBreak('auto', 6.5);
+                $pdf->SetMargins(1,0.35,1);
+                $pdf->header = 0;
+                $pdf->addPage('','',false);
+
+                // Set default font
+                $pdf->SetFont('Arial', '', 10);
+
+                // Header
+                if (file_exists('./assets/img/' . $pengaturan->logo)) {
+                    $pdf->Image('./assets/img/' . $pengaturan->logo, 1, 0.5, 2);
+                }
+
+                # Gambar Watermark Tengah
+//                $pdf->Image($gambar2, 0.5, 0.4, 1.5, 1.9);
+//
+//                # Blok Judul
+//                $pdf->SetFont('Arial', 'B', '13');
+//                $pdf->Cell(1.9, 0.05, $judul, 0, 1, 'C');
+//                $pdf->Ln(0);
+//                $pdf->SetFont('Arial', 'Bi', '13');
+//                $pdf->Cell(1.9, 0.05, $judul2, 'B', 1, 'C');
+//                $pdf->Ln();
+//
+//                # Blok Dokter Penanggung Jawab
+//                $pdf->SetFont('Arial', 'B', '9');
+//                $pdf->Cell(0.9, 0.05, '', '0', 0, 'L', $fill);
+//                $pdf->Cell(0.4, 0.05, 'Dokter Penanggung Jawab', '0', 0, 'L', $fill);
+//                $pdf->Cell(0.05, 0.05, ':', '0', 0, 'C', $fill);
+//                $pdf->SetFont('Arial', 'B', '9');
+//                $pdf->Cell(0.55, 0.05, '1. dr. ANITA TRI HASTUTI, Sp.PK', '', 0, 'L', $fill);
+//                $pdf->Ln();
+//                $pdf->Cell(0.9, 0.05, '', '0', 0, 'L', $fill);
+//                $pdf->Cell(0.4, 0.05, '', '0', 0, 'L', $fill);
+//                $pdf->Cell(0.05, 0.05, '', '0', 0, 'C', $fill);
+//                $pdf->Cell(0.55, 0.05, '2. dr. YENI JAMILAH, Sp.MK', '', 0, 'L', $fill);
+//                $pdf->Ln();
+
+                // Title
+                $pdf->SetFont('Arial', 'B', 11);
+                $pdf->Cell(19, 0.5, 'HASIL PEMERIKSAAN AUDIOMETRI', 0, 1, 'C');
+                $pdf->Ln(0.5);
+
+                // Patient Info
+                $pdf->SetFont('Arial', '', 9);
+                $pdf->Cell(3, 0.5, 'Nama Pasien', 0, 0);
+                $pdf->Cell(0.5, 0.5, ':', 0, 0);
+                $pdf->Cell(6.5, 0.5, $audiometri->nama_pgl, 0, 0);
+                $pdf->Cell(3, 0.5, 'No. RM', 0, 0);
+                $pdf->Cell(0.5, 0.5, ':', 0, 0);
+                $pdf->Cell(5.5, 0.5, $audiometri->no_rm, 0, 1);
+
+                $pdf->Cell(3, 0.5, 'Tgl Lahir', 0, 0);
+                $pdf->Cell(0.5, 0.5, ':', 0, 0);
+                $pdf->Cell(6.5, 0.5, $this->tanggalan->tgl_indo($audiometri->tgl_lahir), 0, 0);
+                $pdf->Cell(3, 0.5, 'Jenis Kelamin', 0, 0);
+                $pdf->Cell(0.5, 0.5, ':', 0, 0);
+                $pdf->Cell(5.5, 0.5, ($audiometri->jk == 'L' ? 'Laki-laki' : 'Perempuan'), 0, 1);
+
+                $pdf->Cell(3, 0.5, 'Alamat', 0, 0);
+                $pdf->Cell(0.5, 0.5, ':', 0, 0);
+                $pdf->Cell(15.5, 0.5, $audiometri->alamat, 0, 1);
+
+                $pdf->Ln(0.5);
+
+                // Examination Info
+                $pdf->Cell(3, 0.5, 'Tgl Periksa', 0, 0);
+                $pdf->Cell(0.5, 0.5, ':', 0, 0);
+                $pdf->Cell(15.5, 0.5, $this->tanggalan->tgl_indo($audiometri->tgl_masuk), 0, 1);
+
+                $pdf->Ln(0.5);
+
+                // Results
+                $pdf->SetFont('Arial', 'B', 10);
+                $pdf->Cell(19, 0.5, 'HASIL PEMERIKSAAN:', 0, 1);
+                $pdf->Ln(0.2);
+
+                $pdf->SetFont('Arial', '', 9);
+                $pdf->MultiCell(19, 0.5, $audiometri->hasil, 0, 'L');
+
+                // Add audiometri image if exists
+                if (!empty($audiometri->nama_file)) {
+                    $pdf->Ln(0.5);
+                    $image_path = FCPATH . 'file/pasien/' . strtolower($audiometri->kode_dpn . $audiometri->kode) . '/audiometri/' . $audiometri->nama_file;
+                    
+                    if (file_exists($image_path)) {
+                        $ext = strtolower(pathinfo($image_path, PATHINFO_EXTENSION));
+                        if ($ext == 'jpg' || $ext == 'jpeg' || $ext == 'png') {
+                            list($width, $height) = getimagesize($image_path);
+                            $aspect = $width / $height;
+                            
+                            // Set max width to 18cm (page width minus margins)
+                            $max_width = 18;
+                            $new_width = min($width/10, 9);
+                            $new_height = $new_width / $aspect;
+                            
+                            // Center the image
+                            $x = (21 - $new_width) / 2;
+                            try {
+                                $pdf->Image($image_path, $x, $pdf->GetY(), $new_width);
+                                $pdf->Ln($new_height + 0.5);
+                            } catch (Exception $e) {
+                                log_message('error', 'Failed to load image: ' . $image_path . ' - ' . $e->getMessage());
+                            }
+                        }
+                    } else {
+                        log_message('error', 'Image file not found: ' . $image_path);
+                    }
+                }
+
+                $pdf->Ln(1);
+
+                // Signature
+                $pdf->Cell(9.5, 0.5, '', 0, 0);
+                $pdf->Cell(9.5, 0.5, 'Pemeriksa,', 0, 1, 'C');
+                $pdf->Ln(1.5);
+
+                $pdf->Cell(9.5, 0.5, '', 0, 0);
+                $pdf->Cell(9.5, 0.5, (!empty($audiometri->nama_dpn) ? $audiometri->nama_dpn . ' ' : '').$audiometri->nama.(!empty($audiometri->nama_blk) ? ', ' . $audiometri->nama_blk : ''), 0, 1, 'C');
+
+                ob_start();
+                $pdf->Output('Hasil_Audiometri_' . $audiometri->no_rm . '.pdf', 'I');
+                ob_end_flush();
+            } catch (Exception $e) {
+                log_message('error', $e->getMessage());
+                $this->session->set_flashdata('error', $e->getMessage());
+                redirect($_SERVER['HTTP_REFERER']);
+            }
+        } else {
+            $this->session->set_flashdata('login', '<div class="alert alert-danger">Authentifikasi gagal, silahkan login ulang!!</div>');
+            redirect();
+        }
+    }
+
     public function pdf_medcheck_pen_hrv() {
         if (akses::aksesLogin() == TRUE) {
             $setting            = $this->db->get('tbl_pengaturan')->row();
@@ -17482,7 +18122,7 @@ class medcheck extends CI_Controller {
             $gambar2            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-bw-bg2-1440px.png';
             $gambar3            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-footer.png';
             $foto_file          = realpath($sql_pasien->file_name);
-            $ck_foto            = (!empty($sql_pasien->file_name) ? base_url($sql_pasien->file_name) : FCPATH.'/assets/theme/admin-lte-3/dist/img/'.($sql_pasien->jns_klm == 'L' ? 'avatar7-men' : 'avatar7-women').'.png');
+            $ck_foto            = (!empty($sql_pasien->file_name) ? FCPATH.'/'.$sql_pasien->file_name : FCPATH.'/assets/theme/admin-lte-3/dist/img/'.($sql_pasien->jns_klm == 'L' ? 'avatar7-men' : 'avatar7-women').'.png');
             $foto_pasien        = $ck_foto;
                     
             $judul  = "RESUME MEDICAL CHECKUP";
@@ -18341,6 +18981,7 @@ class medcheck extends CI_Controller {
             $sql_medc_ass14R     = $this->db->where('id_medcheck_ass', $sql_medc_lab->id)->where('status_posisi', 'R')->where('tipe', '14')->get('tbl_trans_medcheck_ass_fisik_hsl')->result();
             $sql_medc_ass15      = $this->db->where('id_medcheck_ass', $sql_medc_lab->id)->where('tipe', '15')->get('tbl_trans_medcheck_ass_fisik_hsl')->result();
             $sql_medc_ass16      = $this->db->where('id_medcheck_ass', $sql_medc_lab->id)->where('tipe', '16')->get('tbl_trans_medcheck_ass_fisik_hsl')->result();
+            $sql_medc_ass17      = $this->db->where('id_medcheck_ass', $sql_medc_lab->id)->where('tipe', '17')->get('tbl_trans_medcheck_ass_fisik_hsl')->result();
             # --- END --
             
             $sql_poli            = $this->db->where('id', $sql_medc->id_poli)->get('tbl_m_poli')->row();
@@ -18359,7 +19000,7 @@ class medcheck extends CI_Controller {
 
             $this->load->library('MedLabPDF');
             $pdf = new MedLabPDF('P', 'cm', array(21.5,33));
-            $pdf->SetAutoPageBreak('auto', 5.5);
+            $pdf->SetAutoPageBreak('auto', 6.5);
             $pdf->SetMargins(1,0.35,1);
             $pdf->header = 0;
             $pdf->addPage('','',false);
@@ -18492,7 +19133,29 @@ class medcheck extends CI_Controller {
             }
             $pdf->Cell(19, .5, '', 'T', 0, 'C', $fill);
             $pdf->Ln();
+            # --------------  
+    
+            # Blok Grup 17 Anamnesis Okupasi, harusnya nomer 3 tapi ketinggalan sehingga di taruh sini
+            $pdf->SetFont('Arial', 'B', '9');
+            $pdf->Cell(7, .5, 'Anamnesis Okupasi', '1', 0, 'L', $fill);
+            $pdf->Cell(1, .5, 'Ya', 'TLB', 0, 'C', $fill);
+            $pdf->Cell(1, .5, 'Tidak', 'TLB', 0, 'C', $fill);
+            $pdf->Cell(10, .5, 'Jelaskan', '1', 0, 'L', $fill);
+            $pdf->Ln();
+            
+            $pdf->SetFont('Arial', '', '9');
+            foreach ($sql_medc_ass17 as $ass17){                
+                $pdf->Cell(7, .5, $ass17->item_name, 'BLR', 0, 'L', $fill);
+                $pdf->Cell(1, .5, (!empty($ass17->item_value) ? 'V' : ''), 'BL', 0, 'C', $fill);
+                $pdf->Cell(1, .5, (empty($ass17->item_value2) ? 'V' : ''), 'BL', 0, 'C', $fill);
+                $pdf->Cell(10, .5, $ass17->item_value2, 'BLR', 0, 'L', $fill);
+                $pdf->Ln();
+            }
+            $pdf->Cell(19, .5, '', 'T', 0, 'C', $fill);
+            $pdf->Ln();
             # --------------
+            
+            $pdf->addPage('','',false);
             
             # ISI BLOK 2
             $pdf->SetFont('Arial', 'i', '9');
@@ -18536,9 +19199,9 @@ class medcheck extends CI_Controller {
                 $pdf->Cell(4.5, .5, $ass3L->item_value3, '0', 0, 'L', $fill);
                 $pdf->Ln();
             }
-            $pdf->Ln();
+            $pdf->Ln(0);
             
-            $setYAss3R = 25.1;
+            $setYAss3R = 21.55;
             foreach ($sql_medc_ass3R as $ass3R) {
                 $pdf->SetXY(10.5,$setYAss3R);
                 $pdf->SetFont('Arial', 'B', '9');
@@ -18981,7 +19644,7 @@ class medcheck extends CI_Controller {
             $gambar3            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-footer.png';
             $kasir              = (!empty($sql_medc->id_kasir) ? $this->ion_auth->user($sql_medc->id_kasir)->row()->first_name : $this->ion_auth->user()->row()->first_name);
 
-            $judul              = ($sql_medc->tipe == '6' ? 'INVOICE FARMASI' : 'INVOICE');
+            $judul              = ($sql_medc->tipe == '6' ? 'INVOICE FARMASI' : ($sql_medc->status_bayar == '1' ? 'INVOICE' : 'TAGIHAN'));
             
             $this->load->library('MedPDF');
             $pdf = new MedPDF('P', 'cm', array(21.5,33));
@@ -19773,6 +20436,203 @@ class medcheck extends CI_Controller {
         }
     }
     
+    # KUITANSI
+    public function pdf_medcheck_nota_dm() {
+        if (akses::aksesLogin() == TRUE) {
+            $this->load->helper("terbilang");
+            $setting            = $this->db->get('tbl_pengaturan')->row();
+            $id_medcheck        = $this->input->get('id');
+            
+            $sql_medc           = $this->db->where('id', general::dekrip($id_medcheck))->get('tbl_trans_medcheck')->row();
+            $sql_medc_plat      = $this->db->where('id_medcheck', $sql_medc->id)->get('v_medcheck_plat')->result();
+            $sql_medc_det       = $this->db->where('id_medcheck', $sql_medc->id)->where('status_pkt', '0')->group_by('id_item_kat')->get('tbl_trans_medcheck_det')->result();
+            $sql_medc_det_sum   = $this->db->select('SUM(diskon) AS diskon, SUM(potongan) AS potongan, SUM(potongan_poin) AS potongan_poin, SUM(subtotal) AS subtotal')->where('id_medcheck', $sql_medc->id)->get('tbl_trans_medcheck_det')->row();
+            $sql_pasien         = $this->db->where('id', $sql_medc->id_pasien)->get('tbl_m_pasien')->row(); 
+            $sql_pasien_poin    = $this->db->where('id_pasien', $sql_medc->id_pasien)->get('tbl_m_pasien_poin')->row();
+            $sql_poli           = $this->db->where('id', $sql_medc->id_poli)->get('tbl_m_poli')->row();
+            $sql_pekerjaan      = $this->db->where('id', $sql_pasien->id_pekerjaan)->get('tbl_m_jenis_kerja')->row();
+            $sql_dokter         = $this->db->where('id_user', $sql_medc->id_dokter)->get('tbl_m_karyawan')->row();
+            $kode_pasien        = $sql_pasien->kode_dpn.$sql_pasien->kode;
+            $gambar1            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-esensia-2.png';
+            $gambar2            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-bw-bg2-1440px.png';
+            $gambar3            = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-footer.png';
+            $kasir              = (!empty($sql_medc->id_kasir) ? $this->ion_auth->user($sql_medc->id_kasir)->row()->first_name : $this->ion_auth->user()->row()->first_name);
+
+            $judul = "KWITANSI ".strtoupper(general::status_rawat2($sql_medc->tipe));
+            
+            $this->load->library('MedPDFdm');
+            $pdf = new MedPDFdm('P', 'cm', array(12.4,25));
+            $pdf->SetAutoPageBreak('auto', 5);
+            $pdf->SetMargins(0.75, 0.5, 0.75); 
+            $pdf->addPage();
+            
+            $pdf->Ln(0.20);
+            $pdf->SetFont('Times', 'B', '8');
+            $pdf->Cell(1.5, 0.25, 'No. Faktur', 0, 'L');
+            $pdf->Cell(0.25, 0.25, ':', '', 'C');
+            $pdf->SetFont('Times', '', '8');
+            $pdf->Cell(5.5, 0.25, $sql_medc->no_nota, '', 'L');
+            $pdf->SetFont('Times', 'B', '8');
+            $pdf->Cell(1, 0.25, 'No. RM', 0, 'L');
+            $pdf->Cell(0.25, 0.25, ':', '', 'C');
+            $pdf->SetFont('Times', '', '8');
+            $pdf->Cell(1.5, 0.25, $sql_pasien->kode, '', 'L');
+            $pdf->Ln();
+            $pdf->SetFont('Times', 'B', '8');
+            $pdf->Cell(1.5, 0.25, 'Nama', 0, 'L');
+            $pdf->Cell(0.25, 0.25, ':', '', 'C');
+            $pdf->SetFont('Times', '', '8');
+            $pdf->Cell(5.5, 0.25, $sql_pasien->nama_pgl, '', 'L');
+            $pdf->SetFont('Times', 'B', '8');
+            $pdf->Cell(1, 0.25, 'Tanggal', 0, 'L');
+            $pdf->Cell(0.25, 0.25, ':', '', 'C');
+            $pdf->SetFont('Times', '', '8');
+            $pdf->Cell(1.5, 0.25, $this->tanggalan->tgl_indo2($sql_medc->tgl_masuk).' '.$this->tanggalan->wkt_indo($sql_medc->tgl_masuk).'-'.$this->tanggalan->wkt_indo($sql_medc->tgl_bayar), '', 'L');
+            $pdf->Ln();
+            $pdf->SetFont('Times', 'B', '8');
+            $pdf->Cell(1.5, 0.25, 'Tgl Lahir', 0, 'L');
+            $pdf->Cell(0.25, 0.25, ':', '', 'C');
+            $pdf->SetFont('Times', '', '8');
+            $pdf->Cell(5.5, 0.25, $this->tanggalan->tgl_indo2($sql_pasien->tgl_lahir), '', 'L');
+            $pdf->SetFont('Times', 'B', '8');
+            $pdf->Cell(1, 0.25, 'Poli', 0, 'L');
+            $pdf->Cell(0.25, 0.25, ':', '', 'C');
+            $pdf->SetFont('Times', '', '8');
+            $pdf->Cell(1.5, 0.25, $sql_poli->lokasi, '', 'L');
+            $pdf->Ln();
+            $pdf->SetFont('Times', 'B', '8');
+            $pdf->Cell(1.5, 0.25, 'Telp / HP', 0, 'L');
+            $pdf->Cell(0.25, 0.25, ':', '', 'C');
+            $pdf->SetFont('Times', '', '8');
+            $pdf->Cell(5.5, 0.25, $sql_pasien->no_hp, '', 'L');
+            $pdf->SetFont('Times', 'B', '8');
+            $pdf->Cell(1, 0.25, 'Kasir', 0, 'L');
+            $pdf->Cell(0.25, 0.25, ':', '', 'C');
+            $pdf->SetFont('Times', '', '8');
+            $pdf->MultiCell(3, 0.25, (!empty($sql_medc->id_kasir) ? $this->ion_auth->user($sql_medc->id_kasir)->row()->first_name : $this->ion_auth->user()->row()->first_name), '', 'L');
+            
+            // Isi Nota
+            $pdf->SetFont('Times', 'B', '8');
+            $pdf->Cell(5.5, 0.35, 'Item', 'TB', 0, 'L', $fill);
+            $pdf->Cell(1, 0.35, 'Jml', 'TB', 0, 'C', $fill);
+            $pdf->Cell(2, 0.35, 'Harga', 'TB', 0, 'R', $fill);
+            $pdf->Cell(2.5, 0.35, 'Subtotal', 'TB', 0, 'R', $fill);
+            $pdf->Ln();            
+            
+            $fill = FALSE;
+            $no = 1; $gtotal = 0;
+            foreach ($sql_medc_det as $det){
+                $sql_kat = $this->db->where('id', $det->id_item_kat)->get('tbl_m_kategori')->row();
+                $sql_det = $this->db->where('id_medcheck', $det->id_medcheck)->where('id_item_kat', $det->id_item_kat)->where('status_pkt', '0')->where('jml >=', '0')->get('tbl_trans_medcheck_det')->result();
+                
+                $pdf->SetFont('Times', 'B', '8');
+                $pdf->Cell(5.5, 0.35, $sql_kat->keterangan . ' (' . $sql_kat->kategori . ')', '', 0, 'L', $fill);
+                $pdf->Ln();
+                $pdf->SetFont('Times', '', '8');
+                
+                $subtotal = 0;
+                foreach ($sql_det as $medc) {
+                    $total_item = $medc->subtotal;
+                    $total_hrg  = $medc->subtotal;
+                    $total_disk = $medc->diskon + $medc->potongan;
+                    
+                    $pdf->Cell(5.5, 0.35, ($medc->status_rc == '1' ? '- ' : '').$medc->item, '', 0, 'L', $fill);
+                    $pdf->Cell(1, 0.35, (float)$medc->jml, '', 0, 'C', $fill);
+                    $pdf->Cell(2, 0.35, general::format_angka($medc->harga), '', 0, 'R', $fill);
+                    $pdf->Cell(2.5, 0.35, general::format_angka($medc->subtotal), '', 0, 'R', $fill);
+                    $pdf->Ln();
+                    
+                    if($medc->diskon > 0){
+                        $pdf->Cell(5.5, 0.35, ($medc->disk1 != '0.00' ? 'disk : '.(float)$medc->disk1 : '').($medc->disk2 != '0.00' ? ' + '.(float)$medc->disk2 : '').($medc->disk3 != '0.00' ? ' + '.(float)$medc->disk3 : '').($medc->disk1 != '0.00' || $medc->disk2 != '0.00' || $medc->disk3 != '0.00' ? '%' : '').($medc->potongan > 0 ? ' pot : '.general::format_angka($medc->potongan) : ''), '', 0, 'R', $fill);
+                        $pdf->Cell(1, 0.35, '', '', 0, 'C', $fill);
+                        $pdf->Cell(2, 0.35, (!empty($total_disk) ? '('.general::format_angka($total_disk).')' : ''), '', 0, 'R', $fill);
+                        $pdf->Cell(2.5, 0.35, '', '', 0, 'R', $fill);
+                        $pdf->Ln();
+                    }
+                    
+                    
+                    # RACIKAN SUUU                   
+                    foreach (json_decode($medc->resep) as $racikan) {
+                        $pdf->SetFont('Times', 'i', '8'); 
+                        $pdf->Cell(5.5, 0.35, '-'.$racikan->item, '', 0, 'L', $fill);
+                        $pdf->Cell(1, 0.35, (float)$racikan->jml, '', 0, 'C', $fill);
+                        $pdf->Cell(2, 0.35, general::format_angka($racikan->harga), '', 0, 'R', $fill);
+                        $pdf->Cell(2.5, 0.35, '', '', 0, 'R', $fill);
+                        $pdf->Ln();
+                    }
+                    
+                    $subtotal += $total_item;
+                }
+
+                $pdf->SetFont('Times', 'B', '8');
+                $pdf->Cell(8.5, 0.35, 'Subtotal', '', 0, 'R', $fill);
+                $pdf->Cell(2.5, 0.35, general::format_angka($subtotal), '', 0, 'R', $fill);
+                $pdf->Ln();
+
+                $gtotal = $gtotal + $subtotal;
+                $number++;         
+            }
+            
+            $sql_platform   = $this->db->where('id', $sql_medc->metode)->get('tbl_m_platform')->row();
+            $jml_ongkir     = $sql_medc->jml_ongkir;
+            $jml_total      = $sql_medc_det_sum->subtotal + $sql_medc_det_sum->diskon + $sql_medc_det_sum->potongan + $sql_medc_det_sum->potongan_poin;
+            $jml_diskon     = $jml_total - $sql_medc_det_sum->subtotal;
+            $diskon         = ($jml_diskon / $sql_medc->jml_total) * 100;
+            $jml_subtotal   = $sql_medc->jml_total + $jml_ongkir - $jml_diskon;
+
+            $pdf->SetFont('Times', 'B', '8');
+            $pdf->Cell(5.5, 0.35, $sql_platform->platform, 'T', 0, 'L', $fill);
+            $pdf->Cell(3, 0.35, 'GRAND TOTAL', 'T', 0, 'R', $fill);
+            $pdf->Cell(2.5, 0.35, general::format_angka($sql_medc->jml_total), 'T', 0, 'R', $fill);
+            $pdf->Ln();
+            $pdf->Cell(5.5, 0.35, 'PARAF', '', 0, 'L', $fill);
+            $pdf->Cell(3, 0.35, 'Disc ('.(float) round($diskon, 1).'%)', '', 0, 'R', $fill);
+            $pdf->Cell(2.5, 0.35, '-'.general::format_angka($jml_diskon), '', 0, 'R', $fill);
+            $pdf->Ln();
+            $pdf->Cell(5.5, 0.35, 'Poin : '.($sql_pasien_poin->jml_poin <= 0 ? 0 : (float)$sql_pasien_poin->jml_poin), '', 0, 'L', $fill);
+            $pdf->Cell(3, 0.35, 'Ongkir', '', 0, 'R', $fill);
+            $pdf->Cell(2.5, 0.35, general::format_angka($jml_ongkir), '', 0, 'R', $fill);
+            $pdf->Ln();
+            $pdf->Cell(5.5, 0.35, '', '', 0, 'L', $fill);
+            $pdf->Cell(3, 0.35, 'Harus dibayar', '', 0, 'R', $fill);
+            $pdf->Cell(2.5, 0.35, general::format_angka($jml_subtotal), '', 0, 'R', $fill);
+            $pdf->Ln();
+            
+            $jml_tot_byr = 0;
+            foreach ($sql_medc_plat as $plat) {
+                $sql_plat       = $this->db->where('id', $plat->id_platform)->get('tbl_m_platform')->row();
+                $jml_tot_byr    = $jml_tot_byr + $plat->nominal;
+
+                $pdf->Cell(5.5, 0.35, '', '', 0, 'L', $fill);
+                $pdf->Cell(3, 0.35, $sql_plat->platform, '', 0, 'R', $fill);
+                $pdf->Cell(2.5, 0.35, general::format_angka($plat->nominal), '', 0, 'R', $fill);
+                $pdf->Ln();
+            }
+                   
+            $jml_kembali    = $jml_subtotal - $jml_tot_byr;
+            $pdf->Cell(5.5, 0.35, '', '', 0, 'L', $fill);
+            $pdf->Cell(3, 0.35, 'Kembali', '', 0, 'R', $fill);
+            $pdf->Cell(2.5, 0.35, general::format_angka($jml_kembali), '', 0, 'R', $fill);
+            $pdf->Ln();
+            $pdf->SetFont('Times', '', '9');
+            $pdf->Cell(11, 0.35, 'Terimakasih atas kunjungannya, semoga lekas sembuh', 'T', 0, 'C', $fill);
+            $pdf->Ln();
+            $pdf->SetFont('Times', 'B', '9');
+            $pdf->Cell(11, 0.35, 'Transaksi yang sudah dibayar tidak dapat dibatalkan', 'B', 0, 'C', $fill);
+            $pdf->Ln();
+
+            $type = (isset($_GET['type']) ? $_GET['type'] : 'I');
+
+            ob_start();
+            $pdf->Output($sql_pasien->nama_pgl . '_KWI' . '.pdf', $type);
+            ob_end_flush();
+        } else {
+            $errors = $this->ion_auth->messages();
+            $this->session->set_flashdata('login', '<div class="alert alert-danger">Authentifikasi gagal, silahkan login ulang!!</div>');
+            redirect();
+        }
+    }
+    
     # LABEL
     public function pdf_medcheck_label() {
         if (akses::aksesLogin() == TRUE) {
@@ -20280,15 +21140,17 @@ class medcheck extends CI_Controller {
             $id         = $this->input->post('id_medcheck');
             $nama       = $this->input->post('pasien');
             $tipe       = $this->input->post('tipe');
+            $poli       = $this->input->post('poli');
             $tgl        = $this->input->post('tgl_daftar');
             $status_byr = $this->input->post('status_bayar');
+            $tipe       = $this->input->post('tipe');
 
             $sql        = $sql   = $this->db->select('*')->where('status_akt !=', '2')->like('nama',$nama)->limit(10)->get('tbl_pendaftaran');
             
             $sql_row    = $sql->row();
             $sql_jml    = $sql->num_rows();
             
-            redirect(base_url('medcheck/data_pendaftaran.php?'.(!empty($tgl) ? 'filter_tgl='.$this->tanggalan->tgl_indo_sys($tgl) : '').(!empty($nama) ? 'filter_nama='.$nama : '').(!empty($id) ? '&id='.general::enkrip($id) : '')));
+            redirect(base_url('medcheck/data_pendaftaran.php?'.(!empty($tgl) ? 'filter_tgl='.$this->tanggalan->tgl_indo_sys($tgl) : '').(!empty($nama) ? 'filter_nama='.$nama : '').(!empty($poli) ? '&poli='.$poli : '').(!empty($tipe) ? '&tipe='.$tipe : '').(!empty($id) ? '&id='.general::enkrip($id) : '')));
         } else {
             $errors = $this->ion_auth->messages();
             $this->session->set_flashdata('login', '<div class="alert alert-danger">Authentifikasi gagal, silahkan login ulang!!</div>');
@@ -20605,7 +21467,7 @@ class medcheck extends CI_Controller {
                                     ->where("(tbl_m_produk.produk LIKE '%" . $term . "%' OR tbl_m_produk.produk_alias LIKE '%" . $term . "%' OR tbl_m_produk.produk_kand LIKE '%" . $term . "%' OR tbl_m_produk.kode LIKE '%" . $term . "%' OR tbl_m_produk.barcode LIKE '" . $term . "')")
                                     ->where('tbl_m_produk.status', '2')
                                     ->where('status_hps', '0')
-                                    ->or_where('tbl_m_produk.status', '6')
+//                                    ->or_where('tbl_m_produk.status', '6')
                                     ->order_by('tbl_m_produk.jml', ($_GET['mod'] == 'beli' ? 'asc' : 'desc'))
                                     ->get('tbl_m_produk')->result();
                     break;
@@ -20614,6 +21476,7 @@ class medcheck extends CI_Controller {
                     $sql = $this->db->select('tbl_m_produk.id, tbl_m_produk.id_satuan, tbl_m_produk.kode, tbl_m_produk.produk, tbl_m_produk.produk_alias, tbl_m_produk.produk_kand, tbl_m_produk.jml, tbl_m_produk.harga_jual, tbl_m_produk.harga_beli, tbl_m_produk.harga_beli, tbl_m_produk.status_brg_dep')
                                     ->where('tbl_m_produk.status', '3')
                                     ->where('status_hps', '0')
+                                    ->or_where('tbl_m_produk.status', '6')
                                     ->where("(tbl_m_produk.produk LIKE '%" . $term . "%' OR tbl_m_produk.produk_alias LIKE '%" . $term . "%' OR tbl_m_produk.produk_kand LIKE '%" . $term . "%' OR tbl_m_produk.kode LIKE '%" . $term . "%' OR tbl_m_produk.barcode LIKE '" . $term . "')")
                                     ->get('tbl_m_produk')->result();
                     break;
@@ -20623,6 +21486,7 @@ class medcheck extends CI_Controller {
                                     ->where("(tbl_m_produk.produk LIKE '%" . $term . "%' OR tbl_m_produk.produk_alias LIKE '%" . $term . "%' OR tbl_m_produk.produk_kand LIKE '%" . $term . "%' OR tbl_m_produk.kode LIKE '%" . $term . "%' OR tbl_m_produk.barcode LIKE '" . $term . "')")
                                     ->where('tbl_m_produk.status', '5')
                                     ->where('status_hps', '0')
+                                    ->or_where('tbl_m_produk.status', '6')
                                     ->order_by('tbl_m_produk.jml', ($_GET['mod'] == 'beli' ? 'asc' : 'desc'))
                                     ->get('tbl_m_produk')->result();
                     break;
@@ -20632,6 +21496,7 @@ class medcheck extends CI_Controller {
                                     ->where("(tbl_m_produk.produk LIKE '%" . $term . "%' OR tbl_m_produk.produk_alias LIKE '%" . $term . "%' OR tbl_m_produk.produk_kand LIKE '%" . $term . "%' OR tbl_m_produk.kode LIKE '%" . $term . "%' OR tbl_m_produk.barcode LIKE '" . $term . "')")
                                     ->where('tbl_m_produk.status', '4')
                                     ->where('status_hps', '0')
+//                                    ->or_where('tbl_m_produk.status', '6')
                                     ->order_by('tbl_m_produk.jml', ($_GET['mod'] == 'beli' ? 'asc' : 'desc'))
                                     ->get('tbl_m_produk')->result();
                     break;

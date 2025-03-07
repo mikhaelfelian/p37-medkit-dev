@@ -66,6 +66,27 @@
                                 </table>
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <table class="table table-condensed">
+                                    <thead>
+                                        <tr>
+                                            <th>Anamnesis Okupasi</th>
+                                            <th></th>
+                                            <th>Jelaskan</th>
+                                        </tr>
+                                    </thead>
+                                    <?php foreach ($sql_ass_riw3->result() as $ass_riw3) { ?>
+                                    <?php $sql_ck3 = $this->db->where('id_medcheck', $sql_medc->id)->where('id_medcheck_ass', general::dekrip($this->input->get('id_ass')))->where('id_item', $ass_riw3->id)->where('tipe', '17')->get('tbl_trans_medcheck_ass_fisik_hsl')->row(); ?>
+                                        <tr>
+                                            <td style="width: 175px;" class="text-left"><small><?php echo $ass_riw3->penyakit ?></small></td>
+                                            <td style="width: 10px;" class="text-center"><?php echo form_checkbox(array('id' => '', 'name' => 'riw3[' . $ass_riw3->id . ']', 'value' => '1', 'checked' => ($sql_ck3->item_value == 1 ? 'true' : ''))) ?></td>
+                                            <td style="width: 150px;" class="text-left"><?php echo form_input(array('id' => '', 'name' => 'riw3_jwb[' . $ass_riw3->id . ']', 'class' => 'form-control input-sm rounded-0', 'value' => $sql_ck3->item_value2)) ?></td>
+                                        </tr>
+                                    <?php } ?>
+                                </table>
+                            </div>                            
+                        </div>
                     </div>
                 </div>
             </div>

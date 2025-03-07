@@ -12,33 +12,56 @@ class MedLabPDF extends FPDF {
 
     private $nm_dokter;
     private $no_sip;
+    private $page_height = 33; // Define page height
+    private $current_dokter;
+    private $current_sip;
 
-    public function header($dokter, $no_sip) {
+    public function __construct($orientation='P', $unit='cm', $size=array(21.5,33)) {
+        parent::FPDF($orientation, $unit, $size);
+        $this->SetAutoPageBreak(true, 6.5);
+        $this->SetMargins(1, 0.35, 1);
+    }
+
+    public function setDokterInfo($dokter, $no_sip) {
+        $this->current_dokter = $dokter;
+        $this->current_sip = $no_sip;
+    }
+
+    public function Header() {
         $CI = & get_instance();
         $CI->load->database();
 
         $setting = $CI->db->get('tbl_pengaturan')->row();
-//        $gambar1 = base_url('assets/theme/admin-lte-3/dist/img/logo-header-es.png');
         $gambar1 = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-header-es.png';
 
+        // Reset Y position for each page
+        $this->SetY(0.35);
+        
         $this->Ln(0.25);
         $this->SetFont('Arial', 'B', '12');
         $this->SetTextColor(0,146,63,255);
         $this->Cell(10.5, .5, '', '', 0, 'L', FALSE);
-        $this->Cell(8.5, .5, 'INSTALASI LABORATORIUM', '', 0, 'L', FALSE);
+        $this->MultiCell(8.5, .5, $setting->judul, '0', 'L');
         $this->Ln(0.5);
         $this->SetFont('Courier', 'B', '14');
         $this->Ln(1.5);
 
         // Gambar Logo Atas 1
         $this->Image($gambar1, 1, 0.25, 10, 2.3);
+
+        // Add watermark for each page
+        $gambar2 = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-bw-bg2-1440px.png';
+        $this->Image($gambar2, 5, 4, 15, 19);
     }
 
-    public function footer($dokter, $no_sip) {
-        $gambar3 = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-footer.png'; // base_url('assets/theme/admin-lte-3/dist/img/logo-footer.png');
-
+    public function Footer() {
+        $gambar3 = FCPATH.'/assets/theme/admin-lte-3/dist/img/logo-footer.png';
+        
+        // Calculate footer position based on page height
+        $footer_y = $this->page_height - 7.25;
+        
         // Gambar Watermark Bawah
-        $this->Image($gambar3, 0, 25.75, 21.5, 7, 'png');
+        $this->Image($gambar3, 0, $footer_y, 21.5, 7, 'png');
     }
     
     function MultiCellRow($cells, $width, $height, $data, $pdf) {
@@ -139,5 +162,14 @@ class MedLabPDF extends FPDF {
         $height += $h;
 
         return $height;
+    }
+
+    public function CheckPageBreak($h) {
+        // If the height of the element would cause an overflow, add a new page
+        if($this->GetY() + $h > $this->PageBreakTrigger) {
+            $this->AddPage($this->CurOrientation);
+            return true;
+        }
+        return false;
     }
 }

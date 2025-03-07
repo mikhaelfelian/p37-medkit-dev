@@ -138,6 +138,7 @@
                                             <th>No. Faktur</th>
                                             <th>Item</th>
                                             <th class="text-right">Harga</th>
+                                            <th class="text-right">HET</th>
                                             <th class="text-right">Diskon</th>
                                             <th class="text-right">Jml</th>
                                             <th class="text-right">Subtotal</th>
@@ -159,7 +160,7 @@
                                                         <?php echo br(); ?>
                                                         <span class="mailbox-read-time float-left"><?php echo $this->tanggalan->tgl_indo($beli->tgl_masuk); ?></span>
                                                     </td>
-                                                    <td class="text-left" style="width: 450px;" colspan="4">
+                                                    <td class="text-left" style="width: 450px;" colspan="5">
                                                         <b><?php echo $beli->nama; ?></b>
                                                     </td>
                                                     <td class="text-right" style="width: 100px;">
@@ -184,6 +185,9 @@
                                                             <?php echo general::format_angka($beli_det->harga); ?>
                                                         </td>
                                                         <td class="text-right" style="width: 100px;">
+                                                            <?php echo general::format_angka($beli_det->harga_het); ?>
+                                                        </td>
+                                                        <td class="text-right" style="width: 100px;">
                                                             <?php echo ($beli_det->diskon > 0 || $beli_det->potongan > 0 ? (float) $beli_det->diskon + $beli_det->potongan : '0') ?>
                                                         </td>
                                                         <td class="text-right" style="width: 100px;">
@@ -195,23 +199,23 @@
                                                     </tr>
                                                 <?php } ?>
                                                 <tr>
-                                                    <td class="text-right text-bold" colspan="6">Subtotal</td>
+                                                    <td class="text-right text-bold" colspan="7">Subtotal</td>
                                                     <td class="text-right text-bold"><?php echo general::format_angka($jml_subtot) ?></td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="text-right text-bold" colspan="6">Diskon</td>
+                                                    <td class="text-right text-bold" colspan="7">Diskon</td>
                                                     <td class="text-right text-bold"><?php echo general::format_angka($beli->jml_diskon) ?></td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="text-right text-bold" colspan="6">PPN</td>
+                                                    <td class="text-right text-bold" colspan="7">PPN</td>
                                                     <td class="text-right text-bold"><?php echo general::format_angka($beli->jml_ppn) ?></td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="text-right text-bold" colspan="6">Grand Total</td>
+                                                    <td class="text-right text-bold" colspan="7">Grand Total</td>
                                                     <td class="text-right text-bold"><?php echo general::format_angka($beli->jml_gtotal) ?></td>
                                                 </tr>
                                                 <tr>
-                                                    <td colspan="7" style="background-color: #17a2b8;"></td>
+                                                    <td colspan="8" style="background-color: #17a2b8;"></td>
                                                 </tr>
                                                 <?php $no++ ?>
                                             <?php } ?>

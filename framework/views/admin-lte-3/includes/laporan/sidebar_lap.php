@@ -68,13 +68,19 @@
             <p>Data Apresiasi</p>
         </a>
     </li>
+    <li class="nav-item">
+        <a href="<?php echo base_url('laporan/data_referal_fee.php') ?>" class="nav-link">
+            <i class="nav-icon fa fa-file-lines"></i>
+            <p>Data Referall Fee</p>
+        </a>
+    </li>
     <li class="nav-header text-bold">LAPORAN PENDAPATAN</li>
     <li class="nav-item">
         <a href="<?php echo base_url('laporan/data_omset.php') ?>" class="nav-link">
             <i class="nav-icon fa fa-file-lines"></i>
             <p>Data Omset Global</p>
         </a>
-    </li>    
+    </li>
     <li class="nav-item">
         <a href="<?php echo base_url('laporan/data_omset_poli.php') ?>" class="nav-link">
             <i class="nav-icon fa fa-file-lines"></i>
@@ -108,6 +114,12 @@
     <li class="nav-header text-bold">DATA PASIEN</li>
     <li class="nav-item">
         <a href="<?php echo base_url('laporan/data_pasien.php') ?>" class="nav-link">
+            <i class="nav-icon fa fa-file-lines"></i>
+            <p>Data Ultah Pasien</p>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a href="<?php echo base_url('laporan/data_pasien_st.php') ?>" class="nav-link">
             <i class="nav-icon fa fa-file-lines"></i>
             <p>Data Pasien</p>
         </a>

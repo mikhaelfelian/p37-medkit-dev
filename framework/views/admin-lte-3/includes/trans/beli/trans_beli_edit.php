@@ -150,7 +150,7 @@
                                                     <?php echo form_input(array('id' => 'jml', 'name' => 'jml', 'class' => 'form-control rounded-0 pull-right' . (!empty($hasError['tgl_masuk']) ? ' is-invalid' : ''), 'placeholder' => 'Isikan Jml ...', 'value'=>'1')) ?>
                                                 </div>                                            
                                             </div>
-                                            <div class="col-md-5">
+                                            <div class="col-md-3">
                                                 <div class="form-group <?php echo (!empty($hasError['satuan']) ? 'text-danger' : '') ?>">
                                                     <label class="control-label">Satuan</label>
                                                     <select name="satuan" class="form-control rounded-0">
@@ -160,6 +160,17 @@
                                                         <?php } ?>
                                                     </select>
                                                 </div>                                           
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group <?php echo (!empty($hasError['harga_het']) ? 'text-danger' : '') ?>">
+                                                    <label class="control-label">Harga Eceran Tertinggi (HET)</label>
+                                                    <div class="input-group mb-3">
+                                                        <div class="input-group-append">
+                                                            <span class="input-group-text">Rp.</span>
+                                                        </div>
+                                                        <?php echo form_input(array('id' => 'harga', 'name' => 'harga_het', 'class' => 'form-control rounded-0 pull-right' . (!empty($hasError['tgl_keluar']) ? ' is-invalid' : ''), 'placeholder' => 'Isikan Harga ...', 'value' => (float) $sql_item->harga_het_beli)) ?>
+                                                    </div>
+                                                </div>                                       
                                             </div>
                                         </div>
                                         <div class="row">
@@ -295,7 +306,8 @@
                                                             <td class="text-left">
                                                                 <?php echo (!empty($cart->kode_batch) ? $cart->kode_batch.br() : ''); ?>
                                                                 <?php echo $cart->produk; ?><br/>
-                                                                <small><?php echo $this->tanggalan->tgl_indo($cart->tgl_ed); ?></small>
+                                                                <small><b>ED :</b><?php echo $this->tanggalan->tgl_indo($cart->tgl_ed); ?></small><br/>
+                                                                <small><b>HET:</b><?php echo general::format_angka($cart->harga_het); ?></small>
                                                             </td>
                                                             <td class="text-center"><?php echo general::format_angka($cart->jml); ?></td>
                                                             <td class="text-right"><?php echo general::format_angka($cart->harga); ?></td>

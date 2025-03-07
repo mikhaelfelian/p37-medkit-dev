@@ -65,7 +65,7 @@
                     </div>
                     <div class="form-group <?php echo (!empty($hasError['imt']) ? 'text-danger' : '') ?>">
                         <label for="inputEmail3">IMT*</label>
-                        <?php echo form_input(array('id' => 'jml', 'name' => 'imt', 'class' => 'form-control pull-right rounded-0' . (!empty($hasError['imt']) ? ' is-invalid' : ''), 'placeholder' => 'Isikan IMT ...', 'value' => $sql_medc_lab_spr_rw->imt)) ?>
+                        <?php echo form_input(array('id' => 'jml', 'name' => 'imt', 'class' => 'form-control pull-right rounded-0' . (!empty($hasError['imt']) ? ' is-invalid' : ''), 'value' => (!empty($sql_medc_lab_spr_rw->imt) ? $sql_medc_lab_spr_rw->imt : 0), 'readonly'=>'TRUE')) ?>
                     </div>
                     <div class="form-group">
                         <label for="inputEmail3">Reference</label>
@@ -92,6 +92,25 @@
 <script type="text/javascript">
     $(function () {
 //        $("input[id=jml]").autoNumeric({aSep: '.', aDec: ',', aPad: false});
+
+        $("input[name=bb]").keyup(function () {
+            var bb  = $('input[name=bb]').val().replace(/[.]/g, "");
+            var tb  = $('input[name=tb]').val().replace(/[.]/g, "");
+            var tbb = parseFloat(tb) / 100;
+            var imt = parseFloat(bb) / (parseFloat(tbb) * parseFloat(tbb));
+
+            $('input[name=imt]').val(Math.round(imt)).autoNumeric({aSep: '.', aDec: ',', aPad: false});
+        });
+
+        $("input[name=tb]").keyup(function () {
+            var bb  = $('input[name=bb]').val().replace(/[.]/g, "");
+            var tb  = $('input[name=tb]').val().replace(/[.]/g, "");
+            var tbb = parseFloat(tb) / 100;
+            var imt = parseFloat(bb) / (parseFloat(tbb) * parseFloat(tbb));
+
+            $('input[name=imt]').val(Math.round(imt)).autoNumeric({aSep: '.', aDec: ',', aPad: false});
+        });
+
         $("input[id=jml]").keydown(function (e) {
             // kibot: backspace, delete, tab, escape, enter .
             if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 ||

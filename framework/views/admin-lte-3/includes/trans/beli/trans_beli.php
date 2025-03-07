@@ -117,7 +117,7 @@
                                             <div class="col-md-3">
                                                 <div class="form-group <?php echo (!empty($hasError['kode_batch']) ? 'text-danger' : '') ?>">
                                                     <label class="control-label">Nomor Batch</label>
-                                                    <?php echo form_input(array('id' => 'kode_batch', 'name' => 'kode_batch', 'class' => 'form-control rounded-0 text-middle' . (!empty($hasError['kode_batch']) ? ' is-invalid' : ''), 'style' => 'vertical-align: middle;', 'placeholder' => 'Isikan Kode Batch...')) ?>
+                                                    <?php echo form_input(array('id' => 'kode_batch', 'name' => 'kode_batch', 'class' => 'form-control rounded-0 text-middle' . (!empty($hasError['kode_batch']) ? ' is-invalid' : ''), 'style' => 'vertical-align: middle;', 'placeholder' => 'Isikan Kode Batch...', 'value' => (float) $sql_beli_det_rw->kode_batch)) ?>
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
@@ -127,7 +127,7 @@
                                                         <div class="input-group-append">
                                                             <span class="input-group-text"><i class="fas fa-calendar"></i></span>
                                                         </div>
-                                                        <?php echo form_input(array('id' => 'tgl_ed', 'name' => 'tgl_ed', 'class' => 'form-control rounded-0 text-middle' . (!empty($hasError['kode_batch']) ? ' is-invalid' : ''), 'style' => 'vertical-align: middle;', 'placeholder' => 'Isikan Kode Batch...')) ?>
+                                                        <?php echo form_input(array('id' => 'tgl_ed', 'name' => 'tgl_ed', 'class' => 'form-control rounded-0 text-middle' . (!empty($hasError['kode_batch']) ? ' is-invalid' : ''), 'style' => 'vertical-align: middle;', 'placeholder' => 'Isikan Kode Batch...', 'value' => $this->tanggalan->tgl_indo7($sql_beli_det_rw->tgl_ed))) ?>
                                                     </div>
                                                 </div>
                                             </div>
@@ -146,7 +146,7 @@
                                                     <?php echo form_input(array('id' => 'jml', 'name' => 'jml', 'class' => 'form-control rounded-0 pull-right' . (!empty($hasError['tgl_masuk']) ? ' is-invalid' : ''), 'placeholder' => 'Isikan Jml ...', 'value'=>(!empty($_GET['qty']) ? $this->input->get('qty') : '1'))) ?>
                                                 </div>                                            
                                             </div>
-                                            <div class="col-md-5">
+                                            <div class="col-md-3">
                                                 <div class="form-group <?php echo (!empty($hasError['satuan']) ? 'text-danger' : '') ?>">
                                                     <label class="control-label">Satuan</label>
                                                     <select name="satuan" class="form-control rounded-0">
@@ -156,6 +156,17 @@
                                                         <?php } ?>
                                                     </select>
                                                 </div>                                           
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group <?php echo (!empty($hasError['harga_het']) ? 'text-danger' : '') ?>">
+                                                    <label class="control-label">Harga Eceran Tertinggi (HET)</label>
+                                                    <div class="input-group mb-3">
+                                                        <div class="input-group-append">
+                                                            <span class="input-group-text">Rp.</span>
+                                                        </div>
+                                                        <?php echo form_input(array('id' => 'harga', 'name' => 'harga_het', 'class' => 'form-control rounded-0 pull-right' . (!empty($hasError['tgl_keluar']) ? ' is-invalid' : ''), 'placeholder' => 'Isikan Harga ...', 'value' => (float) $sql_beli_det_rw->harga_het)) ?>
+                                                    </div>
+                                                </div>                                       
                                             </div>
                                         </div>
                                         <div class="row">
@@ -292,8 +303,9 @@
                                                                 <td class="text-center"><?php echo $no; ?></td>
                                                                 <td class="text-left">
                                                                     <?php echo (!empty($cart->kode_batch) ? $cart->kode_batch.br() : ''); ?>
-                                                                    <?php echo $cart->produk; ?>
-                                                                    <small><?php echo $this->tanggalan->tgl_indo($cart->tgl_ed); ?></small>
+                                                                    <?php echo $cart->produk; ?><br/>
+                                                                    <small><b>ED :</b><?php echo $this->tanggalan->tgl_indo($cart->tgl_ed); ?></small><br/>
+                                                                    <small><b>HET :</b><?php echo general::format_angka($cart->harga_het); ?></small><br/>
                                                                 </td>
                                                                 <td class="text-center"><?php echo (float)$cart->jml; ?></td>
                                                                 <td class="text-right"><?php echo general::format_angka($cart->harga); ?></td>

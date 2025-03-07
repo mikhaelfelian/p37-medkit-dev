@@ -351,6 +351,7 @@ class transaksi extends CI_Controller {
             $status             = $this->input->get('status');
             $dft_pas            = $this->input->get('dft_pas');
             $dft_id             = $this->input->get('dft_id');
+            $rowid              = $this->input->get('rowid');
             $userid             = $this->ion_auth->user()->row()->id;
 
             $data['sess_beli']      = $this->session->userdata('trans_beli');
@@ -361,6 +362,7 @@ class transaksi extends CI_Controller {
             if(!empty($data['sess_beli'])){                
                 $data['sql_beli']       = $this->db->where('id', general::dekrip($id))->get('tbl_trans_beli')->row();
                 $data['sql_beli_det']   = $this->db->where('id_pembelian', $data['sql_beli']->id)->get('tbl_trans_beli_det')->result();
+                $data['sql_beli_det_rw']= $this->db->where('id', general::dekrip($rowid))->get('tbl_trans_beli_det')->row();
                 $data['sql_item']       = $this->db->where('id', general::dekrip($id_produk))->get('tbl_m_produk')->row();
                 $data['sql_satuan']     = $this->db->get('tbl_m_satuan')->result();
             }
@@ -1079,7 +1081,7 @@ class transaksi extends CI_Controller {
             $pdf->Cell(5, .5, $oleh, '0', 0, 'L', $fill);
             $pdf->Ln();
             $pdf->MultiCell(19, .5, $sql_supplier->alamat, '0', 'L');
-            $pdf->Ln();            
+            $pdf->Ln();  
             
                         
             $fill = FALSE;
@@ -1530,6 +1532,7 @@ class transaksi extends CI_Controller {
                         'tgl_modif'         => date('Y-m-d H:i:s'),
 //                        'jml'               => (float)$stok_akhir,
 //                        'harga_beli'        => (float)$hrg_pcs_akhir,
+                        'harga_jual_het'        => (float)$cart->harga_het,
 //                        'harga_beli_ppn'    => (float)$hrg_ppn,
                     );
 
@@ -1966,6 +1969,7 @@ class transaksi extends CI_Controller {
             $diskon2  = general::format_angka_db($this->input->post('disk2'));
             $diskon3  = general::format_angka_db($this->input->post('disk3'));
             $harga    = general::format_angka_db($this->input->post('harga'));
+            $harga_het= general::format_angka_db($this->input->post('harga_het'));
             $potongan = general::format_angka_db($this->input->post('potongan'));
 
             $this->form_validation->set_error_delimiters('<div class="alert alert-danger">', '</div>');
@@ -2017,6 +2021,7 @@ class transaksi extends CI_Controller {
                     'satuan'       => $sql_satuan->satuanTerkecil,
                     'keterangan'   => '',
                     'harga'        => (float)$harga,
+                    'harga_het'    => (float)$harga_het,
                     'disk1'        => (float)$diskon1,
                     'disk2'        => (float)$diskon2,
                     'disk3'        => (float)$diskon3,
@@ -2064,6 +2069,7 @@ class transaksi extends CI_Controller {
             $diskon2  = general::format_angka_db($this->input->post('disk2'));
             $diskon3  = general::format_angka_db($this->input->post('disk3'));
             $harga    = general::format_angka_db($this->input->post('harga'));
+            $harga_het= general::format_angka_db($this->input->post('harga_het'));
             $potongan = general::format_angka_db($this->input->post('potongan'));
 
             $this->form_validation->set_error_delimiters('<div class="alert alert-danger">', '</div>');
@@ -2115,6 +2121,7 @@ class transaksi extends CI_Controller {
                     'satuan'       => $sql_satuan->satuanTerkecil,
                     'keterangan'   => '',
                     'harga'        => (float)$harga,
+                    'harga_het'    => (float)$harga_het,
                     'disk1'        => (float)$diskon1,
                     'disk2'        => (float)$diskon2,
                     'disk3'        => (float)$diskon3,
@@ -2174,6 +2181,7 @@ class transaksi extends CI_Controller {
             $diskon2  = general::format_angka_db($this->input->post('disk2'));
             $diskon3  = general::format_angka_db($this->input->post('disk3'));
             $harga    = general::format_angka_db($this->input->post('harga'));
+            $harga_het= general::format_angka_db($this->input->post('harga_het'));
             $potongan = general::format_angka_db($this->input->post('potongan'));
 
             $this->form_validation->set_error_delimiters('<div class="alert alert-danger">', '</div>');
@@ -2227,6 +2235,7 @@ class transaksi extends CI_Controller {
                     'satuan'       => $sql_satuan->satuanTerkecil,
                     'keterangan'   => '',
                     'harga'        => (float)$harga,
+                    'harga_het'    => (float)$harga_het,
                     'disk1'        => (float)$diskon1,
                     'disk2'        => (float)$diskon2,
                     'disk3'        => (float)$diskon3,

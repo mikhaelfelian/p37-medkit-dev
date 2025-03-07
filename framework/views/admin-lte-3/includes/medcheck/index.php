@@ -149,6 +149,15 @@
                                                             <?php echo br(); ?>
                                                             <small><i><b>Rp. <?php echo general::format_angka($sql_det->jml_gtotal); ?></b></i></small>
                                                         <?php } ?>
+                                                        <?php if ($penj->id_referall > 0) { ?>
+                                                            <?php echo br(); ?>
+                                                            <?php 
+                                                                $referal = $this->ion_auth->user()->row();
+                                                                if ($referal) {
+                                                                    echo '<small><i>Referal: ' . $referal->first_name . ' ' . $referal->last_name . '</i></small>' . br();
+                                                                }
+                                                            ?>
+                                                        <?php } ?>
                                                     </td>
                                                     <td class="text-center" style="width: 150px;"><?php echo general::jns_klm($pasien->jns_klm) ?></td>
                                                     <td class="text-left" style="width: 150px;">

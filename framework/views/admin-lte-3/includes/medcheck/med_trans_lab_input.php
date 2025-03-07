@@ -207,6 +207,7 @@
                                         -->
                                         <?php if (akses::hakSA() == TRUE OR akses::hakOwner() == TRUE OR akses::hakOwner2() == TRUE OR akses::hakAdminM() == TRUE OR akses::hakAdmin() == TRUE OR akses::hakAnalis() == TRUE) { ?>
                                             <?php if ($sql_medc_lab_rw->status != '2') { ?>
+                                                <?php echo anchor(base_url('medcheck/tambah.php?act=lab_hasil&id=' . $this->input->get('id') . '&id_lab=' . $this->input->get('id_lab') . '&status=' . $this->input->get('status') . '&id_produk=' . general::enkrip($medc->id_item) . '&id_item=' . general::enkrip($medc->id)), '<i class="fas fa-edit"></i> Edit', 'class="btn btn-success btn-flat btn-xs" style="width: 65px;"') ?>
                                                 <?php echo anchor(base_url('medcheck/tambah.php?act=lab_hasil&id=' . $this->input->get('id') . '&id_lab=' . $this->input->get('id_lab') . '&status=' . $this->input->get('status') . '&id_produk=' . general::enkrip($medc->id_item) . '&id_item=' . general::enkrip($medc->id)), '<i class="fas fa-check"></i> Input', 'class="btn btn-success btn-flat btn-xs" style="width: 65px;"') ?>
                                                 <?php if ($sql_medc->status < 5) { ?>
                                                     <?php echo br() ?>
