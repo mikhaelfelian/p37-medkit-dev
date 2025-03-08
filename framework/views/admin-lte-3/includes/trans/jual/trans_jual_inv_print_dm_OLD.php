@@ -41,23 +41,9 @@ margin: 10;*/
     <body>
         <table border="0" style="width: 365px;" cellspacing="0">
             <tr>
-                <th rowspan="3" style="border-bottom: 1px solid #000;">
-                    <img src="<?php echo base_url('/assets/theme/admin-lte-3/dist/img/kop_es_bw_197x234.png') ?>" width="75px" height="82px">                   
+                <th style="width: 75px; text-align: left; font-size: 11px;" colspan="6">
+                    <img src="<?php echo base_url('/assets/theme/admin-lte-3/dist/img/kop.png') ?>" width="365px" height="82px">
                 </th>
-                <th style="width: 75px; text-align: center; font-size: 18px; color: #00A650;" colspan="5">
-                    <?php echo $setting->judul ?>
-                    <!--<img src="<?php echo base_url('/assets/theme/admin-lte-3/dist/img/kop.png') ?>" width="365px" height="82px">-->
-                </th>
-            </tr>
-            <tr>
-                <td style="width: 75px; text-align: center; font-size: 11px; color: #00A650;" colspan="5">
-                    <?php echo $setting->alamat ?>
-                </td>
-            </tr>
-            <tr>
-                <td style="width: 75px; text-align: center; font-size: 11px; border-bottom: 1px solid #000; color: #00A650;" colspan="5">
-                    <?php echo $setting->tlp ?> / <?php echo $setting->email ?>
-                </td>
             </tr>
             <tr>
                 <th style="width: 65px; text-align: left; font-size: 11px;">No. Faktur</th>
@@ -69,7 +55,7 @@ margin: 10;*/
                 <td style="font-size: 11px;"><?php echo $sql_pasien->kode_dpn . $sql_pasien->kode ?></td>
             </tr>
             <tr>
-                <th style="width: 50px; text-align: left; font-size: 11px;">Nama</th>
+                <th style="width: 50px; text-align: left; font-size: 11px;">Pelanggan</th>
                 <th style="font-size: 11px;">:</th>
                 <td style="font-size: 11px;"><?php echo $sql_pasien->nama_pgl ?></td>
 
@@ -78,18 +64,9 @@ margin: 10;*/
                 <td style="font-size: 11px;"><?php echo $this->tanggalan->tgl_indo2($sql_medc->tgl_masuk) ?><br/><?php echo $this->tanggalan->wkt_indo($sql_medc->tgl_masuk) ?> - <?php echo $this->tanggalan->wkt_indo($sql_medc->tgl_bayar) ?></td>
             </tr>
             <tr>
-                <th style="width: 50px; text-align: left; font-size: 11px;">Tgl Lahir</th>
+                <th style="width: 50px; text-align: left; font-size: 11px;">Telp</th>
                 <th style="font-size: 11px;">:</th>
-                <td style="font-size: 11px;"><?php echo $this->tanggalan->tgl_indo2($sql_pasien->tgl_lahir) ?></td>
-
-                <th style="width: 50px; text-align: left; font-size: 11px;">Poli</th>
-                <th style="font-size: 11px;">:</th>
-                <td style="font-size: 11px;"><?php echo $sql_poli->lokasi ?></td>
-            </tr>
-            <tr>
-                <th style="width: 50px; text-align: left; font-size: 11px;">Telp / HP</th>
-                <th style="font-size: 11px;">:</th>
-                <td style="font-size: 11px;"><?php echo $sql_pasien->no_hp ?></td>
+                <td style="font-size: 11px;"><?php echo $sql_medc->no_hp ?></td>
 
                 <th style="width: 50px; text-align: left; font-size: 11px;">Kasir</th>
                 <th style="font-size: 11px;">:</th>
@@ -113,7 +90,7 @@ margin: 10;*/
             <?php $gtotal = 0; ?>
             <?php foreach ($sql_medc_det as $det) { ?>
                 <?php $sql_kat = $this->db->where('id', $det->id_item_kat)->get('tbl_m_kategori')->row(); ?>
-                <?php $sql_det = $this->db->where('id_medcheck', $det->id_medcheck)->where('id_item_kat', $det->id_item_kat)->where('status_pkt', '0')->where('jml >=', '0')->get('tbl_trans_medcheck_det')->result(); ?>
+                <?php $sql_det = $this->db->where('id_medcheck', $det->id_medcheck)->where('id_item_kat', $det->id_item_kat)->get('tbl_trans_medcheck_det')->result(); ?>
                 <tr>
                     <!--<th style="text-align: left; font-size: 11px;"></th>-->
                     <!--<th style="text-align: left; border-top: 1px dashed #000; border-bottom: 1px dashed #000;"></th>-->
@@ -122,23 +99,15 @@ margin: 10;*/
                 </tr>
                 <?php $subtotal = 0; ?>
                 <?php foreach ($sql_det as $medc) { ?>
-                    <?php $total_item = $medc->subtotal; ?>
-                    <?php $total_hrg  = $medc->subtotal; ?>
-                    <?php $total_disk = $medc->diskon + $medc->potongan; ?>
+                    <?php $total_item = $medc->potongan + $medc->subtotal; ?>
+                    <?php $total_hrg  = $medc->potongan + $medc->subtotal; ?>
                     <tr>
-                        <td style="text-align: left; font-size: 11px;"><?php echo ($medc->status_rc == '1' ? ' -<i>'.$medc->item.'</i>' : $medc->item); ?></td>
+                        <td style="text-align: left; font-size: 11px;"><?php echo $medc->item; ?></td>
                         <td style="text-align: center; font-size: 11px;"><?php echo (float) $medc->jml; ?></td>
                         <td style="text-align: center; font-size: 11px;">Rp.</td>
                         <td style="text-align: right; font-size: 11px;"><?php echo general::format_angka($medc->harga); ?></td>
                         <td style="text-align: center; font-size: 11px;">Rp.</td>
-                        <td style="text-align: right; font-size: 11px;"><?php echo general::format_angka($medc->subtotal); ?></td>
-                    </tr>
-                    <tr>
-                    <td style="text-align: right; font-size: 11px; font-style: italic;" colspan="2"><?php echo ($medc->disk1 != '0.00' ? 'disk : '.(float)$medc->disk1 : '').($medc->disk2 != '0.00' ? ' + '.(float)$medc->disk2 : '').($medc->disk3 != '0.00' ? ' + '.(float)$medc->disk3 : '').($medc->disk1 != '0.00' || $medc->disk2 != '0.00' || $medc->disk3 != '0.00' ? '%' : '').($medc->potongan > 0 ? ' pot : '.general::format_angka($medc->potongan) : ''); ?></td>
-                        <td style="text-align: center; font-size: 11px; font-style: italic;"></td>
-                        <td style="text-align: right; font-size: 11px; font-style: italic;"><?php echo (!empty($total_disk) ? '('.general::format_angka($total_disk).')' : ''); ?></td>
-                        <td style="text-align: center; font-size: 11px; font-style: italic;"></td>
-                        <td style="text-align: right; font-size: 11px; font-style: italic;"></td>
+                        <td style="text-align: right; font-size: 11px;"><?php echo general::format_angka($total_hrg); ?></td>
                     </tr>
                     <?php foreach (json_decode($medc->resep) as $racikan) { ?>
                         <tr>
@@ -162,11 +131,9 @@ margin: 10;*/
             <?php } ?>
             <?php 
                 $sql_platform   = $this->db->where('id', $sql_medc->metode)->get('tbl_m_platform')->row();
-                $jml_ongkir     = $sql_medc->jml_ongkir;
                 $jml_total      = $sql_medc_sum->subtotal + $sql_medc_sum->diskon + $sql_medc_sum->potongan + $sql_medc_sum->potongan_poin;
-                $jml_diskon     = $jml_total - $sql_medc_sum->subtotal; // $sql_medc->jml_total - $sql_medc->jml_subtotal;
-                $diskon         = ($jml_diskon / $jml_total) * 100;
-                $jml_subtotal   = $sql_medc_sum->subtotal + $jml_ongkir;
+                $jml_diskon     = $jml_total - ($jml_total - $sql_medc->jml_diskon);
+                $diskon         = ($jml_diskon / $jml_total) * 100;            
             ?>
             <tr>
                 <td colspan="2" style="text-align: left; font-weight: bold; font-size: 9px; border-top: 1px dashed #000;"><?php echo $sql_platform->platform ?></td>
@@ -175,38 +142,22 @@ margin: 10;*/
                 <td style="text-align: right; font-weight: bold; font-size: 11px; border-top: 1px dashed #000;"><?php echo general::format_angka($jml_total); ?></td>
             </tr>            
             <tr>
-                <td colspan="2" style="text-align: left; font-weight: bold; font-size: 9px;">PARAF</td>
-                <td colspan="2" style="text-align: right; font-weight: bold; font-size: 11px;">Disc (<?php echo (float) round($diskon, 1) ?>%)</td>
+                <td colspan="2" style="text-align: left; font-weight: bold; font-size: 11px;">Poin : <?php echo ($sql_pasien_poin->jml_poin <= 0 ? 0 : (float)$sql_pasien_poin->jml_poin) ?></td>
+                <td colspan="2" style="text-align: right; font-weight: bold; font-size: 11px;">Disc (<?php echo (float) number_format($diskon, 1) ?>%)</td>
                 <td style="text-align: center; font-size: 11px; font-weight: bold;">Rp.</td>
                 <td style="text-align: right; font-weight: bold; font-size: 11px;">-<?php echo general::format_angka($jml_diskon) ?></td>
-            </tr>
-            <tr>
-                <td colspan="2" style="text-align: left; font-weight: bold; font-size: 9px;">Poin : <?php echo ($sql_pasien_poin->jml_poin <= 0 ? 0 : (float)$sql_pasien_poin->jml_poin) ?></td>
-                <td colspan="2" style="text-align: right; font-weight: bold; font-size: 11px;">Ongkir</td>
-                <td style="text-align: center; font-size: 11px; font-weight: bold;">Rp.</td>
-                <td style="text-align: right; font-weight: bold; font-size: 11px;"><?php echo general::format_angka($jml_ongkir) ?></td>
-            </tr>
-            <tr>
-                <td rowspan="2" style="text-align: left; font-weight: bold; font-size: 11px;">
-                    <?php if(!empty($sql_medc->ttd_obat)){ ?>
-                        <!--<img src="<?php // echo base_url($sql_medc->ttd_obat) ?>" style="width: 50px;">-->
-                    <?php } ?>
-                </td>
-                <td colspan="3" style="text-align: right; vertical-align: top; font-weight: bold; font-size: 11px;">Harus Dibayar</td>
-                <td style="text-align: center; vertical-align: top; font-size: 11px; font-weight: bold;">Rp.</td>
-                <td style="text-align: right; vertical-align: top; font-weight: bold; font-size: 11px;"><?php echo general::format_angka($jml_subtotal) ?></td>
             </tr>
             <?php $jml_tot_byr = 0; ?>
             <?php foreach ($sql_medc_plat as $plat) { ?>
                 <?php $sql_plat = $this->db->where('id', $plat->id_platform)->get('tbl_m_platform')->row() ?>
                 <?php $jml_tot_byr = $jml_tot_byr + $plat->nominal; ?>
                 <tr>
-                    <td colspan="3" style="text-align: right; font-weight: bold; font-size: 11px;"><?php echo $sql_plat->platform ?></td>
+                    <td colspan="4" style="text-align: right; font-weight: bold; font-size: 11px;"><?php echo $sql_plat->platform ?></td>
                     <td style="text-align: center; font-size: 11px; font-weight: bold;">Rp.</td>
                     <td style="text-align: right; font-weight: bold; font-size: 11px;"><?php echo general::format_angka($plat->nominal) ?></td>
                 </tr>
             <?php } ?>
-            <?php $kembali      = $jml_tot_byr - $jml_subtotal; ?>
+            <?php $kembali      = $jml_tot_byr - $sql_medc_sum->subtotal; ?>
             <?php $jml_kembali  = ($kembali > 0 ? $kembali : 0); ?>
             <tr>
                 <td colspan="4" style="text-align: right; font-weight: bold; font-size: 11px;">Kembali</td>
@@ -214,10 +165,7 @@ margin: 10;*/
                 <td style="text-align: right; font-weight: bold; font-size: 11px;"><?php echo general::format_angka($jml_kembali) ?></td>
             </tr>
             <tr>
-                <td colspan="6" style="text-align: center; border-top: 1px double #000; font-size: 11px;">Terimakasih atas kunjungannya, semoga lekas sembuh</td>
-            </tr>
-            <tr>
-                <td colspan="6" style="text-align: center; border-bottom: 1px double #000; font-size: 15px;">Transaksi yang sudah dibayar tidak dapat dibatalkan</td>
+                <td colspan="6" style="text-align: center; border-top: 1px double #000; border-bottom: 1px double #000; font-size: 11px;">Terimakasih atas kunjungannya, semoga lekas sembuh</td>
             </tr>
         </table>
         <br/>

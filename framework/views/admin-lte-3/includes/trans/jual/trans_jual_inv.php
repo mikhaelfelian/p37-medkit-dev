@@ -198,7 +198,10 @@
                                     <?php echo form_close(); ?>
                                     <br/>
                                     
-                                    <button type="button" class="btn btn-app bg-success" onclick="window.location.href = '<?php echo base_url('medcheck/invoice/print_pdf.php?id=' . general::enkrip($sql_medc->id)) ?>'">
+<!--                                    <button type="button" class="btn btn-app bg-success" onclick="window.location.href = '<?php echo base_url('medcheck/invoice/print_pdf.php?id=' . general::enkrip($sql_medc->id)) ?>'">
+                                        <i class="fa fa-print"></i> Nota PDF
+                                    </button>-->
+                                    <button type="button" class="btn btn-app bg-success" onclick="window.location.href = '<?php echo base_url('medcheck/invoice/print_dm_pdf.php?id=' . general::enkrip($sql_medc->id)) ?>'">
                                         <i class="fa fa-print"></i> Nota PDF
                                     </button>
                                     <button type="button" class="btn btn-app bg-success" onclick="window.location.href = '<?php echo base_url('pos/trans_jual_inv_print_dm.php?id=' . general::enkrip($sql_medc->id)) ?>'">

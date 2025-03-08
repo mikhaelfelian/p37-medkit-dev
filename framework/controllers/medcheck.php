@@ -2078,7 +2078,7 @@ class medcheck extends CI_Controller {
                             'id_dokter'    => (!empty($dokter) ? $dokter : '0'),
                             'id_pekerjaan' => (!empty($pekerjaan) ? $pekerjaan : '0'),
                             'id_instansi'  => (!empty($inst) ? $sql_ins->id : '0'),
-                            'id_referall' => (!empty($referall) ? $referall : '0'),
+                            'id_referall'  => (!empty($referall) ? $referall : '0'),
                             'no_urut'      => $no_urut,
                             'nik'          => $nik_lama,
                             'nama'         => stripslashes($nama),
@@ -15890,15 +15890,15 @@ public function set_medcheck_lab_adm_save() {
             $fill = FALSE;
             $pdf->SetFont('Arial', 'B', '9');
             $pdf->Cell(6, .5, 'PEMERIKSAAN', 'T', 0, 'L', $fill);
-            $pdf->Cell(4.5, .5, 'HASIL', 'T', 0, 'L', $fill);
+            $pdf->Cell(5, .5, 'HASIL', 'T', 0, 'L', $fill);
             $pdf->Cell(4, .5, 'NILAI RUJUKAN', 'T', 0, 'L', $fill);
-            $pdf->Cell(4.5, .5, 'SATUAN', 'T', 0, 'L', $fill);
+            $pdf->Cell(4, .5, 'SATUAN', '0', 0, 'L', $fill);
             $pdf->Ln();
             $pdf->SetFont('Arial', 'Bi', '9');
             $pdf->Cell(6, .5, 'EXAMINATION', 'B', 0, 'L', $fill);
-            $pdf->Cell(4.5, .5, 'RESULT', 'B', 0, 'L', $fill);
+            $pdf->Cell(5, .5, 'RESULT', 'B', 0, 'L', $fill);
             $pdf->Cell(4, .5, 'REFERENCE VALUE', 'B', 0, 'L', $fill);
-            $pdf->Cell(4.5, .5, 'MEASURE', 'B', 0, 'L', $fill);
+            $pdf->Cell(4, .5, 'MEASURE', 'B', 0, 'L', $fill);
             $pdf->Ln();
             
             # Jika status cetak 1, maka akan di cetak semua
@@ -18981,7 +18981,6 @@ public function set_medcheck_lab_adm_save() {
             $sql_medc_ass14R     = $this->db->where('id_medcheck_ass', $sql_medc_lab->id)->where('status_posisi', 'R')->where('tipe', '14')->get('tbl_trans_medcheck_ass_fisik_hsl')->result();
             $sql_medc_ass15      = $this->db->where('id_medcheck_ass', $sql_medc_lab->id)->where('tipe', '15')->get('tbl_trans_medcheck_ass_fisik_hsl')->result();
             $sql_medc_ass16      = $this->db->where('id_medcheck_ass', $sql_medc_lab->id)->where('tipe', '16')->get('tbl_trans_medcheck_ass_fisik_hsl')->result();
-            $sql_medc_ass17      = $this->db->where('id_medcheck_ass', $sql_medc_lab->id)->where('tipe', '17')->get('tbl_trans_medcheck_ass_fisik_hsl')->result();
             # --- END --
             
             $sql_poli            = $this->db->where('id', $sql_medc->id_poli)->get('tbl_m_poli')->row();
@@ -19000,7 +18999,7 @@ public function set_medcheck_lab_adm_save() {
 
             $this->load->library('MedLabPDF');
             $pdf = new MedLabPDF('P', 'cm', array(21.5,33));
-            $pdf->SetAutoPageBreak('auto', 6.5);
+            $pdf->SetAutoPageBreak('auto', 5.5);
             $pdf->SetMargins(1,0.35,1);
             $pdf->header = 0;
             $pdf->addPage('','',false);
@@ -19133,29 +19132,7 @@ public function set_medcheck_lab_adm_save() {
             }
             $pdf->Cell(19, .5, '', 'T', 0, 'C', $fill);
             $pdf->Ln();
-            # --------------  
-    
-            # Blok Grup 17 Anamnesis Okupasi, harusnya nomer 3 tapi ketinggalan sehingga di taruh sini
-            $pdf->SetFont('Arial', 'B', '9');
-            $pdf->Cell(7, .5, 'Anamnesis Okupasi', '1', 0, 'L', $fill);
-            $pdf->Cell(1, .5, 'Ya', 'TLB', 0, 'C', $fill);
-            $pdf->Cell(1, .5, 'Tidak', 'TLB', 0, 'C', $fill);
-            $pdf->Cell(10, .5, 'Jelaskan', '1', 0, 'L', $fill);
-            $pdf->Ln();
-            
-            $pdf->SetFont('Arial', '', '9');
-            foreach ($sql_medc_ass17 as $ass17){                
-                $pdf->Cell(7, .5, $ass17->item_name, 'BLR', 0, 'L', $fill);
-                $pdf->Cell(1, .5, (!empty($ass17->item_value) ? 'V' : ''), 'BL', 0, 'C', $fill);
-                $pdf->Cell(1, .5, (empty($ass17->item_value2) ? 'V' : ''), 'BL', 0, 'C', $fill);
-                $pdf->Cell(10, .5, $ass17->item_value2, 'BLR', 0, 'L', $fill);
-                $pdf->Ln();
-            }
-            $pdf->Cell(19, .5, '', 'T', 0, 'C', $fill);
-            $pdf->Ln();
             # --------------
-            
-            $pdf->addPage('','',false);
             
             # ISI BLOK 2
             $pdf->SetFont('Arial', 'i', '9');
@@ -19199,9 +19176,9 @@ public function set_medcheck_lab_adm_save() {
                 $pdf->Cell(4.5, .5, $ass3L->item_value3, '0', 0, 'L', $fill);
                 $pdf->Ln();
             }
-            $pdf->Ln(0);
+            $pdf->Ln();
             
-            $setYAss3R = 21.55;
+            $setYAss3R = 25.1;
             foreach ($sql_medc_ass3R as $ass3R) {
                 $pdf->SetXY(10.5,$setYAss3R);
                 $pdf->SetFont('Arial', 'B', '9');
@@ -21476,7 +21453,7 @@ public function set_medcheck_lab_adm_save() {
                     $sql = $this->db->select('tbl_m_produk.id, tbl_m_produk.id_satuan, tbl_m_produk.kode, tbl_m_produk.produk, tbl_m_produk.produk_alias, tbl_m_produk.produk_kand, tbl_m_produk.jml, tbl_m_produk.harga_jual, tbl_m_produk.harga_beli, tbl_m_produk.harga_beli, tbl_m_produk.status_brg_dep')
                                     ->where('tbl_m_produk.status', '3')
                                     ->where('status_hps', '0')
-                                    ->or_where('tbl_m_produk.status', '6')
+//                                    ->or_where('tbl_m_produk.status', '6')
                                     ->where("(tbl_m_produk.produk LIKE '%" . $term . "%' OR tbl_m_produk.produk_alias LIKE '%" . $term . "%' OR tbl_m_produk.produk_kand LIKE '%" . $term . "%' OR tbl_m_produk.kode LIKE '%" . $term . "%' OR tbl_m_produk.barcode LIKE '" . $term . "')")
                                     ->get('tbl_m_produk')->result();
                     break;
@@ -21486,7 +21463,7 @@ public function set_medcheck_lab_adm_save() {
                                     ->where("(tbl_m_produk.produk LIKE '%" . $term . "%' OR tbl_m_produk.produk_alias LIKE '%" . $term . "%' OR tbl_m_produk.produk_kand LIKE '%" . $term . "%' OR tbl_m_produk.kode LIKE '%" . $term . "%' OR tbl_m_produk.barcode LIKE '" . $term . "')")
                                     ->where('tbl_m_produk.status', '5')
                                     ->where('status_hps', '0')
-                                    ->or_where('tbl_m_produk.status', '6')
+//                                    ->or_where('tbl_m_produk.status', '6')
                                     ->order_by('tbl_m_produk.jml', ($_GET['mod'] == 'beli' ? 'asc' : 'desc'))
                                     ->get('tbl_m_produk')->result();
                     break;
@@ -21496,7 +21473,7 @@ public function set_medcheck_lab_adm_save() {
                                     ->where("(tbl_m_produk.produk LIKE '%" . $term . "%' OR tbl_m_produk.produk_alias LIKE '%" . $term . "%' OR tbl_m_produk.produk_kand LIKE '%" . $term . "%' OR tbl_m_produk.kode LIKE '%" . $term . "%' OR tbl_m_produk.barcode LIKE '" . $term . "')")
                                     ->where('tbl_m_produk.status', '4')
                                     ->where('status_hps', '0')
-//                                    ->or_where('tbl_m_produk.status', '6')
+                                    ->or_where('tbl_m_produk.status', '6')
                                     ->order_by('tbl_m_produk.jml', ($_GET['mod'] == 'beli' ? 'asc' : 'desc'))
                                     ->get('tbl_m_produk')->result();
                     break;
