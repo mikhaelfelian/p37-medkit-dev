@@ -21444,7 +21444,7 @@ public function set_medcheck_lab_adm_save() {
                                     ->where("(tbl_m_produk.produk LIKE '%" . $term . "%' OR tbl_m_produk.produk_alias LIKE '%" . $term . "%' OR tbl_m_produk.produk_kand LIKE '%" . $term . "%' OR tbl_m_produk.kode LIKE '%" . $term . "%' OR tbl_m_produk.barcode LIKE '" . $term . "')")
                                     ->where('tbl_m_produk.status', '2')
                                     ->where('status_hps', '0')
-//                                    ->or_where('tbl_m_produk.status', '6')
+                                    ->or_where('tbl_m_produk.status', '6')
                                     ->order_by('tbl_m_produk.jml', ($_GET['mod'] == 'beli' ? 'asc' : 'desc'))
                                     ->get('tbl_m_produk')->result();
                     break;
@@ -21473,7 +21473,7 @@ public function set_medcheck_lab_adm_save() {
                                     ->where("(tbl_m_produk.produk LIKE '%" . $term . "%' OR tbl_m_produk.produk_alias LIKE '%" . $term . "%' OR tbl_m_produk.produk_kand LIKE '%" . $term . "%' OR tbl_m_produk.kode LIKE '%" . $term . "%' OR tbl_m_produk.barcode LIKE '" . $term . "')")
                                     ->where('tbl_m_produk.status', '4')
                                     ->where('status_hps', '0')
-                                    ->or_where('tbl_m_produk.status', '6')
+//                                    ->or_where('tbl_m_produk.status', '6')
                                     ->order_by('tbl_m_produk.jml', ($_GET['mod'] == 'beli' ? 'asc' : 'desc'))
                                     ->get('tbl_m_produk')->result();
                     break;
