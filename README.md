@@ -1,4 +1,3 @@
-# p37-medkit-dev
 # Medkit
 
 Medkit adalah aplikasi yang dirancang khusus untuk Klinik Utama Rawat Inap "Esensia" Semarang. Aplikasi ini berfungsi untuk mengelola data pasien, rekam medis, jadwal dokter, administrasi, serta layanan rawat inap, guna meningkatkan efisiensi dan kualitas pelayanan klinik.
